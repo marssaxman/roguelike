@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import copy
 import tcod
 
 from engine import Engine
+import entity_factories
 from entity import Entity
 from input_handlers import EventHandler
 from procgen import generate_dungeon
@@ -19,6 +21,8 @@ def main():
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
+    # how should it be populated with enemies?
+    max_monsters_per_room = 2
 
     # load the graphics
     tileset = tcod.tileset.load_tilesheet(
@@ -28,20 +32,19 @@ def main():
     event_handler = EventHandler()
 
     # create some objects: a player and an npc
-    player = Entity(screen_width // 2, screen_height //2, "@", (255,255,255))
-    npc = Entity(screen_width // 2 - 5, screen_height // 2, "X", (255,255,0))
-    entities = {npc, player}
+    player = copy.deepcopy(entity_factories.player)
     game_map = generate_dungeon(
         max_rooms=max_rooms,
         room_min_size=room_min_size,
         room_max_size=room_max_size,
         map_width=map_width,
         map_height=map_height,
+        max_monsters_per_room=max_monsters_per_room,
         player=player
     )
 
     engine = Engine(
-        entities=entities, event_handler=event_handler, game_map=game_map, player=player
+        event_handler=event_handler, game_map=game_map, player=player
     )
 
     # create a terminal window to put the game interface in
