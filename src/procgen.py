@@ -53,10 +53,14 @@ def place_entities(
         y = random.randint(room.y1 + 1, room.y2 - 1)
         # assuming the square is empty, put a monster in it
         if not any(e.x == x and e.y == y for e in dungeon.entities):
-            if random.random() < 0.8:
-                entity_factories.orc.spawn(dungeon, x, y)
+            weight = random.random()
+            if weight < 0.625:
+                monster = entity_factories.orc
+            elif random.random() < 0.875:
+                monster = entity_factories.rat
             else:
-                entity_factories.troll.spawn(dungeon, x, y)
+                monster = entity_factories.troll
+            monster.spawn(dungeon, x, y)
 
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]
