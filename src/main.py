@@ -23,7 +23,7 @@ def main():
     room_min_size = 6
     max_rooms = 30
     # how should it be populated with enemies?
-    max_monsters_per_room = 2
+    max_monsters_per_room = 4
     max_items_per_room = 2
 
     # load the graphics
