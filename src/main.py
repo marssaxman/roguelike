@@ -2,13 +2,18 @@
 import traceback
 import tcod
 import color
-
 import exceptions
+import setup_game
 import input_handlers
 from entity import Entity
-import setup_game
-
 from random import randrange
+
+
+def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
+    """If the current event handler has an active engine, then save it."""
+    if isinstance(handler, input_handlers.EventHandler):
+        handler.engine.save_as(filename)
+        print("Game saved.")
 
 def main():
     # how big should the game window be?
@@ -55,10 +60,10 @@ def main():
         except exceptions.QuitWithoutSaving:
             raise
         except SystemExit:  # Save and quit.
-            # TODO: Add the save function here
+            save_game(handler, "savegame.sav")
             raise
         except BaseException:  # Save on any other unexpected exception.
-            # TODO: Add the save function here
+            save_game(handler, "savegame.sav")
             raise
 
       

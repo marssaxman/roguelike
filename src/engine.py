@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import lzma
+import pickle
 from typing import TYPE_CHECKING
 
 from tcod.console import Console
@@ -20,6 +22,12 @@ class Engine:
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+
+    def save_as(self, filename: str) -> None:
+        """Save this game engine instance as a compressed file."""
+        save_data = lzma.compress(pickle.dumps(self))
+        with open(filename, "wb") as f:
+            f.write(save_data)
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
