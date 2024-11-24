@@ -280,7 +280,7 @@ class LevelUpEventHandler(AskUserEventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
-        index = key - tcod.event.K_a
+        index = key - tcod.event.KeySym.a
 
         if 0 <= index <= 2:
             if index == 0:
@@ -531,7 +531,7 @@ class MainGameEventHandler(EventHandler):
             return InventoryActivateHandler(self.engine)
         elif key == tcod.event.KeySym.d:
             return InventoryDropHandler(self.engine)
-        elif key == tcod.event.K_c:
+        elif key == tcod.event.KeySym.c:
             return CharacterScreenEventHandler(self.engine)
         elif key == tcod.event.KeySym.SLASH:
             return LookHandler(self.engine)
