@@ -52,6 +52,14 @@ def remove_empty_rooms(builder):
     for id in empty_rooms:
         builder.delete_room(id)
 
+def print_maze(maze):
+    text = render.to_chars(maze)
+    for y in range(maze.shape[1]):
+        line = ""
+        for x in range(maze.shape[0]):
+            line += chr(text[x, y])
+        print(line)
+
 
 if __name__ == '__main__':
     # Everything descends from the random seed; we'll use the current time.
@@ -81,12 +89,6 @@ if __name__ == '__main__':
         print(f"starting seed: {seed}")
         raise
 
-    # Render the maze in ASCII chars for display.
-    text = render.to_chars(maze)
-    for y in range(height):
-        line = ""
-        for x in range(width):
-            line += chr(text[x, y])
-        print(line)
-
     # ta-da
+    print_maze(maze)
+
