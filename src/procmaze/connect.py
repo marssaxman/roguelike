@@ -22,7 +22,10 @@ def disconnected_neighbors(builder, katamari):
 def open_random_door(builder, a, b, rng):
     wall = builder.wall_between(a, b)
     x, y = rng.choice(list(wall.tiles()))
-    builder.open_door(x, y, a, b)
+    if rng.choice([0, 1]):
+        builder.open_door(x, y, a, b)
+    else:
+        builder.open_passage(x, y, a, b)
 
 
 #intentional entrypoint

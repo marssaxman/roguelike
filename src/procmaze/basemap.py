@@ -182,18 +182,10 @@ class Builder:
         self._get_room(room_id)._add_tile(x, y)
 
     def place_horz_wall(self, x, y, above_id, below_id):
-        assert self.map[x, y] == Tile.VOID
-        self.map[x, y] = Tile.WALL
-        self._get_room(above_id)._add_neighbor(below_id)
-        self._get_room(below_id)._add_neighbor(above_id)
-        self._get_wall(above_id, below_id)._add_tile(x, y)
+        self._place_wall(x, y, above_id, below_id)
 
     def place_vert_wall(self, x, y, left_id, right_id):
-        assert self.map[x, y] == Tile.VOID
-        self.map[x, y] = Tile.WALL
-        self._get_room(left_id)._add_neighbor(right_id)
-        self._get_room(right_id)._add_neighbor(left_id)
-        self._get_wall(left_id, right_id)._add_tile(x, y)
+        self._place_wall(x, y, left_id, right_id)
 
     def place_pillar(self, x, y):
         assert self.map[x, y] == Tile.VOID
@@ -212,18 +204,10 @@ class Builder:
         del self._rooms[id]
 
     def open_door(self, x, y, a_id, b_id):
-        assert self.map[x, y] == Tile.WALL
-        assert a_id in self._rooms
-        assert b_id in self._rooms
-        assert a_id in self._rooms[b_id]._neighbors
-        assert b_id in self._rooms[a_id]._neighbors
-        wall = self._get_wall(a_id, b_id)
-        assert (x, y) in wall._tiles
-        assert not wall.has_door()
-        wall._has_door = True
-        self.map[x, y] = Tile.DOOR
-        self._get_room(a_id)._add_connection(b_id)
-        self._get_room(b_id)._add_connection(a_id)
+        self._open_wall(x, y, a_id, b_id, Tile.DOOR)
+
+    def open_passage(self, x, y, a_id, b_id):
+        self._open_wall(x, y, a_id, b_id, Tile.FLOOR)
 
 
     # Retrieve finished copy of contents
@@ -252,3 +236,25 @@ class Builder:
         if key not in self._walls:
             self._walls[key] = Wall(a_id, b_id)
         return self._walls[key]
+
+    def _place_wall(self, x, y, a_id, b_id):
+        assert self.map[x, y] == Tile.VOID
+        self.map[x, y] = Tile.WALL
+        self._get_room(a_id)._add_neighbor(b_id)
+        self._get_room(b_id)._add_neighbor(a_id)
+        self._get_wall(a_id, b_id)._add_tile(x, y)
+
+    def _open_wall(self, x, y, a_id, b_id, tile_type):
+        assert self.map[x, y] == Tile.WALL
+        assert a_id in self._rooms
+        assert b_id in self._rooms
+        assert a_id in self._rooms[b_id]._neighbors
+        assert b_id in self._rooms[a_id]._neighbors
+        wall = self._get_wall(a_id, b_id)
+        assert (x, y) in wall._tiles
+        assert not wall.has_door()
+        wall._has_door = True
+        self.map[x, y] = tile_type
+        self._get_room(a_id)._add_connection(b_id)
+        self._get_room(b_id)._add_connection(a_id)
+
