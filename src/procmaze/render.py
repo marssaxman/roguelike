@@ -15,6 +15,7 @@ PLUS = 43
 
 DOOR_H = 0x2508
 DOOR_V = 0x2506
+PILLAR = 0x25A3
 
 # box drawing characters, heavy lines
 WALL_L = 0x2561
@@ -39,7 +40,7 @@ WALL_LTRB = 0x256C
 # which contains another wall will have its bit set. We can then sum the
 # adjacent items and return the appropriate character.
 WALL_GLYPHS = [# L T R B
-    HASH,      # . . . .
+    PILLAR,    # . . . .
     WALL_B,    # . . . X
     WALL_R,    # . . X .
     WALL_RB,   # . . X X
@@ -87,13 +88,16 @@ def place_wall(grid, x: np.uint, y:np.uint):
 def to_chars(grid):
     maze = np.full(shape=grid.shape, dtype=np.uint32, fill_value=SPACE)
     for x, y in np.ndindex(maze.shape):
-        if grid[x, y] == Tile.VOID:
-            maze[x, y] = SPACE
-        elif grid[x, y] == Tile.FLOOR:
-            maze[x, y] = PERIOD
-        elif grid[x, y] == Tile.DOOR:
-            maze[x, y] = place_door(grid, x, y)
-        elif grid[x, y] == Tile.WALL:
-            maze[x, y] = place_wall(grid, x, y)
+        tile = grid[x, y]
+        char = 0
+        if tile == Tile.VOID:
+            char = SPACE
+        elif tile == Tile.FLOOR:
+            char = PERIOD
+        elif tile == Tile.DOOR:
+            char = place_door(grid, x, y)
+        elif tile == Tile.WALL:
+            char = place_wall(grid, x, y)
+        maze[x, y] = char
     return maze
 
