@@ -18,6 +18,10 @@ def rasterize(width: np.uint, height: np.uint, rects):
         # Skip rects that don't lie completely within the requested area
         if left <= 0 or top <= 0 or right > width or bottom > height:
             continue;
+        # Skip rects whose width or height is less than 2, because they would
+        # be filled with walls and therefore impassable
+        if (right-left) < 2 or (bottom - top) < 2:
+            continue
         # Increment the room counter and assign it to the cell region
         counter += 1
         grid[left:right, top:bottom] = counter
@@ -40,17 +44,6 @@ def apply_grid(grid, builder):
         else:
             builder.place_pillar(x, y)
 
-
-def remove_empty_rooms(builder):
-    # Find all the empty rooms, then delete the list. We don't want to
-    # confuse the path-finding algorithm with spurious rooms which cannot
-    # be traversed.
-    empty_rooms = []
-    for room in builder.rooms():
-        if room.is_empty():
-            empty_rooms.append(room.id)
-    for id in empty_rooms:
-        builder.delete_room(id)
 
 def print_maze(maze):
     text = render.to_chars(maze)
@@ -80,7 +73,6 @@ if __name__ == '__main__':
         apply_grid(grid, builder)
         # The grid squares have become isolated rooms, separated by walls.
         # Connect these rooms into a playable maze.
-        remove_empty_rooms(builder)
         connect.fully(builder=builder, rng=rng)
         connect.some(builder=builder, rng=rng)
         connect.corridors(builder)

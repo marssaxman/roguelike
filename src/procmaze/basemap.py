@@ -69,12 +69,6 @@ class Room:
         if other_id != 0:
             self._neighbors.add(other_id)
 
-    def _remove_neighbor(self, other_id):
-        if self.id == 0:
-            return
-        if other_id in self._neighbors:
-            self._neighbors.remove(other_id)
-
     def _add_connection(self, other_id):
         if self.id == 0:
             return
@@ -190,19 +184,6 @@ class Builder:
     def place_pillar(self, x, y):
         assert self.map[x, y] == Tile.VOID
         self.map[x, y] = Tile.WALL
-
-    def delete_room(self, id: int):
-        assert id in self._rooms
-        room = self._rooms[id]
-        # can't delete a room with doors connecting to other rooms
-        assert 0 == len(room._connections)
-        for n_id in room.neighbor_ids():
-            self._rooms[n_id]._remove_neighbor(id)
-            del self._walls[self._wall_key(id, n_id)]
-        for x,y in room.tiles():
-            assert self.map[x, y] == Tile.FLOOR
-            self.map[x, y] == Tile.VOID
-        del self._rooms[id]
 
     def open_door(self, x, y, a_id, b_id):
         self._open_wall(x, y, a_id, b_id, Tile.DOOR)
