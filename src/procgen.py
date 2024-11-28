@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
+from abc import ABC, abstractmethod
 
 import tcod
 
@@ -80,7 +81,13 @@ def get_entities_at_random(
     return chosen_entities
 
 
-class RectangularRoom:
+class Room(ABC):
+    @abstractmethod
+    def random_location(self) -> Tuple[int, int]:
+        pass
+
+
+class RectangularRoom(Room):
     def __init__(self, x: int, y: int, width: int, height: int):
         self.x1 = x
         self.y1 = y
@@ -99,6 +106,11 @@ class RectangularRoom:
         """Return the inner area of this room as a 2D array index."""
         return slice(self.x1 + 1, self.x2), slice(self.y1 + 1, self.y2)
 
+    def random_location(self) -> Tuple[int, int]:
+        x = random.randint(self.x1 + 1, self.x2 - 1)
+        y = random.randint(self.y1 + 1, self.y2 - 1)
+        return x, y
+
     def intersects(self, other: RectangularRoom) -> bool:
         """Return True if this room overlaps with another RectangularRoom."""
         return (
@@ -109,25 +121,21 @@ class RectangularRoom:
         )
 
 
-def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) -> None:
+def place_entities(room: Room, dungeon: GameMap, floor_number: int) -> None:
     number_of_monsters = random.randint(
         0, get_max_value_for_floor(max_monsters_by_floor, floor_number)
     )
     number_of_items = random.randint(
         0, get_max_value_for_floor(max_items_by_floor, floor_number)
-    )    
-
+    )
     monsters: List[Entity] = get_entities_at_random(
         enemy_chances, number_of_monsters, floor_number
     )
     items: List[Entity] = get_entities_at_random(
         item_chances, number_of_items, floor_number
     )
-
     for entity in monsters + items:
-        x = random.randint(room.x1 + 1, room.x2 - 1)
-        y = random.randint(room.y1 + 1, room.y2 - 1)
-
+        x, y = room.random_location()
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
             entity.spawn(dungeon, x, y)
 
@@ -150,6 +158,17 @@ def tunnel_between(
         yield x, y
     for x, y in tcod.los.bresenham((corner_x, corner_y), (x2, y2)).tolist():
         yield x, y
+
+
+def populate_rooms(
+    dungeon: GameMap,
+    rooms: Iterator[RectangularRoom]
+):
+    """Populate all of these rooms with appropriate entities for the level."""
+    floor = dungeon.engine.game_world.current_floor
+    for room in rooms:
+        # Put some monsters in the room
+        place_entities(room, dungeon, floor)
 
 
 def generate_dungeon(
@@ -185,7 +204,6 @@ def generate_dungeon(
 
         # Dig out this rooms inner area.
         dungeon.tiles[new_room.inner] = tile_types.floor
-        
         center_of_last_room = new_room.center
 
         if len(rooms) == 0:
@@ -196,13 +214,13 @@ def generate_dungeon(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
 
-        # Put some monsters in the room
-        place_entities(new_room, dungeon, engine.game_world.current_floor)
-
-        dungeon.tiles[center_of_last_room] = tile_types.down_stairs
-        dungeon.downstairs_location = center_of_last_room
-
         # Finally, append the new room to the list.
         rooms.append(new_room)
+
+    populate_rooms(dungeon, rooms)
+
+    dungeon.tiles[center_of_last_room] = tile_types.down_stairs
+    dungeon.downstairs_location = center_of_last_room
+
 
     return dungeon
