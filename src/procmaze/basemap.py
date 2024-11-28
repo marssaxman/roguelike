@@ -198,6 +198,7 @@ class Builder:
         assert 0 == len(room._connections)
         for n_id in room.neighbor_ids():
             self._rooms[n_id]._remove_neighbor(id)
+            del self._walls[self._wall_key(id, n_id)]
         for x,y in room.tiles():
             assert self.map[x, y] == Tile.FLOOR
             self.map[x, y] == Tile.VOID
