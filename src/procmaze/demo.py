@@ -75,6 +75,7 @@ if __name__ == '__main__':
         remove_empty_rooms(builder)
         connect.fully(builder=builder, rng=rng)
         connect.some(builder=builder, rng=rng)
+        connect.corridors(builder)
         maze = builder.get_tiles()
     except:
         print(f"starting seed: {seed}")

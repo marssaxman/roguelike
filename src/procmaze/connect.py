@@ -1,4 +1,4 @@
-
+import basemap
 
 def collect_connections(builder, room_id, katamari=set()):
     if room_id in katamari:
@@ -62,4 +62,17 @@ def some(builder, rng):
             continue
         other_id = rng.choice(list(unlinked_ids))
         open_random_door(builder, r_id, other_id, rng)
+
+
+def corridors(builder):
+    """Open all one-square walls."""
+    # Try to make corridors useful by opening doors at their extreme ends.
+    # Find all the corridors and iterate through their single-cell walls;
+    # for each one which is not already open, try to create a door.
+    for room in filter(lambda x: x.is_corridor(), builder.rooms()):
+        walls = builder.walls_around(room.id)
+        for wall in filter(lambda x: 1 == x.area(), walls):
+            if not wall.has_door():
+                x,y = next(iter(wall.tiles()))
+                builder.open_door(x, y, wall.a, wall.b)
 

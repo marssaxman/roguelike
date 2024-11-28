@@ -40,6 +40,22 @@ class Room:
     def is_connected(self):
         return len(self._connections) if self.id else False
 
+    def is_corridor(self):
+        if not self.id or not self._tiles:
+            return False
+        first_x, first_y = next(iter(self._tiles))
+        corr_h, corr_v = True, True
+        for x, y in self._tiles:
+            if x != first_x:
+                corr_v = False
+            if y != first_y:
+                corr_h = False
+        if corr_h == corr_v:
+            return False
+        if len(self._tiles) <= 4:
+            return False
+        return True
+
     # Internal manipulators for use by Builder
     def _add_tile(self, x, y):
         if self.id == 0:
@@ -80,6 +96,14 @@ class Wall:
         self._tiles = set()
         self._has_door = False
 
+    @property
+    def a(self):
+        return self._a
+
+    @property
+    def b(self):
+        return self._b
+
     def tiles(self):
         return frozenset(self._tiles)
 
@@ -88,6 +112,12 @@ class Wall:
 
     def has_door(self):
         return self._has_door
+
+    def area(self):
+        return len(self._tiles)
+
+    def adjoins(self, room_id):
+        return self._a == room_id or self._b == room_id
 
     # Internal manipulators for use by Builder
     def _add_tile(self, x, y):
@@ -135,6 +165,11 @@ class Builder:
 
     def wall_between(self, a_id, b_id):
         return self._walls[self._wall_key(a_id, b_id)]
+
+    def walls_around(self, room_id):
+        for w in self._walls.values():
+            if w.adjoins(room_id):
+                yield w
 
 
     # Mutators
