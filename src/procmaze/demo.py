@@ -40,6 +40,18 @@ def apply_grid(grid, builder):
             builder.place_pillar(x, y)
 
 
+def remove_empty_rooms(builder):
+    # Find all the empty rooms, then delete the list. We don't want to
+    # confuse the path-finding algorithm with spurious rooms which cannot
+    # be traversed.
+    empty_rooms = []
+    for room in builder.rooms():
+        if room.is_empty():
+            empty_rooms.append(room.id)
+    for id in empty_rooms:
+        builder.delete_room(room.id)
+
+
 if __name__ == '__main__':
     # Everything descends from the random seed; we'll use the current time.
     seed: np.int64 = offgrid.hash64(np.int64(time.time_ns()))
@@ -55,6 +67,9 @@ if __name__ == '__main__':
     grid = rasterize(width, height, rects)
     builder = basemap.Builder(width, height)
     apply_grid(grid, builder)
+    # The grid squares have become isolated rooms, separated by walls.
+    # Connect these rooms into a playable maze.
+    remove_empty_rooms(builder)
     maze = builder.get_tiles()
 
     # Render the maze in ASCII chars for display.
