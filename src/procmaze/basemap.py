@@ -50,7 +50,7 @@ class Builder:
 
 
     # Retrieve finished copy of contents
-    def get(self):
+    def get_tiles(self):
         return np.copy(self.map)
 
 

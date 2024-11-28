@@ -40,27 +40,25 @@ def apply_grid(grid, builder):
             builder.place_pillar(x, y)
 
 
-# Main entrypoint! Call this to build a level
-def from_rects(width: np.uint, height: np.uint, rects):
-    grid = rasterize(width, height, rects)
-    level = basemap.Builder(width, height)
-    apply_grid(grid, level)
-    return level.get()
-
-
 if __name__ == '__main__':
+    # Everything descends from the random seed; we'll use the current time.
     seed: np.int64 = offgrid.hash64(np.int64(time.time_ns()))
-    width, height = np.uint(80), np.uint(50)
-    #width, height = np.uint(50), np.uint(25)
-    box_size = np.uint(8)
-    # generate offset grid rectangles which will cover the game area
-    rects = offgrid.generate(width, height, box_size, seed, edge=0.08)
-    # generate a level map & room list from these rectangles
-    maze = from_rects(width, height, rects)
-    # render the maze in ASCII chars for display
-    text = render.to_chars(maze)
 
-    # print the maze
+    # How big a game board do we want to build, and how big should the
+    # average room be?
+    width, height = np.uint(80), np.uint(50)
+    box_size = np.uint(8)
+
+    # Generate offset grid rectangles which will cover the game area.
+    # Populate a basemap from those rectangles, generating rooms and walls.
+    rects = offgrid.generate(width, height, box_size, seed, edge=0.08)
+    grid = rasterize(width, height, rects)
+    builder = basemap.Builder(width, height)
+    apply_grid(grid, builder)
+    maze = builder.get_tiles()
+
+    # Render the maze in ASCII chars for display.
+    text = render.to_chars(maze)
     for y in range(height):
         line = ""
         for x in range(width):
