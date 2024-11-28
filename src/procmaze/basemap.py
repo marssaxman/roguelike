@@ -12,63 +12,86 @@ class Tile(Enum):
 
 
 class Room:
+    """A game region consisting of a contiguous set of floor tiles."""
+    """A room with ID 0 represents the void, which cannot contain anything."""
     id: int
     _tiles: Set[Tuple[int, int]]
     _neighbors: Set[int]
+    _connections: Set[int]
     def __init__(self, id: int):
         self.id = id
         self._tiles = set()
         self._neighbors = set()
+        self._connections = set()
 
     # Public accessors
     def is_empty(self):
-        return 0 == len(self._tiles)
+        return 0 == len(self._tiles) if self.id else True
 
     def tiles(self):
-        for x, y in self._tiles:
-            yield x, y
+        return frozenset(self._tiles) if self.id else frozenset()
 
-    def neighbors(self):
-        """Iterate over neighbor IDs"""
-        for k in self._neighbors:
-            yield k
+    def neighbor_ids(self):
+        return frozenset(self._neighbors) if self.id else frozenset()
+
+    def connection_ids(self):
+        return frozenset(self._connections) if self.id else frozenset()
+
+    def is_connected(self):
+        return len(self._connections) if self.id else False
 
     # Internal manipulators for use by Builder
     def _add_tile(self, x, y):
+        if self.id == 0:
+            return
         self._tiles.add((x, y))
 
     def _add_neighbor(self, other_id):
+        if self.id == 0:
+            return
         assert other_id != self.id
         if other_id != 0:
             self._neighbors.add(other_id)
 
     def _remove_neighbor(self, other_id):
+        if self.id == 0:
+            return
         if other_id in self._neighbors:
             self._neighbors.remove(other_id)
 
+    def _add_connection(self, other_id):
+        if self.id == 0:
+            return
+        assert other_id != self.id
+        if other_id != 0:
+            assert other_id in self._neighbors
+            self._connections.add(other_id)
 
-class Void:
-    """Convenience dummy which acts like Room"""
-    def __init__(self):
-        pass
 
-    @property
-    def id(self):
-        return 0
-
-    def is_empty(self):
-        return True
+class Wall:
+    """Boundary between two rooms."""
+    _a: int
+    _b: int
+    _tiles: Set[Tuple[int, int]]
+    _has_door: bool
+    def __init__(self, a, b):
+        self._a = a
+        self._b = b
+        self._tiles = set()
+        self._has_door = False
 
     def tiles(self):
-        return
-        yield
+        return frozenset(self._tiles)
 
-    def neighbors(self):
-        return
-        yield
+    def adjoins(self, id):
+        return self._a == id or self._b == id
 
-    def _add_neighbor(self, id):
-        pass
+    def has_door(self):
+        return self._has_door
+
+    # Internal manipulators for use by Builder
+    def _add_tile(self, x, y):
+        self._tiles.add((x, y))
 
 
 
@@ -77,10 +100,12 @@ class Void:
 # Returned objects are either copied or immutable.
 class Builder:
     _rooms: Dict[np.uint, Room]
+    _walls: Dict[Tuple[int, int], Wall]
 
     def __init__(self, width: np.uint, height: np.uint):
         self.map = np.full((width, height), Tile.VOID, dtype=Tile)
-        self._rooms = {0: Void()}
+        self._rooms = {0: Room(0)}
+        self._walls = {}
 
     # Accessors for array-like properties
     @property
@@ -102,6 +127,15 @@ class Builder:
             if k != 0:
                 yield v
 
+    def room_ids(self):
+        return frozenset(r.id for r in self.rooms())
+
+    def room(self, id):
+        return self._rooms[id]
+
+    def wall_between(self, a_id, b_id):
+        return self._walls[self._wall_key(a_id, b_id)]
+
 
     # Mutators
     def place_floor(self, x, y, room_id):
@@ -117,12 +151,14 @@ class Builder:
         self.map[x, y] = Tile.WALL
         self._get_room(above_id)._add_neighbor(below_id)
         self._get_room(below_id)._add_neighbor(above_id)
+        self._get_wall(above_id, below_id)._add_tile(x, y)
 
     def place_vert_wall(self, x, y, left_id, right_id):
         assert self.map[x, y] == Tile.VOID
         self.map[x, y] = Tile.WALL
         self._get_room(left_id)._add_neighbor(right_id)
         self._get_room(right_id)._add_neighbor(left_id)
+        self._get_wall(left_id, right_id)._add_tile(x, y)
 
     def place_pillar(self, x, y):
         assert self.map[x, y] == Tile.VOID
@@ -131,12 +167,28 @@ class Builder:
     def delete_room(self, id: int):
         assert id in self._rooms
         room = self._rooms[id]
-        for n_id in room.neighbors():
+        # can't delete a room with doors connecting to other rooms
+        assert 0 == len(room._connections)
+        for n_id in room.neighbor_ids():
             self._rooms[n_id]._remove_neighbor(id)
         for x,y in room.tiles():
             assert self.map[x, y] == Tile.FLOOR
             self.map[x, y] == Tile.VOID
         del self._rooms[id]
+
+    def open_door(self, x, y, a_id, b_id):
+        assert self.map[x, y] == Tile.WALL
+        assert a_id in self._rooms
+        assert b_id in self._rooms
+        assert a_id in self._rooms[b_id]._neighbors
+        assert b_id in self._rooms[a_id]._neighbors
+        wall = self._get_wall(a_id, b_id)
+        assert (x, y) in wall._tiles
+        assert not wall.has_door()
+        wall._has_door = True
+        self.map[x, y] = Tile.DOOR
+        self._get_room(a_id)._add_connection(b_id)
+        self._get_room(b_id)._add_connection(a_id)
 
 
     # Retrieve finished copy of contents
@@ -151,3 +203,17 @@ class Builder:
             self._rooms[room_id] = Room(room_id)
         return self._rooms[room_id]
 
+    def _wall_key(self, a_id, b_id):
+        """Sort IDs consistently, so we only create one wall per pair."""
+        return min(a_id, b_id), max(a_id, b_id)
+
+    def _get_wall(self, a_id, b_id) -> Wall:
+        """This is the only way to create a Wall instance."""
+        # If either wall is the void, return a dummy throwaway wall.
+        if a_id == 0 or b_id == 0:
+            return Wall(a_id, b_id)
+        assert a_id != b_id
+        key = self._wall_key(a_id, b_id)
+        if key not in self._walls:
+            self._walls[key] = Wall(a_id, b_id)
+        return self._walls[key]

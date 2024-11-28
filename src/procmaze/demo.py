@@ -49,28 +49,73 @@ def remove_empty_rooms(builder):
         if room.is_empty():
             empty_rooms.append(room.id)
     for id in empty_rooms:
-        builder.delete_room(room.id)
+        builder.delete_room(id)
+
+
+def collect_connections(builder, room_id, katamari=set()):
+    if room_id in katamari:
+        return katamari
+    katamari.add(room_id)
+    room = builder.room(room_id)
+    for conex in room.connection_ids():
+        collect_connections(builder, conex, katamari)
+    return katamari
+
+
+def disconnected_neighbors(builder, katamari):
+    for room_id in katamari:
+        room = builder.room(room_id)
+        for n_id in room.neighbor_ids():
+            if n_id in katamari:
+                continue
+            yield (room_id, n_id)
+
+
+def fully_connect(builder, rng):
+    """Ensure that every room is reachable from every other room."""
+    # Pick a room at random.
+    other_ids = set(builder.room_ids())
+    start_id = rng.choice(list(builder.room_ids()))
+    katamari = collect_connections(builder, start_id)
+    other_ids -= katamari
+    while other_ids:
+        options = list(disconnected_neighbors(builder, katamari))
+        # Pick a connection at random. Open a random spot in its wall.
+        joint_a, joint_b = rng.choice(options)
+        wall = builder.wall_between(joint_a, joint_b)
+        x, y = rng.choice(list(wall.tiles()))
+        builder.open_door(x, y, joint_a, joint_b)
+        # Absorb both neighboring connected sets into the work set.
+        collect_connections(builder, joint_a, katamari)
+        collect_connections(builder, joint_b, katamari)
+        other_ids -= katamari
 
 
 if __name__ == '__main__':
     # Everything descends from the random seed; we'll use the current time.
     seed: np.int64 = offgrid.hash64(np.int64(time.time_ns()))
+    rng = np.random.default_rng(seed=np.uint(seed))
 
-    # How big a game board do we want to build, and how big should the
-    # average room be?
-    width, height = np.uint(80), np.uint(50)
-    box_size = np.uint(8)
+    try:
+        # How big a game board do we want to build, and how big should the
+        # average room be?
+        width, height = np.uint(80), np.uint(50)
+        box_size = np.uint(8)
 
-    # Generate offset grid rectangles which will cover the game area.
-    # Populate a basemap from those rectangles, generating rooms and walls.
-    rects = offgrid.generate(width, height, box_size, seed, edge=0.08)
-    grid = rasterize(width, height, rects)
-    builder = basemap.Builder(width, height)
-    apply_grid(grid, builder)
-    # The grid squares have become isolated rooms, separated by walls.
-    # Connect these rooms into a playable maze.
-    remove_empty_rooms(builder)
-    maze = builder.get_tiles()
+        # Generate offset grid rectangles which will cover the game area.
+        # Populate a basemap from those rectangles, generating rooms and walls.
+        rects = offgrid.generate(width, height, box_size, seed, edge=0.08)
+        grid = rasterize(width, height, rects)
+        builder = basemap.Builder(width, height)
+        apply_grid(grid, builder)
+        # The grid squares have become isolated rooms, separated by walls.
+        # Connect these rooms into a playable maze.
+        remove_empty_rooms(builder)
+        fully_connect(builder=builder, rng=rng)
+        maze = builder.get_tiles()
+    except:
+        print(f"starting seed: {seed}")
+        raise
 
     # Render the maze in ASCII chars for display.
     text = render.to_chars(maze)
