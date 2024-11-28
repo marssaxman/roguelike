@@ -169,6 +169,10 @@ def populate_rooms(
     for room in rooms:
         # Put some monsters in the room
         place_entities(room, dungeon, floor)
+    # Put the exit stairway somewhere in the last room
+    stairs_location = room.random_location()
+    dungeon.tiles[stairs_location] = tile_types.down_stairs
+    dungeon.downstairs_location = stairs_location
 
 
 def generate_dungeon(
@@ -184,13 +188,9 @@ def generate_dungeon(
     dungeon = GameMap(engine, map_width, map_height, entities=[player])
 
     rooms: List[RectangularRoom] = []
-
-    center_of_last_room = (0, 0)
-
     for r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
-
         x = random.randint(0, dungeon.width - room_width - 1)
         y = random.randint(0, dungeon.height - room_height - 1)
 
@@ -204,7 +204,6 @@ def generate_dungeon(
 
         # Dig out this rooms inner area.
         dungeon.tiles[new_room.inner] = tile_types.floor
-        center_of_last_room = new_room.center
 
         if len(rooms) == 0:
             # The first room, where the player starts.
@@ -218,9 +217,4 @@ def generate_dungeon(
         rooms.append(new_room)
 
     populate_rooms(dungeon, rooms)
-
-    dungeon.tiles[center_of_last_room] = tile_types.down_stairs
-    dungeon.downstairs_location = center_of_last_room
-
-
     return dungeon
