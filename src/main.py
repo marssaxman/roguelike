@@ -22,7 +22,7 @@ def main():
 
     # load the graphics
     tileset = tcod.tileset.load_tilesheet(
-        "assets/dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "assets/Cooz_curses_square_16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437
     )
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
