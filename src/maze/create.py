@@ -1,8 +1,8 @@
 
 import numpy as np
-import offgrid
-import basemap
-import connect
+from . import offgrid
+from . import basemap
+from . import connect
 
 def rasterize(width: np.uint, height: np.uint, rects):
     # Allocate an extra row and column, which will be left empty;

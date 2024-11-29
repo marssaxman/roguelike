@@ -20,7 +20,7 @@ def print_maze(maze):
 if __name__ == '__main__':
     # Everything descends from the random seed; we'll use the current time.
     seed = np.int64(time.time_ns())
-    rng = np.random.default_rng()
+    rng = np.random.default_rng(seed)
 
     try:
         # How big a game board do we want to build, and how big should the

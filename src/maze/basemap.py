@@ -56,6 +56,9 @@ class Room:
             return False
         return True
 
+    def random_location(self, rng) -> Tuple[int, int]:
+        return rng.choice(list(self._tiles))
+
     # Internal manipulators for use by Builder
     def _add_tile(self, x, y):
         if self.id == 0:

@@ -1,4 +1,4 @@
-import basemap
+from . import basemap
 
 def collect_connections(builder, room_id, katamari=set()):
     if room_id in katamari:
