@@ -153,8 +153,7 @@ def generate_dungeon(
         elif src == basemap.Tile.FLOOR:
             dst = tile_types.floor
         elif src == basemap.Tile.DOOR:
-            # we don't have a game tile for a door yet
-            dst = tile_types.floor
+            dst = tile_types.door
         dungeon.tiles[loc] = dst
 
     # Get only the non-corridor rooms.
