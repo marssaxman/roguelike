@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import random
 from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
-from abc import ABC, abstractmethod
 
 import tcod
 import numpy as np
@@ -64,6 +62,7 @@ def get_entities_at_random(
     weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
     number_of_entities: int,
     floor: int,
+    rng: np.random.Generator
  ) -> List[Entity]:
     entity_weighted_chances = {}
 
@@ -78,13 +77,15 @@ def get_entities_at_random(
                 entity_weighted_chances[entity] = weighted_chance
 
     entities = list(entity_weighted_chances.keys())
-    entity_weighted_chance_values = list(entity_weighted_chances.values())
+    entity_chance_weights = list(entity_weighted_chances.values())
 
-    chosen_entities = random.choices(
-        entities, weights=entity_weighted_chance_values, k=number_of_entities
+    # get p-values by dividing each value by the sum of the weights
+    total_weight = np.sum(entity_chance_weights)
+    entity_probabilities = np.divide(entity_chance_weights, total_weight)
+    chosen_entities = rng.choice(
+        entities, size=number_of_entities, p=entity_probabilities
     )
-
-    return chosen_entities
+    return chosen_entities.tolist()
 
 
 def place_entities(
@@ -93,17 +94,19 @@ def place_entities(
     floor_number: int,
     rng: np.random.Generator
 ) -> None:
-    number_of_monsters = random.randint(
-        0, get_max_value_for_floor(max_monsters_by_floor, floor_number)
+    number_of_monsters = rng.integers(
+        0, get_max_value_for_floor(max_monsters_by_floor, floor_number),
+        endpoint=True
     )
-    number_of_items = random.randint(
-        0, get_max_value_for_floor(max_items_by_floor, floor_number)
+    number_of_items = rng.integers(
+        0, get_max_value_for_floor(max_items_by_floor, floor_number),
+        endpoint=True
     )
     monsters: List[Entity] = get_entities_at_random(
-        enemy_chances, number_of_monsters, floor_number
+        enemy_chances, number_of_monsters, floor_number, rng
     )
     items: List[Entity] = get_entities_at_random(
-        item_chances, number_of_items, floor_number
+        item_chances, number_of_items, floor_number, rng
     )
     for entity in monsters + items:
         x, y = room.random_location(rng)
