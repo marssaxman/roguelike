@@ -1,9 +1,12 @@
-
 # Given an array of map tiles, generate an array of character codes.
 # We'll use box-drawing characters to show the direction of wall connections.
 
-from basemap import Tile
 import numpy as np
+from dataclasses import dataclass
+from typing import Any
+
+from .basemap import Tile
+
 
 SPACE = 32
 HASH = 35
@@ -100,4 +103,28 @@ def to_chars(grid):
             char = place_wall(grid, x, y)
         maze[x, y] = char
     return maze
+
+
+@dataclass
+class Palette:
+    void: Any
+    floor: Any
+    door: Any
+    wall: Any
+
+def tiles(src, dest, palette: Palette):
+    assert len(src.shape) == 2 and len(dest.shape) == 2
+    assert dest.shape[0] >= src.shape[0] and dest.shape[1] >= src.shape[1]
+    for x, y in np.ndindex(src.shape):
+        src_val = src[x, y]
+        dest_val = palette.void
+        if src_val == Tile.VOID:
+            dest_val = palette.void
+        elif src_val == Tile.FLOOR:
+            dest_val = palette.floor
+        elif src_val == Tile.DOOR:
+            dest_val = palette.door
+        elif src_val == Tile.WALL:
+            dest_val = palette.wall
+        dest[x, y] = dest_val
 

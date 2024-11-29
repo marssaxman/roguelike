@@ -11,6 +11,7 @@ import entity_factories
 from game_map import GameMap
 import tile_types
 import maze.create
+import maze.render
 from maze import basemap
 
 
@@ -142,19 +143,13 @@ def generate_dungeon(
     rng = np.random.default_rng()
     level = maze.create.level(map_width, map_height, rng=rng)
 
-    # Copy the base tiles into the game map as game tiles
-    for loc in np.ndindex(level.tiles.shape):
-        src = level.tiles[loc]
-        dst = None
-        if src == basemap.Tile.VOID:
-            dst = tile_types.wall
-        if src == basemap.Tile.WALL:
-            dst = tile_types.wall
-        elif src == basemap.Tile.FLOOR:
-            dst = tile_types.floor
-        elif src == basemap.Tile.DOOR:
-            dst = tile_types.door
-        dungeon.tiles[loc] = dst
+    palette = maze.render.Palette(
+        void = tile_types.wall,
+        floor = tile_types.floor,
+        door = tile_types.door,
+        wall = tile_types.wall,
+    )
+    maze.render.tiles(level.tiles, dungeon.tiles, palette)
 
     # Get only the non-corridor rooms.
     rooms = [r for r in level.rooms if not r.is_corridor()]
