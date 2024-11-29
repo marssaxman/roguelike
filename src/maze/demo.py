@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import offgrid
 import time
 import render
-import basemap
-import connect
 import create
 
 def print_maze(maze):
