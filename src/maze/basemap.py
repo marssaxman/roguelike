@@ -118,6 +118,12 @@ class Wall:
         self._tiles.add((x, y))
 
 
+class BaseMap:
+    def __init__(self, tiles, rooms):
+        self.tiles = tiles
+        self.rooms = rooms
+
+
 
 # Create and manipulate a base map for a game level.
 # All mutation happens through calls to the builder.
@@ -193,8 +199,11 @@ class Builder:
 
 
     # Retrieve finished copy of contents
-    def get_tiles(self):
-        return np.copy(self.map)
+    def build(self):
+        return BaseMap(
+            tiles=np.copy(self.map),
+            rooms=list(self.rooms())
+        )
 
 
     # Internal methods

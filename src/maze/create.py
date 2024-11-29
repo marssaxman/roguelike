@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
 
 import numpy as np
 import offgrid
-import time
-import render
 import basemap
 import connect
 
@@ -44,43 +41,24 @@ def apply_grid(grid, builder):
         else:
             builder.place_pillar(x, y)
 
-
-def print_maze(maze):
-    text = render.to_chars(maze)
-    for y in range(maze.shape[1]):
-        line = ""
-        for x in range(maze.shape[0]):
-            line += chr(text[x, y])
-        print(line)
-
-
-if __name__ == '__main__':
-    # Everything descends from the random seed; we'll use the current time.
-    seed: np.int64 = offgrid.hash64(np.int64(time.time_ns()))
-    rng = np.random.default_rng(seed=np.uint(seed))
-
-    try:
-        # How big a game board do we want to build, and how big should the
-        # average room be?
-        width, height = np.uint(80), np.uint(50)
-        box_size = np.uint(8)
-
-        # Generate offset grid rectangles which will cover the game area.
-        # Populate a basemap from those rectangles, generating rooms and walls.
-        rects = offgrid.generate(width, height, box_size, seed, edge=0.08)
-        grid = rasterize(width, height, rects)
-        builder = basemap.Builder(width, height)
-        apply_grid(grid, builder)
-        # The grid squares have become isolated rooms, separated by walls.
-        # Connect these rooms into a playable maze.
-        connect.fully(builder=builder, rng=rng)
-        connect.some(builder=builder, rng=rng)
-        connect.corridors(builder)
-        maze = builder.get_tiles()
-    except:
-        print(f"starting seed: {seed}")
-        raise
-
-    # ta-da
-    print_maze(maze)
+def level(width, height, rng) -> basemap.BaseMap:
+    """Generate a basemap for a level having the specified dimensions."""
+    # Generate offset grid rectangles which will cover the game area.
+    grid_seed = offgrid.hash64(rng.integers(0xFFFFFFFF))
+    rects = offgrid.generate(
+        width=np.uint(width),
+        height=np.uint(height),
+        box_size=np.uint(8),
+        seed=np.int64(grid_seed),
+        edge=0.08
+    )
+    grid = rasterize(width, height, rects)
+    builder = basemap.Builder(width, height)
+    apply_grid(grid, builder)
+    # The grid squares have become isolated rooms, separated by walls.
+    # Connect these rooms into a playable maze.
+    connect.fully(builder=builder, rng=rng)
+    connect.some(builder=builder, rng=rng)
+    connect.corridors(builder=builder)
+    return builder.build()
 
