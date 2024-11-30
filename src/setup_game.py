@@ -25,7 +25,6 @@ def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
     map_width = 80
     map_height = 43
-
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
@@ -33,7 +32,6 @@ def new_game() -> Engine:
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
-
     engine.game_world = GameWorld(
         engine=engine,
         max_rooms=max_rooms,
@@ -42,27 +40,23 @@ def new_game() -> Engine:
         map_width=map_width,
         map_height=map_height,
     )
-
     engine.game_world.generate_floor()
-
     engine.update_fov()
 
     engine.message_log.add_message(
         "why are u in my dungeon ):< get out of me dungeon!!!", color.welcome_text
     )
 
-    dagger = copy.deepcopy(entity_factories.dagger)
+    # Give the player armor and a weapon to start out with.
     leather_armor = copy.deepcopy(entity_factories.leather_armor)
-
-    dagger.parent = player.inventory
     leather_armor.parent = player.inventory
-
-    player.inventory.items.append(dagger)
-    player.equipment.toggle_equip(dagger, add_message=False)
-
     player.inventory.items.append(leather_armor)
     player.equipment.toggle_equip(leather_armor, add_message=False)
 
+    dagger = copy.deepcopy(entity_factories.dagger)
+    dagger.parent = player.inventory
+    player.inventory.items.append(dagger)
+    player.equipment.toggle_equip(dagger, add_message=False)
 
     return engine
 
@@ -85,7 +79,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            "bob's house of uncleanliness'",
+            "bob's house of uncleanliness",
             fg=color.menu_title,
             alignment=libtcodpy.CENTER,
         )
