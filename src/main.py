@@ -106,7 +106,7 @@ def main():
             save_game(handler, "savegame.sav")
             raise
 
-      
+
 # python magic to call the main function when the program begins
 if __name__ == '__main__':
     main()

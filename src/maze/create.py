@@ -41,17 +41,25 @@ def apply_grid(grid, builder):
         else:
             builder.place_pillar(x, y)
 
-def level(width, height, rng) -> basemap.BaseMap:
+def level(
+    width: np.uint,
+    height: np.uint,
+    box_size: np.uint = np.uint(8), # minimum 3
+    rng: np.random.Generator = np.random.default_rng(),
+) -> basemap.BaseMap:
     """Generate a basemap for a level having the specified dimensions."""
     # Generate offset grid rectangles which will cover the game area.
+    assert box_size > 2
     grid_seed = offgrid.hash64(rng.integers(0xFFFFFFFF))
     rects = offgrid.generate(
         width=np.uint(width),
         height=np.uint(height),
-        box_size=np.uint(8),
+        box_size=box_size,
         seed=np.int64(grid_seed),
         edge=0.08
     )
+    if not rects:
+        print("empty rects list")
     grid = rasterize(width, height, rects)
     builder = basemap.Builder(width, height)
     apply_grid(grid, builder)

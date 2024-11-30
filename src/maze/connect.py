@@ -31,6 +31,8 @@ def open_random_door(builder, a, b, rng):
 def fully(builder, rng):
     """Ensure that every room is reachable from every other room."""
     # Pick a room at random.
+    if not builder.room_ids():
+        return
     other_ids = set(builder.room_ids())
     start_id = rng.choice(list(builder.room_ids()))
     katamari = collect_connections(builder, start_id)
@@ -53,6 +55,8 @@ def some(builder, rng):
     # any disconnected neighbors, pick one of them randomly and connect.
     room_ids = list(builder.room_ids())
     room_count = len(room_ids)
+    if room_count < 2:
+        return
     min_rooms = room_count // 4
     max_rooms = room_count - min_rooms
     link_count = rng.integers(min_rooms, max_rooms)

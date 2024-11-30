@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from .basemap import Tile
-import codepoint as cp
 
 
 @dataclass
@@ -93,33 +92,4 @@ def tiles(src, dest, palette: Palette):
         elif src_val == Tile.WALL:
             dest_val = place_wall(src, x, y, palette)
         dest[x, y] = dest_val
-
-
-def to_chars(grid):
-    maze = np.full(shape=grid.shape, dtype=np.uint32, fill_value=cp.SPACE)
-    palette = Palette(
-        void=cp.VOID,
-        floor=cp.FLOOR,
-        door=cp.DOOR,
-        door_H=cp.DOOR_H,
-        door_V=cp.DOOR_V,
-        wall=cp.COLUMN,
-        wall_B=cp.WALL_B,
-        wall_R=cp.WALL_R,
-        wall_RB=cp.WALL_RB,
-        wall_A=cp.WALL_A,
-        wall_AB=cp.WALL_AB,
-        wall_AR=cp.WALL_AR,
-        wall_ARB=cp.WALL_ARB,
-        wall_L=cp.WALL_L,
-        wall_LB=cp.WALL_LB,
-        wall_LR=cp.WALL_LR,
-        wall_LRB=cp.WALL_LRB,
-        wall_LA=cp.WALL_LA,
-        wall_LAB=cp.WALL_LAB,
-        wall_LAR=cp.WALL_LAR,
-        wall_LARB=cp.WALL_LARB,
-    )
-    tiles(grid, maze, palette)
-    return maze
 
