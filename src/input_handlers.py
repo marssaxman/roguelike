@@ -199,9 +199,8 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         if self.engine.player.x <= 30:
             x = 40
         else:
-            x = 0
-
-        y = 0
+            x = 1
+        y = 1
 
         width = len(self.TITLE) + 4
 
@@ -245,11 +244,12 @@ class LevelUpEventHandler(AskUserEventHandler):
         if self.engine.player.x <= 30:
             x = 40
         else:
-            x = 0
+            x = 1
+        y = 1
 
         console.draw_frame(
             x=x,
-            y=0,
+            y=y,
             width=35,
             height=8,
             title=self.TITLE,
@@ -329,9 +329,8 @@ class InventoryEventHandler(AskUserEventHandler):
         if self.engine.player.x <= 30:
             x = 40
         else:
-            x = 0
-
-        y = 0
+            x = 1
+        y = 1
 
         width = len(self.TITLE) + 4
 
