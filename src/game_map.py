@@ -88,8 +88,12 @@ class GameMap:
         for entity in entities_sorted_for_rendering:
             # Only print entities which are currently visible
             if self.visible[entity.x, entity.y]:
+                char = entity.char
+                # entity char can be a string or a codepoint
+                if isinstance(char, int):
+                    char = chr(char)
                 console.print(
-                    x=entity.x, y=entity.y, string=entity.char, fg=entity.color
+                    x=entity.x, y=entity.y, string=char, fg=entity.color
                 )
 
 class GameWorld:

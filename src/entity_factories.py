@@ -5,9 +5,10 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from entity import Actor, Item
+import codepoint as cp
 
 player = Actor(
-    char="@",
+    char=cp.PLAYER,
     color=(255, 255, 255),
     name="Player",
     ai_cls=Passive,
@@ -37,7 +38,6 @@ troll=Actor(
     fighter=Fighter(hp=16, base_defense=0, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=100),
-    
 )
 
 rat=Actor(
@@ -46,7 +46,7 @@ rat=Actor(
     name="Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=4, base_defense=0, base_power=3),
-    equipment=Equipment(),    
+    equipment=Equipment(),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=10)
 )
@@ -82,7 +82,7 @@ lightning_scroll = Item(
 dagger = Item(
     char="/", color=(0, 191, 255), name="Dagger", equippable=equippable.Dagger()
 )
- 
+
 sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
 
 leather_armor = Item(

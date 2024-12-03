@@ -57,6 +57,11 @@ def load_tiles():
     )
     tileset.set_tile(codepoint.DOOR, door_tiles.get_tile(0))
 
+    player_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
+    )
+    tileset.set_tile(codepoint.PLAYER, player_tiles.get_tile(0))
+
     return tileset
 
 def main():

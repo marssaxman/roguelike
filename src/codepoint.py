@@ -27,28 +27,33 @@ WHITE_SQUARE_CONTAINING_BLACK_SMALL_SQUARE = 0x25A3
 # Basic multilingual plane private use area: 6400 code points
 PUA = 0xE000
 
-# graphical tile codepoints
-COLUMN = WHITE_SQUARE_CONTAINING_BLACK_SMALL_SQUARE
-WALL = SPACE
-WALL_L = BOX_DRAWINGS_VERTICAL_SINGLE_LEFT_DOUBLE
-WALL_A = BOX_DRAWINGS_UP_DOUBLE_HORIZONTAL_SINGLE
-WALL_R = BOX_DRAWINGS_VERTICAL_SINGLE_RIGHT_DOUBLE
-WALL_B = BOX_DRAWINGS_DOWN_DOUBLE_HORIZONTAL_SINGLE
-WALL_LR = BOX_DRAWINGS_DOUBLE_HORIZONTAL
-WALL_AB = BOX_DRAWINGS_DOUBLE_VERTICAL
-WALL_RB = BOX_DRAWINGS_DOUBLE_DOWN_RIGHT
-WALL_LB = BOX_DRAWINGS_DOUBLE_DOWN_LEFT
-WALL_AR = BOX_DRAWINGS_DOUBLE_UP_RIGHT
-WALL_LA = BOX_DRAWINGS_DOUBLE_UP_LEFT
-WALL_ARB = BOX_DRAWINGS_DOUBLE_VERTICAL_RIGHT
-WALL_LAB = BOX_DRAWINGS_DOUBLE_VERTICAL_LEFT
-WALL_LRB = BOX_DRAWINGS_DOUBLE_DOWN_HORIZONTAL
-WALL_LAR = BOX_DRAWINGS_DOUBLE_UP_HORIZONTAL
-WALL_LARB = BOX_DRAWINGS_DOUBLE_VERTICAL_HORIZONTAL
-DOOR = PLUS_SIGN
-DOOR_H = DOOR#BOX_DRAWINGS_LIGHT_QUADRUPLE_DASH_HORIZONTAL
-DOOR_V = DOOR#BOX_DRAWINGS_LIGHT_TRIPLE_DASH_VERTICAL
+_next_codepoint = PUA
+def _alloc():
+    global _next_codepoint
+    ret = _next_codepoint
+    _next_codepoint += 1
+    return ret
 
-# wouldn't it be nice to allocate graphical tile codes in the private use area?
-# the 6400 slots in the BMP private use area should be more than we need
+PLAYER = _alloc()
+
+COLUMN = _alloc()
+WALL = _alloc()
+WALL_L = _alloc()
+WALL_A = _alloc()
+WALL_R = _alloc()
+WALL_B = _alloc()
+WALL_LR = _alloc()
+WALL_AB = _alloc()
+WALL_RB = _alloc()
+WALL_LB = _alloc()
+WALL_AR = _alloc()
+WALL_LA = _alloc()
+WALL_ARB = _alloc()
+WALL_LAB = _alloc()
+WALL_LRB = _alloc()
+WALL_LAR = _alloc()
+WALL_LARB = _alloc()
+DOOR = _alloc()
+DOOR_H = DOOR#not using this yet
+DOOR_V = DOOR#not using this yet
 
