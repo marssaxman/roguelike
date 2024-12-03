@@ -55,12 +55,24 @@ def load_tiles():
     door_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Door0.png", 8, 6, range(48)
     )
-    tileset.set_tile(codepoint.DOOR, door_tiles.get_tile(0))
+    tileset.set_tile(codepoint.DOOR_H, door_tiles.get_tile(0))
+    tileset.set_tile(codepoint.DOOR_V, door_tiles.get_tile(1))
 
     player_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
     )
     tileset.set_tile(codepoint.PLAYER, player_tiles.get_tile(0))
+
+    rodent_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
+    )
+    tileset.set_tile(codepoint.RAT, rodent_tiles.get_tile(9))
+
+    humanoid_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
+    )
+    tileset.set_tile(codepoint.TROLL, humanoid_tiles.get_tile(0))
+    tileset.set_tile(codepoint.ORC, humanoid_tiles.get_tile(64))
 
     return tileset
 

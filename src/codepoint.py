@@ -35,6 +35,9 @@ def _alloc():
     return ret
 
 PLAYER = _alloc()
+RAT = _alloc()
+ORC = _alloc()
+TROLL = _alloc()
 
 COLUMN = _alloc()
 WALL = _alloc()
@@ -53,7 +56,6 @@ WALL_LAB = _alloc()
 WALL_LRB = _alloc()
 WALL_LAR = _alloc()
 WALL_LARB = _alloc()
-DOOR = _alloc()
-DOOR_H = DOOR#not using this yet
-DOOR_V = DOOR#not using this yet
-
+DOOR_H = _alloc()
+DOOR_V = _alloc()
+DOOR = DOOR_H

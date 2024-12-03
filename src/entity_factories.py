@@ -19,7 +19,7 @@ player = Actor(
 )
 
 orc = Actor(
-    char="o",
+    char=cp.ORC,
     color=(63, 127, 63),
     name="Orc",
     ai_cls=HostileEnemy,
@@ -30,7 +30,7 @@ orc = Actor(
 )
 
 troll=Actor(
-    char="T",
+    char=cp.TROLL,
     color=(0, 127, 0),
     name="Troll",
     ai_cls=HostileEnemy,
@@ -41,7 +41,7 @@ troll=Actor(
 )
 
 rat=Actor(
-    char="r",
+    char=cp.RAT,
     color=(127, 127, 200),
     name="Rat",
     ai_cls=HostileEnemy,
