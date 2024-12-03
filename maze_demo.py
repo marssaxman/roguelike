@@ -4,34 +4,34 @@ import argparse
 import numpy as np
 import time
 import src.maze.render as render
-import src.codepoint as cp
+import src.codepoint as U
 import src.maze.create as create
 
 
 def to_chars(grid):
-    maze = np.full(shape=grid.shape, dtype=np.uint32, fill_value=cp.SPACE)
+    maze = np.full(shape=grid.shape, dtype=np.uint32, fill_value=U.SPACE)
     palette = render.Palette(
-        void=cp.SPACE,
-        floor=cp.FULL_STOP,
-        door=cp.PLUS_SIGN,
-        door_H=cp.BOX_DRAWINGS_LIGHT_QUADRUPLE_DASH_HORIZONTAL,
-        door_V=cp.BOX_DRAWINGS_LIGHT_TRIPLE_DASH_VERTICAL,
-        wall=cp.COLUMN,
-        wall_B=cp.WALL_B,
-        wall_R=cp.WALL_R,
-        wall_RB=cp.WALL_RB,
-        wall_A=cp.WALL_A,
-        wall_AB=cp.WALL_AB,
-        wall_AR=cp.WALL_AR,
-        wall_ARB=cp.WALL_ARB,
-        wall_L=cp.WALL_L,
-        wall_LB=cp.WALL_LB,
-        wall_LR=cp.WALL_LR,
-        wall_LRB=cp.WALL_LRB,
-        wall_LA=cp.WALL_LA,
-        wall_LAB=cp.WALL_LAB,
-        wall_LAR=cp.WALL_LAR,
-        wall_LARB=cp.WALL_LARB,
+        void=U.SPACE,
+        floor=U.FULL_STOP,
+        door=U.PLUS_SIGN,
+        door_H=U.BOX_DRAWINGS_LIGHT_QUADRUPLE_DASH_HORIZONTAL,
+        door_V=U.BOX_DRAWINGS_LIGHT_TRIPLE_DASH_VERTICAL,
+        wall=U.WHITE_SQUARE_CONTAINING_BLACK_SMALL_SQUARE,
+        wall_B=U.BOX_DRAWINGS_DOWN_DOUBLE_HORIZONTAL_SINGLE,
+        wall_R=U.BOX_DRAWINGS_VERTICAL_SINGLE_RIGHT_DOUBLE,
+        wall_RB=U.BOX_DRAWINGS_DOUBLE_DOWN_RIGHT,
+        wall_A=U.BOX_DRAWINGS_UP_DOUBLE_HORIZONTAL_SINGLE,
+        wall_AB=U.BOX_DRAWINGS_DOUBLE_VERTICAL,
+        wall_AR=U.BOX_DRAWINGS_DOUBLE_UP_RIGHT,
+        wall_ARB=U.BOX_DRAWINGS_DOUBLE_VERTICAL_RIGHT,
+        wall_L=U.BOX_DRAWINGS_VERTICAL_SINGLE_LEFT_DOUBLE,
+        wall_LB=U.BOX_DRAWINGS_DOUBLE_DOWN_LEFT,
+        wall_LR=U.BOX_DRAWINGS_DOUBLE_HORIZONTAL,
+        wall_LRB=U.BOX_DRAWINGS_DOUBLE_DOWN_HORIZONTAL,
+        wall_LA=U.BOX_DRAWINGS_DOUBLE_UP_LEFT,
+        wall_LAB=U.BOX_DRAWINGS_DOUBLE_VERTICAL_LEFT,
+        wall_LAR=U.BOX_DRAWINGS_DOUBLE_UP_HORIZONTAL,
+        wall_LARB=U.BOX_DRAWINGS_DOUBLE_VERTICAL_HORIZONTAL,
     )
     render.tiles(grid, maze, palette)
     return maze
