@@ -13,13 +13,16 @@ def _rasterize(width: np.uint, height: np.uint, rects):
     counter = 0
     for rect in rects:
         left, top, right, bottom = rect
+        # We generate the offgrid half of our target size to ensure there are
+        # no rects whose width or height is less than 2, because they would
+        # be filled with walls and therefore impassable
+        left *= 2
+        top *= 2
+        right *= 2
+        bottom *= 2
         # Skip rects that don't lie completely within the requested area
         if left <= 0 or top <= 0 or right > width or bottom > height:
             continue;
-        # Skip rects whose width or height is less than 2, because they would
-        # be filled with walls and therefore impassable
-        if (right-left) < 2 or (bottom - top) < 2:
-            continue
         # Increment the room counter and assign it to the cell region
         counter += 1
         grid[left:right, top:bottom] = counter
@@ -50,12 +53,15 @@ def level(
 ) -> basemap.BaseMap:
     """Generate a basemap for a level having the specified dimensions."""
     # Generate offset grid rectangles which will cover the game area.
+    # We will use half the requested width and height, ensuring that every
+    # rect has a minimum dimension 2, which we need in order to line each
+    # edge of the room with a wall tile.
     assert box_size > 2
     grid_seed = offgrid.hash64(rng.integers(0xFFFFFFFF))
     rects = offgrid.generate(
-        width=np.uint(width),
-        height=np.uint(height),
-        box_size=box_size,
+        width=np.floor_divide(np.uint(width), 2, dtype=np.uint),
+        height=np.floor_divide(np.uint(height), 2, dtype=np.uint),
+        box_size=np.floor_divide(np.uint(box_size), 2, dtype=np.uint),
         seed=np.int64(grid_seed),
         edge=0.08
     )
