@@ -1,10 +1,11 @@
 
 import numpy as np
+from typing import List
 from . import offgrid
 from . import basemap
 from . import connect
 
-def rasterize(width: np.uint, height: np.uint, rects):
+def _rasterize(width: np.uint, height: np.uint, rects):
     # Allocate an extra row and column, which will be left empty;
     # this means we can skip the range checks when scanning 2x2 boxes.
     shape = (np.add(width, 1, dtype=np.uint), np.add(height, 1, dtype=np.uint))
@@ -25,7 +26,7 @@ def rasterize(width: np.uint, height: np.uint, rects):
     return grid
 
 
-def apply_grid(grid, builder):
+def _apply_grid(grid, builder):
     for x, y in np.ndindex(builder.shape):
         # Get the four room indexes touching this grid junction
         tl = grid[x, y]
@@ -60,13 +61,23 @@ def level(
     )
     if not rects:
         print("empty rects list")
-    grid = rasterize(width, height, rects)
+    grid = _rasterize(width, height, rects)
     builder = basemap.Builder(width, height)
-    apply_grid(grid, builder)
+    _apply_grid(grid, builder)
     # The grid squares have become isolated rooms, separated by walls.
     # Connect these rooms into a playable maze.
     connect.fully(builder=builder, rng=rng)
     connect.some(builder=builder, rng=rng)
     connect.corridors(builder=builder)
     return builder.build()
+
+
+def tower(
+    width: np.uint,
+    height: np.uint,
+    stories: np.uint, # minimum 1
+    box_size: np.uint = np.uint(8), # minimum 3
+    rng: np.random.Generator = np.random.default_rng(),
+) -> List[basemap.BaseMap]:
+    return [level(width, height, box_size, rng) for x in range(stories)]
 

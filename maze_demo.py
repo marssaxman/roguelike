@@ -46,6 +46,11 @@ def print_maze(maze):
         print(line)
 
 
+def print_tower(tower):
+    for maze in tower:
+        print_maze(maze.tiles)
+
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
@@ -71,6 +76,11 @@ if __name__ == '__main__':
         help="base grid cell size",
         type=int,
     )
+    argparser.add_argument(
+        "--stories",
+        help="number of levels for three-dimensional maze",
+        type=int,
+    )
     args = argparser.parse_args()
 
     seed = args.seed if args.seed else np.int64(time.time_ns())
@@ -80,7 +90,22 @@ if __name__ == '__main__':
     height = args.height or np.uint(50)
     box_size = args.box_size or max(4, int((width+height)//16))
 
-    maze = create.level(width=width, height=height, box_size=box_size, rng=rng)
     print(f"seed: {seed}; x,y=({width},{height}); box_size={box_size}")
-    print_maze(maze.tiles)
+    if args.stories:
+        tower = create.tower(
+            width=width,
+            height=height,
+            box_size=box_size,
+            stories = args.stories,
+            rng=rng
+        )
+        print_tower(tower)
+    else:
+        maze = create.level(
+            width=width,
+            height=height,
+            box_size=box_size,
+            rng=rng
+        )
+        print_maze(maze.tiles)
 
