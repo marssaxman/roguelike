@@ -196,19 +196,20 @@ class CharacterScreenEventHandler(AskUserEventHandler):
     def on_render(self, console: tcod.Console) -> None:
         super().on_render(console)
 
-        if self.engine.player.x <= 30:
-            x = 40
+        width = len(self.TITLE) + 4
+        height = 7
+
+        if self.engine.player.x <= (console.width // 2):
+            x = console.width - width - 1
         else:
             x = 1
         y = 1
-
-        width = len(self.TITLE) + 4
 
         console.draw_frame(
             x=x,
             y=y,
             width=width,
-            height=7,
+            height=height,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -241,8 +242,11 @@ class LevelUpEventHandler(AskUserEventHandler):
     def on_render(self, console: tcod.Console) -> None:
         super().on_render(console)
 
-        if self.engine.player.x <= 30:
-            x = 40
+        width = 35
+        height = 8
+
+        if self.engine.player.x <= (console.width // 2):
+            x = console.width - width - 1
         else:
             x = 1
         y = 1
@@ -250,8 +254,8 @@ class LevelUpEventHandler(AskUserEventHandler):
         console.draw_frame(
             x=x,
             y=y,
-            width=35,
-            height=8,
+            width=width,
+            height=height,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -321,18 +325,17 @@ class InventoryEventHandler(AskUserEventHandler):
         super().on_render(console)
         number_of_items_in_inventory = len(self.engine.player.inventory.items)
 
+        width = len(self.TITLE) + 4
         height = number_of_items_in_inventory + 2
-
         if height <= 3:
             height = 3
 
-        if self.engine.player.x <= 30:
-            x = 40
+        if self.engine.player.x <= (console.width // 2):
+            x = console.width - width - 1
         else:
             x = 1
         y = 1
 
-        width = len(self.TITLE) + 4
 
         console.draw_frame(
             x=x,
