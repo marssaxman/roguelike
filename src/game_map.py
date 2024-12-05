@@ -195,8 +195,6 @@ class GameWorld:
         max_rooms: int,
         room_min_size: int,
         room_max_size: int,
-        viewport_width: int,
-        viewport_height: int,
         current_floor: int = 0
     ):
         self.engine = engine
@@ -208,9 +206,6 @@ class GameWorld:
 
         self.room_min_size = room_min_size
         self.room_max_size = room_max_size
-
-        self.viewport_width = viewport_width
-        self.viewport_height = viewport_height
 
         self.current_floor = current_floor
 

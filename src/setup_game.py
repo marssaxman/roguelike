@@ -29,13 +29,6 @@ def new_game() -> Engine:
     room_min_size = 6
     max_rooms = 30
 
-    # how much of the game map can the player see at once?
-    # this seems like it is a decision made by the console and therefore
-    # ought to be passed in as a parameter; in the meantime, make sure not
-    # to request a viewport larger than the console.
-    viewport_width = 50
-    viewport_height = 50
-
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
@@ -46,8 +39,6 @@ def new_game() -> Engine:
         room_max_size=room_max_size,
         map_width=map_width,
         map_height=map_height,
-        viewport_width=viewport_width,
-        viewport_height=viewport_height,
     )
     engine.game_world.generate_floor()
     engine.update_fov()
