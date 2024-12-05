@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from numpy.typing import NDArray
 
 import numpy as np  # type: ignore
 from tcod.console import Console
@@ -69,32 +70,116 @@ class GameMap:
         """Return True if x and y are inside of the bounds of this map."""
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def render(self, console: Console) -> None:
-        """
-        Renders the map.
 
-        If a tile is in the "visible" array, then draw it with the "light" colors.
-        If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
-        Otherwise, the default is "SHROUD".
+    def get_viewport(self, window_shape: Tuple[int, int]):
         """
-        console.rgb[0:self.width, 0:self.height] = np.select(
-            condlist=[self.visible, self.explored],
-            choicelist=[self.tiles["light"], self.tiles["dark"]],
+        Given the shape of a display window, find the viewable region.
+
+        If the window is larger than the map, we will try to center the
+        viewport on the player, until the player is too close to an edge to
+        make this work without displaying tiles that would be outside the map.
+        """
+        x = self.engine.player.x
+        y = self.engine.player.y
+        view_width = min(window_shape[0], self.width)
+        view_height = min(window_shape[1], self.height)
+        half_width = int(view_width / 2)
+        half_height = int(view_height / 2)
+        # Try to center the viewport on the player, but don't scroll off the
+        # left or top edges of the map.
+        left = max(x - half_width, 0)
+        top = max(y - half_height, 0)
+        right = left + view_width
+        bottom = top + view_height
+        # Do not scroll off the bottom or right edges of the map, either.
+        if right > self.width:
+            left -= (right - self.width)
+            right = self.width
+            if left < 0:
+                left = 0
+        if bottom > self.height:
+            top -= (bottom - self.height)
+            bottom = self.height
+            if top < 0:
+                top = 0
+        # Return the map-coordinates for the viewport.
+        return (left, top, right, bottom)
+
+
+    def render(self, window: NDArray[Any]) -> None:
+        """
+        Renders the map into the given tile buffer.
+
+        If the map is larger than the buffer, attempt to center the viewpoint
+        on the player. If the map is smaller than the buffer, letterbox it
+        with the SHROUD texture.
+
+        Tiles which are currently visible will be rendered with their "light"
+        style; tiles which have previously been visible will be rendered with
+        "dark" style; everything else will be drawn under "SHROUD".
+        """
+        # Get the bounding box of the viewport, in map coordinates, sized to
+        # match the display window.
+        view_rect = self.get_viewport(window.shape)
+        view_left, view_top, view_right, view_bottom = view_rect
+        views_horz = slice(view_left, view_right)
+        views_vert = slice(view_top, view_bottom)
+
+        # Get views on the map, sized & positioned to match the viewport.
+        # Select the display style for each tile based on its visibility.
+        view_tiles = self.tiles[views_horz, views_vert]
+        view_visible = self.visible[views_horz, views_vert]
+        view_explored = self.explored[views_horz, views_vert]
+        style_tiles = np.select(
+            condlist=[view_visible, view_explored],
+            choicelist=[view_tiles["light"], view_tiles["dark"]],
             default=tile_types.SHROUD,
         )
+
+        # Render the styled tiles to the window. If the tiled area is smaller
+        # than the window, letterbox it filling with SHROUD.
+        win_width, win_height = window.shape
+        view_width, view_height = style_tiles.shape
+        adjust_x, adjust_y = view_left, view_top
+        win_horz = slice(0, win_width)
+        win_vert = slice(0, win_height)
+        if win_width > view_width:
+            gap = (win_width - view_width) // 2
+            adjust_x -= gap
+            # draw left side letterbox
+            window[0:gap, :] = tile_types.SHROUD
+            # position viewport in the center of the window
+            win_horz = slice(gap, view_width + gap)
+            # draw right side letterbox
+            window[view_width + gap:, :] = tile_types.SHROUD
+        if win_height > view_height:
+            gap = (win_height - view_height) // 2
+            adjust_y -= gap
+            # draw letterbox above
+            window[:, :gap] = tile_types.SHROUD
+            # position viewport in the center of the window
+            win_vert = slice(gap, view_height + gap)
+            # draw letterbox below
+            window[:, view_height + gap:] = tile_types.SHROUD
+        # Draw the map contents.
+        window[win_horz, win_vert] = style_tiles
+
+        # Draw visible entities in priority order on top of the rendered tiles.
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
         )
         for entity in entities_sorted_for_rendering:
-            # Only print entities which are currently visible
-            if self.visible[entity.x, entity.y]:
-                char = entity.char
-                # entity char can be a string or a codepoint
-                if isinstance(char, int):
-                    char = chr(char)
-                console.print(
-                    x=entity.x, y=entity.y, string=char, fg=entity.color
-                )
+            if not self.visible[entity.x, entity.y]:
+                continue
+            char = entity.char
+            # entity char can be a string or a codepoint; we draw codepoints
+            if isinstance(char, str):
+                char = ord(char)
+            x, y = entity.x - adjust_x, entity.y - adjust_y
+            # reuse the tile's existing background color
+            bg = window[x, y][2]
+            window[x, y] = (char, entity.color, bg)
+
 
 class GameWorld:
    """
@@ -110,6 +195,8 @@ class GameWorld:
         max_rooms: int,
         room_min_size: int,
         room_max_size: int,
+        viewport_width: int,
+        viewport_height: int,
         current_floor: int = 0
     ):
         self.engine = engine
@@ -121,6 +208,9 @@ class GameWorld:
 
         self.room_min_size = room_min_size
         self.room_max_size = room_max_size
+
+        self.viewport_width = viewport_width
+        self.viewport_height = viewport_height
 
         self.current_floor = current_floor
 

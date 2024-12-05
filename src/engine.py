@@ -49,7 +49,7 @@ class Engine:
         self.game_map.explored |= self.game_map.visible
 
     def render(self, console: Console) -> None:
-        self.game_map.render(console)
+        self.game_map.render(console.rgb[:, :-7])
         self.message_log.render(console=console, x=21, y=45, width=40, height=5)
         render_functions.render_bar(
             console=console,
@@ -62,5 +62,10 @@ class Engine:
             dungeon_level=self.game_world.current_floor,
             location=(0, 47),
         )
-        render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
+        render_functions.render_names_at_mouse_location(
+            console=console,
+            x=21,
+            y=44,
+            engine=self
+        )
 
