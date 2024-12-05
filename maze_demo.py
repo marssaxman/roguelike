@@ -99,8 +99,7 @@ if __name__ == '__main__':
     print(f"seed: {seed}; x,y=({width},{height}); box_size={box_size}")
     if args.stories:
         tower = create.tower(
-            width=width,
-            height=height,
+            shape=(width, height),
             box_size=box_size,
             stories = args.stories,
             rng=rng
@@ -108,8 +107,7 @@ if __name__ == '__main__':
         print_tower(tower)
     else:
         maze = create.level(
-            width=width,
-            height=height,
+            shape=(width, height),
             box_size=box_size,
             rng=rng
         )

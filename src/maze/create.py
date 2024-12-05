@@ -70,13 +70,13 @@ def _apply_grid(grid, builder):
 
 
 def level(
-    width: np.uint, # minimum 8
-    height: np.uint, # minimum 8
+    shape: Tuple[int, int],
     box_size: np.uint = np.uint(8), # minimum 3
     rng: np.random.Generator = np.random.default_rng(),
 ) -> basemap.BaseMap:
     """Generate a basemap for a level having the specified dimensions."""
     assert box_size >= 3
+    width, height = shape
     assert width >= 8 and height >= 8
     # Generate offset grid rectangles which will cover the game area.
     # We will use half the tile grid resolution, to ensure that every rect
@@ -96,7 +96,7 @@ def level(
     )
     assert rects
     _rasterize(rects, inset)
-    builder = basemap.Builder(width, height)
+    builder = basemap.Builder(shape=shape)
     _apply_grid(grid, builder)
     # The grid squares have become isolated rooms, separated by walls.
     # Connect these rooms into a playable maze.
@@ -139,13 +139,13 @@ def _make_lair_mask(grid, size=8):
 
 
 def tower(
-    width: np.uint,
-    height: np.uint,
+    shape: Tuple[int, int],
     stories: np.uint, # minimum 1
     box_size: np.uint = np.uint(8), # minimum 3
     rng: np.random.Generator = np.random.default_rng(),
 ) -> List[basemap.BaseMap]:
     assert stories > 0
+    width, height = shape
     assert width >= 8 and height >= 8
     # We will generate one level after another, reusing the same raster grid,
     # using each floor's footprint as a mask for the next, to ensure that the
@@ -174,7 +174,7 @@ def tower(
         )
         inset[:] = 0
         _rasterize(_filter_rects(rects, mask), inset)
-        builder = basemap.Builder(width, height)
+        builder = basemap.Builder(shape=shape)
         _apply_grid(grid, builder)
         if len(builder.room_ids()) != 3:
             continue
@@ -197,7 +197,7 @@ def tower(
         # Rasterize every rectangle which overlays the required mask.
         _rasterize(_filter_rects(rects, mask), inset)
         # Build a level map from the room grid.
-        builder = basemap.Builder(width, height)
+        builder = basemap.Builder(shape=shape)
         _apply_grid(grid, builder)
         connect.fully(builder=builder, rng=rng)
         connect.some(builder=builder, rng=rng)

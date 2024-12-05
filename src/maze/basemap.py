@@ -137,8 +137,8 @@ class Builder:
     _rooms: Dict[np.uint, Room]
     _walls: Dict[Tuple[int, int], Wall]
 
-    def __init__(self, width: np.uint, height: np.uint):
-        self.map = np.full((width, height), Tile.VOID, dtype=Tile)
+    def __init__(self, shape: Tuple[int, int]):
+        self.map = np.full(shape, Tile.VOID, dtype=Tile)
         self._rooms = {0: Room(0)}
         self._walls = {}
 

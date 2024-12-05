@@ -23,8 +23,7 @@ background_image = tcod.image.load("assets/menu_background.png")[:, :, :3]
 
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
-    map_width = 80
-    map_height = 43
+    map_shape = 80, 43
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
@@ -37,8 +36,7 @@ def new_game() -> Engine:
         max_rooms=max_rooms,
         room_min_size=room_min_size,
         room_max_size=room_max_size,
-        map_width=map_width,
-        map_height=map_height,
+        map_shape=map_shape,
     )
     engine.game_world.generate_floor()
     engine.update_fov()

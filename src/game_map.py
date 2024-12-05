@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from typing import Iterable, Iterator, Optional, Tuple, TYPE_CHECKING
 from numpy.typing import NDArray
 
 import numpy as np  # type: ignore
@@ -16,19 +16,17 @@ if TYPE_CHECKING:
 
 class GameMap:
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+        self,
+        engine: Engine,
+        shape: Tuple[int, int],
+        entities: Iterable[Entity] = ()
     ):
         self.engine = engine
-        self.width, self.height = width, height
+        self.width, self.height = shape
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
-        self.visible = np.full(
-            (width, height), fill_value=False, order="F"
-        ) # Tiles the player can currently see
-        self.explored = np.full(
-            (width, height), fill_value=False, order="F"
-        ) # Tiles the player has seen before
-
+        self.tiles = np.full(shape, fill_value=tile_types.wall, order="F")
+        self.visible = np.full(shape, fill_value=False, order="F")
+        self.explored = np.full(shape, fill_value=False, order="F")
         self.downstairs_location = (0, 0)
 
     @property
@@ -190,23 +188,17 @@ class GameWorld:
         self,
         *,
         engine: Engine,
-        map_width: int,
-        map_height: int,
+        map_shape: Tuple[int, int],
         max_rooms: int,
         room_min_size: int,
         room_max_size: int,
         current_floor: int = 0
     ):
         self.engine = engine
-
-        self.map_width = map_width
-        self.map_height = map_height
-
+        self.map_shape = map_shape
         self.max_rooms = max_rooms
-
         self.room_min_size = room_min_size
         self.room_max_size = room_max_size
-
         self.current_floor = current_floor
 
    def generate_floor(self) -> None:
@@ -218,8 +210,7 @@ class GameWorld:
             max_rooms=self.max_rooms,
             room_min_size=self.room_min_size,
             room_max_size=self.room_max_size,
-            map_width=self.map_width,
-            map_height=self.map_height,
+            map_shape=self.map_shape,
             engine=self.engine,
         )
 

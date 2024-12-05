@@ -134,17 +134,16 @@ def generate_dungeon(
     max_rooms: int,
     room_min_size: int,
     room_max_size: int,
-    map_width: int,
-    map_height: int,
+    map_shape: Tuple[int, int],
     engine: Engine,
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    dungeon = GameMap(engine, map_shape, entities=[player])
 
     # temporary: this should become part of the Engine
     rng = np.random.default_rng()
-    level = maze.create.level(map_width, map_height, rng=rng)
+    level = maze.create.level(shape=map_shape, rng=rng)
 
     palette = maze.render.Palette(
         void = tile_types.wall,
