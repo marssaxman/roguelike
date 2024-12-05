@@ -52,7 +52,7 @@ def _apply_grid(grid, builder):
     # that the grid's width and height are at least one greater than the
     # resulting map dimensions.
     assert grid.shape[0] > builder.shape[0]
-    assert grid.shape[1]
+    assert grid.shape[1] > builder.shape[1]
     for x, y in np.ndindex(builder.shape):
         # Get the four room indexes touching this grid junction
         tl = grid[x, y]
