@@ -13,6 +13,8 @@ def to_chars(grid):
     palette = render.Palette(
         void=U.SPACE,
         floor=U.FULL_STOP,
+        entry=ord(">"),
+        exit=ord("<"),
         door=U.PLUS_SIGN,
         door_H=U.BOX_DRAWINGS_LIGHT_QUADRUPLE_DASH_HORIZONTAL,
         door_V=U.BOX_DRAWINGS_LIGHT_TRIPLE_DASH_VERTICAL,

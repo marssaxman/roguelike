@@ -8,7 +8,9 @@ class Tile(Enum):
     VOID = 0,
     WALL = 1,
     FLOOR = 2,
-    DOOR = 3
+    DOOR = 3,
+    ENTRY = 4,
+    EXIT = 5,
 
 
 class Room:

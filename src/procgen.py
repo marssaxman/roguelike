@@ -149,6 +149,8 @@ def generate_dungeon(
     palette = maze.render.Palette(
         void = tile_types.wall,
         floor = tile_types.floor,
+        entry = tile_types.floor,
+        exit = tile_types.floor,
         door = tile_types.door,
         door_H = tile_types.door_H,
         door_V = tile_types.door_V,
