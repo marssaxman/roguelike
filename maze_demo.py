@@ -49,6 +49,10 @@ def print_maze(maze):
 def print_tower(tower):
     for maze in tower:
         print_maze(maze.tiles)
+        line = ""
+        for x in range(maze.tiles.shape[0]):
+            line += "-"
+        print(line)
 
 
 if __name__ == '__main__':

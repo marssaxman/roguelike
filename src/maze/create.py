@@ -1,23 +1,28 @@
 
 import numpy as np
-from typing import List
+from typing import List, Tuple
 from . import offgrid
 from . import basemap
 from . import connect
 
 
+def _grid_seed(rng):
+    return offgrid.hash64(rng.integers(0xFFFFFFFF))
+
+
 def _coarse_grid(
-    width: np.uint,
-    height: np.uint,
+    shape: Tuple[np.uint, np.uint],
     box_size: np.uint,
     seed: np.int64,
     edge: np.double, # range 0..0.5, controls irregularity of grid
 ):
     """Generate an offset grid using half the target resolution."""
+    width = shape[0]
+    height = shape[1]
     for left, top, right, bottom in offgrid.generate(
         width=np.floor_divide(np.uint(width), 2, dtype=np.uint),
         height=np.floor_divide(np.uint(height), 2, dtype=np.uint),
-        box_size=np.floor_divide(np.uint(box_size), 2, dtype=np.uint),
+        box_size=np.floor_divide(np.uint(box_size+1), 2, dtype=np.uint),
         seed=seed,
         edge=edge
     ):
@@ -30,6 +35,7 @@ def _rasterize(rects, grid):
     width = grid.shape[0]
     height = grid.shape[1]
     counter = 0
+    grid[:] = 0
     for rect in rects:
         left, top, right, bottom = rect
         # Skip rects that don't lie completely within the requested area
@@ -80,11 +86,10 @@ def level(
     # empty around every edge. That way we can convert each 2x2 group into
     # one map tile, overscanning the edges, to generate perimeter walls.
     grid = np.zeros((np.uint(width+1), np.uint(height+1)), dtype=np.uint)
-    inset = grid[1:np.uint(width-1), 1:np.uint(height-1)]
-    grid_seed = offgrid.hash64(rng.integers(0xFFFFFFFF))
+    inset = grid[1:np.uint(width), 1:np.uint(height)]
+    grid_seed = _grid_seed(rng)
     rects = _coarse_grid(
-        width=inset.shape[0],
-        height=inset.shape[1],
+        shape=inset.shape,
         box_size=box_size,
         seed=np.int64(grid_seed),
         edge=0.15
@@ -101,39 +106,33 @@ def level(
     return builder.build()
 
 
-def _print_grid(caption, grid):
-    CHARS = ".123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    print(caption)
-    for y in range(grid.shape[1]):
-        line = ""
-        for x in range(grid.shape[0]):
-            line += CHARS[grid[x, y]]
-        print(line)
-
-
-def _mask_rects(rects, mask):
+def _filter_rects(rects, mask):
     """Return each rect which intersects any nonzero element of the mask."""
+    width = mask.shape[0]
+    height = mask.shape[1]
     for left, top, right, bottom in rects:
-        left = np.int(max(left, 0))
-        top = np.int(max(top, 0))
-        right = np.int(min(right, mask.shape[0]))
-        bottom = np.int(min(bottom, mask.shape[1]))
+        left = np.clip(left, 0, width)
+        top = np.clip(top, 0, height)
+        right = np.clip(right, 0, width)
+        bottom = np.clip(bottom, 0, height)
+        if right-left <= 1 or bottom-top <= 1:
+            continue
         if np.any(mask[left:right, top:bottom]):
             yield left, top, right, bottom
 
 
-def _lair_mask(grid):
+def _make_lair_mask(grid, size=8):
     # The topmost floor contains the Lair of Bob, which must cover at least
-    # the centermost 8x8 tiles of the game map.
-    # Allocate one extra row and column for compatibility with _rasterize
+    # the centermost NxN tiles of the game map.
     width = grid.shape[0]
     height = grid.shape[1]
     center_x = np.floor_divide(width, 2, dtype=np.uint)
-    center_y = np.floor_divide(np.uint(height+1), 2, dtype=np.uint)
-    mask_l = np.subtract(center_x, 4, dtype=np.uint)
-    mask_r = np.add(center_x, 4, dtype=np.uint)
-    mask_t = np.subtract(center_y, 4, dtype=np.uint)
-    mask_b = np.add(center_y, 4, dtype=np.uint)
+    center_y = np.floor_divide(height, 2, dtype=np.uint)
+    half_size = np.floor_divide(np.uint(size+1), 2, dtype=np.uint)
+    mask_l = np.subtract(center_x, half_size, dtype=np.uint)
+    mask_r = np.add(center_x, half_size, dtype=np.uint)
+    mask_t = np.subtract(center_y, half_size, dtype=np.uint)
+    mask_b = np.add(center_y, half_size, dtype=np.uint)
     assert mask_l >= 0 and mask_t >= 0
     assert mask_r <= width and mask_b <= height
     _rasterize([(mask_l, mask_t, mask_r, mask_b)], grid)
@@ -146,40 +145,62 @@ def tower(
     box_size: np.uint = np.uint(8), # minimum 3
     rng: np.random.Generator = np.random.default_rng(),
 ) -> List[basemap.BaseMap]:
+    assert stories > 0
+    assert width >= 8 and height >= 8
+    # We will generate one level after another, reusing the same raster grid,
+    # using each floor's footprint as a mask for the next, to ensure that the
+    # tower only grows and never leaves an upper floor unsupported.
+    grid = np.zeros((np.uint(width+1), np.uint(height+1)), dtype=np.uint)
+    inset = grid[1:width, 1:height]
+    mask = np.zeros_like(inset)
 
-    # Initial mask: centered area large enough for Lair of Bob
-    mask = np.zeros((np.uint(width+1), np.uint(height+1)), dtype=np.uint)
-    _lair_mask(mask)
-    _print_grid("Initial mask", mask)
-    # Populate a list of maps, from top down (?)
-    maps = list()
-    for level in range(stories):
-        # prepare the buffer we will write the new level into
-        grid = np.zeros_like(mask)
-        inset = grid[1:np.uint(width-1), 1:np.uint(height-1)]
-        # generate an offset grid
-        grid_seed = offgrid.hash64(rng.integers(0xFFFFFFFF))
+    # The initial mask is a centered area large enough for Lair of Bob
+    _make_lair_mask(mask, size=4)
+    # Lair of Bob is special: we want exactly three rooms of reasonably
+    # proportional size: the antechamber, Bob's room, and the amulet room.
+    # There should be exactly two doors and no corridors on this map.
+    # We will set up the parameters to make this probable, then loop until
+    # we get what we want.
+    levels = list()
+    while not levels:
+        grid_seed = _grid_seed(rng)
+        # make slightly more regular rooms than normal to encourage the
+        # desired layout to occur. 
         rects = _coarse_grid(
-            width=inset.shape[0],
-            height=inset.shape[1],
-            box_size=6,
+            shape=inset.shape,
+            box_size=5,
             seed=np.int64(grid_seed),
-            edge=0.075
+            edge=0.22,
         )
-        assert rects
-        _rasterize(_mask_rects(rects, mask), inset)
-        _print_grid("Rasterized rooms", grid)
+        inset[:] = 0
+        _rasterize(_filter_rects(rects, mask), inset)
+        builder = basemap.Builder(width, height)
+        _apply_grid(grid, builder)
+        if len(builder.room_ids()) != 3:
+            continue
+        if not connect.lair(builder=builder, rng=rng):
+            continue
+        levels.append(builder.build())
+
+    # Generate the rest of the ziggurat.
+    for level in range(1, stories):
+        # Add the previous level's footprint to the mask for this level.
+        mask[inset.nonzero()] = 1
+        # Generate an offset grid and render it into the room grid.
+        grid_seed = _grid_seed(rng)
+        rects = _coarse_grid(
+            shape=inset.shape,
+            box_size=box_size,
+            seed=np.int64(grid_seed),
+            edge=0.1
+        )
+        # Rasterize every rectangle which overlays the required mask.
+        _rasterize(_filter_rects(rects, mask), inset)
+        # Build a level map from the room grid.
         builder = basemap.Builder(width, height)
         _apply_grid(grid, builder)
         connect.fully(builder=builder, rng=rng)
         connect.some(builder=builder, rng=rng)
         connect.corridors(builder=builder)
-        maps.append(builder.build())
-        new_mask = np.zeros_like(mask)
-        new_mask[grid.nonzero()] = 1
-        _print_grid("Next mask", new_mask)
-        error = mask - (new_mask * mask)
-        if np.any(error):
-            _print_grid("Error:", error)
-        mask = new_mask
-    return maps
+        levels.append(builder.build())
+    return levels

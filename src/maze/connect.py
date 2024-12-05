@@ -82,3 +82,26 @@ def corridors(builder):
                 x,y = next(iter(wall.tiles()))
                 builder.open_door(x, y, wall.a, wall.b)
 
+
+def lair(builder, rng):
+    """Connect doors in the pattern required for Bob's lair."""
+    # Identify the largest room.
+    # Open doors to its two adjacent rooms.
+    # If there are other rooms, ignore them.
+    # Return true if we were able to do this.
+    biggest = None
+    for room in builder.rooms():
+        if room.is_corridor():
+            return False
+        if biggest and len(room.tiles()) < len(biggest.tiles()):
+            continue
+        biggest = room
+    nb_ids = list(biggest.neighbor_ids())
+    if len(nb_ids) < 2:
+        return False
+    for i in range(2):
+        wall = builder.wall_between(biggest.id, nb_ids[i])
+        x, y = rng.choice(list(wall.tiles()))
+        builder.open_door(x, y, biggest.id, nb_ids[i])
+    return True
+
