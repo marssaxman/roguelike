@@ -549,6 +549,10 @@ class MainGameEventHandler(EventHandler):
             return CharacterScreenEventHandler(self.engine)
         elif key == tcod.event.KeySym.SLASH:
             return LookHandler(self.engine)
+        elif key == tcod.event.KeySym.q:
+            # yeah, we already use escape, but I keep trying to quit this way,
+            # so we might as well support both
+            raise SystemExit()
 
         # No valid key was pressed
         return action
