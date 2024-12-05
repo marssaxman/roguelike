@@ -203,4 +203,5 @@ def tower(
         connect.some(builder=builder, rng=rng)
         connect.corridors(builder=builder)
         levels.append(builder.build())
+        connect.floors(levels[level-1], levels[level], rng)
     return levels

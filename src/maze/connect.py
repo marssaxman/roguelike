@@ -1,12 +1,13 @@
+import numpy as np
+from .basemap import Tile
 
-def collect_connections(builder, room_id, katamari=set()):
+def collect_connections(builder, room_id, katamari):
     if room_id in katamari:
         return katamari
     katamari.add(room_id)
     room = builder.room(room_id)
     for conex in room.connection_ids():
         collect_connections(builder, conex, katamari)
-    return katamari
 
 
 def disconnected_neighbors(builder, katamari):
@@ -35,7 +36,8 @@ def fully(builder, rng):
         return
     other_ids = set(builder.room_ids())
     start_id = rng.choice(list(builder.room_ids()))
-    katamari = collect_connections(builder, start_id)
+    katamari = set()
+    collect_connections(builder, start_id, katamari)
     other_ids -= katamari
     while other_ids:
         options = list(disconnected_neighbors(builder, katamari))
@@ -104,4 +106,19 @@ def lair(builder, rng):
         x, y = rng.choice(list(wall.tiles()))
         builder.open_door(x, y, biggest.id, nb_ids[i])
     return True
+
+
+def floors(above, below, rng):
+    """Create a stairway linking these maps."""
+    aboves = np.zeros_like(above.tiles, dtype=np.uint)
+    aboves[above.tiles == Tile.FLOOR] = 1
+    belows = np.zeros_like(below.tiles, dtype=np.uint)
+    belows[below.tiles == Tile.FLOOR] = 1
+    sites = aboves * belows
+    # for now, pick any option at random
+    x, y = rng.choice(np.argwhere(sites))
+    assert above.tiles[x, y] == Tile.FLOOR
+    assert below.tiles[x, y] == Tile.FLOOR
+    above.tiles[x, y] = Tile.ENTRY
+    below.tiles[x, y] = Tile.EXIT
 
