@@ -50,22 +50,27 @@ class Engine:
 
     def render(self, console: Console) -> None:
         self.game_map.render(console.rgb[:, :-7])
-        self.message_log.render(console=console, x=21, y=45, width=40, height=5)
+        log_y = console.height - 5
+        log_w = console.width - 21
+        self.message_log.render(console=console, x=21, y=log_y, width=log_w, height=5)
         render_functions.render_bar(
             console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
+            location=(0, log_y),
             total_width=20,
         )
+        level_y = console.height - 3
         render_functions.render_dungeon_level(
             console=console,
             dungeon_level=self.game_world.current_floor,
-            location=(0, 47),
+            location=(0, level_y),
         )
+        names_y = console.height - 6
         render_functions.render_names_at_mouse_location(
             console=console,
             x=21,
-            y=44,
+            y=names_y,
             engine=self
         )
 

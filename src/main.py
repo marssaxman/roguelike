@@ -78,8 +78,8 @@ def load_tiles():
 
 def main():
     # how big should the game window be?
-    screen_width = 80
-    screen_height = 50
+    screen_width = 60
+    screen_height = 30
 
     tileset = load_tiles()
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
@@ -91,6 +91,7 @@ def main():
         tileset = tileset,
         title = "Roguelike Game Experiment",
         vsync = True,
+        sdl_window_flags=tcod.context.SDL_WINDOW_MAXIMIZED,
     ) as context:
         # create a console inside the window we can draw into
         root_console = tcod.console.Console(
@@ -101,7 +102,7 @@ def main():
             while True:
                 root_console.clear()
                 handler.on_render(console=root_console)
-                context.present(root_console)
+                context.present(root_console, integer_scaling=True)
 
                 try:
                     for event in tcod.event.wait():
