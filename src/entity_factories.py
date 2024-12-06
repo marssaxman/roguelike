@@ -52,28 +52,28 @@ rat=Actor(
 )
 
 confusion_scroll = Item(
-    char="~",
+    char=cp.SCROLL,
     color=(207, 63, 255),
     name="Confusion Scroll",
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 
 fireball_scroll = Item(
-    char="~",
+    char=cp.SCROLL,
     color=(255, 0, 0),
     name="Fireball Scroll",
     consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
 )
 
 health_potion = Item(
-    char="!",
+    char=cp.POTION,
     color=(127, 0, 255),
     name="Health Potion",
     consumable=consumable.HealingConsumable(amount=4),
 )
 
 lightning_scroll = Item(
-    char="~",
+    char=cp.SCROLL,
     color=(255, 255, 0),
     name="Death Scroll",
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5)

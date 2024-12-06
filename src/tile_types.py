@@ -45,8 +45,8 @@ def new_door(char_id):
     return new_tile(
         walkable=True,
         transparent=False,
-        dark=(char_id, (127, 127, 127), (0, 0, 100)),
-        light=(char_id, (255, 255, 255), (165, 145, 50)),
+        dark=(char_id, (127, 127, 127), (50, 50, 100)),
+        light=(char_id, (255, 255, 255), (200, 180, 50)),
     )
 
 

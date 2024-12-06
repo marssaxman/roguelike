@@ -39,6 +39,8 @@ RAT = _alloc()
 ORC = _alloc()
 TROLL = _alloc()
 
+CORPSE = _alloc()
+
 COLUMN = _alloc()
 WALL = _alloc()
 WALL_L = _alloc()
@@ -59,3 +61,6 @@ WALL_LARB = _alloc()
 DOOR_H = _alloc()
 DOOR_V = _alloc()
 DOOR = DOOR_H
+
+POTION = _alloc()
+SCROLL = _alloc()

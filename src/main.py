@@ -74,6 +74,21 @@ def load_tiles():
     tileset.set_tile(codepoint.TROLL, humanoid_tiles.get_tile(0))
     tileset.set_tile(codepoint.ORC, humanoid_tiles.get_tile(64))
 
+    potion_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)
+    )
+    tileset.set_tile(codepoint.POTION, potion_tiles.get_tile(0))
+
+    scroll_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Items/Scroll.png", 8, 6, range(8*6)
+    )
+    tileset.set_tile(codepoint.SCROLL, scroll_tiles.get_tile(0))
+
+    redjack = tcod.tileset.load_tilesheet(
+        "assets/Redjack17.png", 16, 16, range(16*16)
+    )
+    tileset.set_tile(codepoint.CORPSE, redjack.get_tile((16*15)+13))
+
     return tileset
 
 def main():
