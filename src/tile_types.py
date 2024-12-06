@@ -85,7 +85,7 @@ wall_LARB = new_wall(cp.WALL_LARB)
 down_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord("0"), (0, 0, 100), (50, 50, 150)),
-    light=(ord("0"), (255, 255, 255), (200, 180, 50)),
+    dark=(cp.STAIRS_UP, (0, 0, 100), (50, 50, 150)),
+    light=(cp.STAIRS_UP, (255, 255, 255), (200, 180, 50)),
 )
 

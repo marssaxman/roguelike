@@ -88,6 +88,8 @@ def load_tiles():
         "assets/Redjack17.png", 16, 16, range(16*16)
     )
     tileset.set_tile(codepoint.CORPSE, redjack.get_tile((16*15)+13))
+    tileset.set_tile(codepoint.STAIRS_UP, redjack.get_tile((16*3)+12))
+    tileset.set_tile(codepoint.STAIRS_DOWN, redjack.get_tile((16*3)+14))
 
     return tileset
 
@@ -104,7 +106,7 @@ def main():
         screen_width,
         screen_height,
         tileset = tileset,
-        title = "Roguelike Game Experiment",
+        title = "bob's house of uncleanliness",
         vsync = True,
         sdl_window_flags=tcod.context.SDL_WINDOW_MAXIMIZED,
     ) as context:

@@ -62,5 +62,8 @@ DOOR_H = _alloc()
 DOOR_V = _alloc()
 DOOR = DOOR_H
 
+STAIRS_UP = _alloc()
+STAIRS_DOWN = _alloc()
+
 POTION = _alloc()
 SCROLL = _alloc()
