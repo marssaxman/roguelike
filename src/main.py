@@ -22,7 +22,25 @@ def load_tiles():
         "assets/Cooz_curses_square_16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437
     )
 
-    # load some graphics
+    # Override the box-drawing characters TCOD uses for frames with some
+    # curvy, dimensional tiles from the Oddball set.
+    oddball_tiles = tcod.tileset.load_tilesheet(
+        "assets/Oddball_16x16.png", 16, 16, tcod.tileset.CHARMAP_CP437
+    )
+    # top left corner
+    tileset.set_tile(0x250C, oddball_tiles.get_tile(0x2554))
+    # horizontal bar
+    tileset.set_tile(0x2500, oddball_tiles.get_tile(0x2550))
+    # top right corner
+    tileset.set_tile(0x2510, oddball_tiles.get_tile(0x2557))
+    # vertical bar
+    tileset.set_tile(0x2502, oddball_tiles.get_tile(0x2551))
+    # bottom left corner
+    tileset.set_tile(0x2514, oddball_tiles.get_tile(0x255A))
+    # bottom right corner
+    tileset.set_tile(0x2518, oddball_tiles.get_tile(0x255D))
+
+    # load some graphics for the walls
     wall_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Wall.png", (320//16), (816//16), range(1020)
     )
