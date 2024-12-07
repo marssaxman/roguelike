@@ -28,6 +28,7 @@ class GameMap:
         self.visible = np.full(shape, fill_value=False, order="F")
         self.explored = np.full(shape, fill_value=False, order="F")
         self.downstairs_location = (0, 0)
+        self.render_origin = (0, 0)
 
     @property
     def gamemap(self) -> GameMap:
@@ -64,10 +65,35 @@ class GameMap:
                 return actor
         return None
 
+    def get_names_at_location(self, x: int, y: int) -> str:
+        """List the names of the entities at this map location."""
+        if not self.in_bounds(x, y) or not self.visible[x, y]:
+            return ""
+        at_location = (e for e in self.entities if e.x == x and e.y == y)
+        names = ", ".join(entity.name for entity in at_location)
+        return names.capitalize()
+
     def in_bounds(self, x: int, y: int) -> bool:
         """Return True if x and y are inside of the bounds of this map."""
         return 0 <= x < self.width and 0 <= y < self.height
 
+    def translate_from_window(self, loc: Tuple[int, int]) -> Tuple[int, int]:
+        """
+        Given a coordinate in the display window, return the corresponding
+        map location.
+        """
+        window_x, window_y = loc
+        origin_x, origin_y = self.render_origin
+        return window_x + origin_x, window_y + origin_y
+
+    def translate_to_window(self, loc: Tuple[int, int]) -> Tuple[int, int]:
+        """
+        Given a coordinate on the map, return the corresponding window
+        location.
+        """
+        map_x, map_y = loc
+        origin_x, origin_y = self.render_origin
+        return map_x - origin_x, map_y - origin_y
 
     def get_viewport(self, window_shape: Tuple[int, int]):
         """
@@ -177,6 +203,11 @@ class GameMap:
             # reuse the tile's existing background color
             bg = window[x, y][2]
             window[x, y] = (char, entity.color, bg)
+
+        # Save the map-relative coordinate for the origin point in the
+        # rendering window. This value can then be added to a position within
+        # the window to find out which map tile it represents.
+        self.render_origin = adjust_x, adjust_y
 
 
 class GameWorld:

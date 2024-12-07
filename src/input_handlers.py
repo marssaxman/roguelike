@@ -156,8 +156,9 @@ class EventHandler(BaseEventHandler):
         return True
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
-        if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
-            self.engine.mouse_location = event.tile.x, event.tile.y
+        x, y = self.engine.game_map.translate_from_window(event.tile)
+        if self.engine.game_map.in_bounds(x, y):
+            self.engine.mouse_location = x, y
 
     def on_render(self, console: tcod.console.Console) -> None:
         self.engine.render(console)
@@ -417,7 +418,12 @@ class SelectIndexHandler(AskUserEventHandler):
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
         super().on_render(console)
-        x, y = self.engine.mouse_location
+        map_loc = self.engine.mouse_location
+        x, y = self.engine.game_map.translate_to_window(map_loc)
+        if x < 0 or x >= console.rgb.shape[0]:
+            return
+        if y < 0 or y >= console.rgb.shape[1]:
+            return
         console.rgb["bg"][x, y] = color.white
         console.rgb["fg"][x, y] = color.black
 
@@ -443,25 +449,32 @@ class SelectIndexHandler(AskUserEventHandler):
             self.engine.mouse_location = x, y
             return None
         elif key in CONFIRM_KEYS:
-            return self.on_index_selected(*self.engine.mouse_location)
+            return self.on_index_selected(self.engine.mouse_location)
         return super().ev_keydown(event)
 
     def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown)  -> Optional[ActionOrHandler]:
         """Left click confirms a selection."""
-        if self.engine.game_map.in_bounds(*event.tile):
+        map_loc = self.engine.game_map.translate_from_window(event.tile)
+        if self.engine.game_map.in_bounds(*map_loc):
             if event.button == 1:
-                return self.on_index_selected(*event.tile)
+                return self.on_index_selected(map_loc)
         return super().ev_mousebuttondown(event)
 
-    def on_index_selected(self, x: int, y: int)  -> Optional[ActionOrHandler]:
-        """Called when an index is selected."""
+    def on_index_selected(
+        self, map_loc: Tuple[int, int]
+    ) -> Optional[ActionOrHandler]:
+        """
+        Called when an index is selected.
+        """
         raise NotImplementedError()
 
 
 class LookHandler(SelectIndexHandler):
     """Lets the player look around using the keyboard."""
 
-    def on_index_selected(self, x: int, y: int) -> MainGameEventHandler:
+    def on_index_selected(
+        self, map_loc: Tuple[int, int]
+    ) -> Optional[ActionOrHandler]:
         """Return to main handler."""
         return MainGameEventHandler(self.engine)
 
@@ -473,11 +486,12 @@ class SingleRangedAttackHandler(SelectIndexHandler):
         self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
     ):
         super().__init__(engine)
-
         self.callback = callback
 
-    def on_index_selected(self, x: int, y: int)  -> Optional[ActionOrHandler]:
-        return self.callback((x, y))
+    def on_index_selected(
+        self, map_loc: Tuple[int, int]
+    ) -> Optional[ActionOrHandler]:
+        return self.callback(map_loc)
 
 
 class AreaRangedAttackHandler(SelectIndexHandler):
@@ -498,8 +512,8 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         """Highlight the tile under the cursor."""
         super().on_render(console)
 
-        x, y = self.engine.mouse_location
-
+        map_loc = self.engine.mouse_location
+        x, y = self.engine.game_map.translate_to_window(map_loc)
         # Draw a rectangle around the targeted area, so the player can see the affected tiles.
         console.draw_frame(
             x=x - self.radius - 1,
@@ -510,8 +524,10 @@ class AreaRangedAttackHandler(SelectIndexHandler):
             clear=False,
         )
 
-    def on_index_selected(self, x: int, y: int)  -> Optional[ActionOrHandler]:
-        return self.callback((x, y))
+    def on_index_selected(
+        self, map_loc: Tuple[int, int]
+    ) -> Optional[ActionOrHandler]:
+        return self.callback(map_loc)
 
 
 class MainGameEventHandler(EventHandler):

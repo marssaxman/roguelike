@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import lzma
 import pickle
-from typing import TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 
 from tcod.console import Console
 from tcod.map import compute_fov
@@ -18,6 +18,9 @@ if TYPE_CHECKING:
 class Engine:
     game_map: GameMap
     game_world: GameWorld
+    message_log: MessageLog
+    mouse_location: Tuple[int, int] # map coordinates, not console coordinates
+    player: Actor
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
