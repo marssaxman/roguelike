@@ -1,4 +1,4 @@
-from components.ai import HostileEnemy, Passive
+from components.ai import HostileEnemy, Passive, Epic_friend
 from components import consumable, equippable
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -49,6 +49,17 @@ rat=Actor(
     equipment=Equipment(),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=10)
+)
+
+silly=Actor(
+    char=ord("x"),
+    color=(255, 0, 255),
+    name="Helper",
+    ai_cls=Epic_friend,
+    fighter=Fighter(hp=10, base_defense=0, base_power=3),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=0)
 )
 
 confusion_scroll = Item(
