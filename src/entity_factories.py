@@ -5,10 +5,10 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from entity import Actor, Item
-import codepoint as cp
+import graphics
 
 player = Actor(
-    char=cp.PLAYER,
+    char=graphics.PLAYER,
     color=(255, 255, 255),
     name="Player",
     ai_cls=Passive,
@@ -19,7 +19,7 @@ player = Actor(
 )
 
 orc = Actor(
-    char=cp.ORC,
+    char=graphics.ORC,
     color=(63, 127, 63),
     name="Orc",
     ai_cls=HostileEnemy,
@@ -30,7 +30,7 @@ orc = Actor(
 )
 
 troll=Actor(
-    char=cp.TROLL,
+    char=graphics.TROLL,
     color=(0, 127, 0),
     name="Troll",
     ai_cls=HostileEnemy,
@@ -41,7 +41,7 @@ troll=Actor(
 )
 
 rat=Actor(
-    char=cp.RAT,
+    char=graphics.RAT,
     color=(127, 127, 200),
     name="Rat",
     ai_cls=HostileEnemy,
@@ -63,28 +63,28 @@ silly=Actor(
 )
 
 confusion_scroll = Item(
-    char=cp.SCROLL,
+    char=graphics.SCROLL,
     color=(207, 63, 255),
     name="Confusion Scroll",
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 
 fireball_scroll = Item(
-    char=cp.SCROLL,
+    char=graphics.SCROLL,
     color=(255, 0, 0),
     name="Fireball Scroll",
     consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
 )
 
 health_potion = Item(
-    char=cp.POTION,
+    char=graphics.POTION,
     color=(127, 0, 255),
     name="Health Potion",
     consumable=consumable.HealingConsumable(amount=4),
 )
 
 lightning_scroll = Item(
-    char=cp.SCROLL,
+    char=graphics.SCROLL,
     color=(255, 255, 0),
     name="Death Scroll",
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5)

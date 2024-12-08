@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 import color
-import codepoint
+import graphics
 
 from components.base_component import BaseComponent
 from render_order import RenderOrder
@@ -59,7 +59,7 @@ class Fighter(BaseComponent):
         else:
             death_message = f"{self.parent.name} is an idiot!"
             death_message_color = color.enemy_die
-        self.parent.char = codepoint.CORPSE
+        self.parent.char = graphics.CORPSE
         self.parent.color = (191, 0, 0)
         self.parent.blocks_movement = False
         self.parent.ai = None

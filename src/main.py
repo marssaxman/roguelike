@@ -7,7 +7,7 @@ import setup_game
 import input_handlers
 from entity import Entity
 from random import randrange
-import codepoint
+import graphics
 
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
@@ -40,74 +40,8 @@ def load_tiles():
     # bottom right corner
     tileset.set_tile(0x2518, oddball_tiles.get_tile(0x255D))
 
-    # load some graphics for the walls
-    wall_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Objects/Wall.png", (320//16), (816//16), range(1020)
-    )
-    # 20 tiles in a row, 51 rows
-    # Wall tiles exist in a 6x3 cluster with 1 space between columns
-    # Clusters exist in a 4-high group (6x12 tiles) of color variants
-    # We'll use the brick cluster in row 1
-    # Within a cluster, tiles are located like thus:
-    # RB    LR    LB    #       LRB
-    # AB    A           ARB     LARB    LAB
-    # AR          LA            LAR
-    # (B = AB, L = AL, R=AR)
-    tileset.set_tile(codepoint.WALL, wall_tiles.get_tile(63))
-    tileset.set_tile(codepoint.WALL_L, wall_tiles.get_tile(61))
-    tileset.set_tile(codepoint.WALL_A, wall_tiles.get_tile(81))
-    tileset.set_tile(codepoint.WALL_R, wall_tiles.get_tile(61))
-    tileset.set_tile(codepoint.WALL_B, wall_tiles.get_tile(80))
-    tileset.set_tile(codepoint.WALL_LR, wall_tiles.get_tile(61))
-    tileset.set_tile(codepoint.WALL_AB, wall_tiles.get_tile(80))
-    tileset.set_tile(codepoint.WALL_RB, wall_tiles.get_tile(60))
-    tileset.set_tile(codepoint.WALL_LB, wall_tiles.get_tile(62))
-    tileset.set_tile(codepoint.WALL_AR, wall_tiles.get_tile(100))
-    tileset.set_tile(codepoint.WALL_LA, wall_tiles.get_tile(102))
-    tileset.set_tile(codepoint.WALL_ARB, wall_tiles.get_tile(83))
-    tileset.set_tile(codepoint.WALL_LAB, wall_tiles.get_tile(85))
-    tileset.set_tile(codepoint.WALL_LRB, wall_tiles.get_tile(64))
-    tileset.set_tile(codepoint.WALL_LAR, wall_tiles.get_tile(104))
-    tileset.set_tile(codepoint.WALL_LARB, wall_tiles.get_tile(84))
-
-    door_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Objects/Door0.png", 8, 6, range(48)
-    )
-    tileset.set_tile(codepoint.DOOR_H, door_tiles.get_tile(0))
-    tileset.set_tile(codepoint.DOOR_V, door_tiles.get_tile(1))
-
-    player_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
-    )
-    tileset.set_tile(codepoint.PLAYER, player_tiles.get_tile(0))
-
-    rodent_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
-    )
-    tileset.set_tile(codepoint.RAT, rodent_tiles.get_tile(9))
-
-    humanoid_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
-    )
-    tileset.set_tile(codepoint.TROLL, humanoid_tiles.get_tile(0))
-    tileset.set_tile(codepoint.ORC, humanoid_tiles.get_tile(64))
-
-    potion_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)
-    )
-    tileset.set_tile(codepoint.POTION, potion_tiles.get_tile(0))
-
-    scroll_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Items/Scroll.png", 8, 6, range(8*6)
-    )
-    tileset.set_tile(codepoint.SCROLL, scroll_tiles.get_tile(0))
-
-    redjack = tcod.tileset.load_tilesheet(
-        "assets/Redjack17.png", 16, 16, range(16*16)
-    )
-    tileset.set_tile(codepoint.CORPSE, redjack.get_tile((16*15)+13))
-    tileset.set_tile(codepoint.STAIRS_UP, redjack.get_tile((16*3)+12))
-    tileset.set_tile(codepoint.STAIRS_DOWN, redjack.get_tile((16*3)+14))
+    # Load all the game graphics, assigning them private-use characters.
+    graphics.load_into(tileset)
 
     return tileset
 

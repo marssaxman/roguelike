@@ -1,7 +1,7 @@
 from typing import Tuple
 import numpy as np  # type: ignore
 
-import codepoint as cp
+import graphics
 
 # Tile graphics structured type compatible with Console.tiles_rgb.
 graphic_dt = np.dtype(
@@ -56,36 +56,36 @@ SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 floor = new_tile(
     walkable=True,
     transparent=True,
-    dark=(cp.SPACE, (127, 127, 127), (50, 50, 150)),
-    light=(cp.SPACE, (255, 255, 255), (200, 180, 50)),
+    dark=(ord(" "), (127, 127, 127), (50, 50, 150)),
+    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
 )
 
-door = new_door(cp.DOOR)
-door_H = new_door(cp.DOOR_H)
-door_V = new_door(cp.DOOR_V)
-wall = new_wall(cp.WALL)
-wall_L = new_wall(cp.WALL_L)
-wall_A = new_wall(cp.WALL_A)
-wall_R = new_wall(cp.WALL_R)
-wall_B = new_wall(cp.WALL_B)
-wall_LR = new_wall(cp.WALL_LR)
-wall_AB = new_wall(cp.WALL_AB)
-wall_RB = new_wall(cp.WALL_RB)
-wall_LB = new_wall(cp.WALL_LB)
-wall_AR = new_wall(cp.WALL_AR)
-wall_LA = new_wall(cp.WALL_LA)
-wall_ARB = new_wall(cp.WALL_ARB)
-wall_LAB = new_wall(cp.WALL_LAB)
-wall_LRB = new_wall(cp.WALL_LRB)
-wall_LAR = new_wall(cp.WALL_LAR)
-wall_LARB = new_wall(cp.WALL_LARB)
+door = new_door(graphics.DOOR)
+door_H = new_door(graphics.DOOR_H)
+door_V = new_door(graphics.DOOR_V)
+wall = new_wall(graphics.WALL)
+wall_L = new_wall(graphics.WALL_L)
+wall_A = new_wall(graphics.WALL_A)
+wall_R = new_wall(graphics.WALL_R)
+wall_B = new_wall(graphics.WALL_B)
+wall_LR = new_wall(graphics.WALL_LR)
+wall_AB = new_wall(graphics.WALL_AB)
+wall_RB = new_wall(graphics.WALL_RB)
+wall_LB = new_wall(graphics.WALL_LB)
+wall_AR = new_wall(graphics.WALL_AR)
+wall_LA = new_wall(graphics.WALL_LA)
+wall_ARB = new_wall(graphics.WALL_ARB)
+wall_LAB = new_wall(graphics.WALL_LAB)
+wall_LRB = new_wall(graphics.WALL_LRB)
+wall_LAR = new_wall(graphics.WALL_LAR)
+wall_LARB = new_wall(graphics.WALL_LARB)
 
 
 
 down_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(cp.STAIRS_UP, (0, 0, 100), (50, 50, 150)),
-    light=(cp.STAIRS_UP, (255, 255, 255), (200, 180, 50)),
+    dark=(graphics.STAIRS_UP, (0, 0, 100), (50, 50, 150)),
+    light=(graphics.STAIRS_UP, (255, 255, 255), (200, 180, 50)),
 )
 
