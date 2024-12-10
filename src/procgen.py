@@ -126,8 +126,8 @@ def populate_rooms(
         place_entities(room, dungeon, floor, rng)
     # Put the exit stairway somewhere in the last room
     stairs_x, stairs_y = room.random_location(rng)
-    dungeon.tiles[stairs_x, stairs_y] = tile_types.down_stairs
-    dungeon.downstairs_location = stairs_x, stairs_y
+    dungeon.tiles[stairs_x, stairs_y] = tile_types.exit_stairs
+    dungeon.exit_location = stairs_x, stairs_y
 
 
 def generate_dungeon(

@@ -82,10 +82,17 @@ wall_LARB = new_wall(graphics.WALL_LARB)
 
 
 
-down_stairs = new_tile(
+exit_stairs = new_tile(
     walkable=True,
     transparent=True,
     dark=(graphics.STAIRS_UP, (0, 0, 100), (50, 50, 150)),
     light=(graphics.STAIRS_UP, (255, 255, 255), (200, 180, 50)),
+)
+
+entry_stairs = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(graphics.STAIRS_DOWN, (0, 0, 100), (50, 50, 150)),
+    light=(graphics.STAIRS_DOWN, (255, 255, 255), (200, 180, 50)),
 )
 

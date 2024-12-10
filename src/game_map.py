@@ -27,7 +27,7 @@ class GameMap:
         self.tiles = np.full(shape, fill_value=tile_types.wall, order="F")
         self.visible = np.full(shape, fill_value=False, order="F")
         self.explored = np.full(shape, fill_value=False, order="F")
-        self.downstairs_location = (0, 0)
+        self.exit_location = (0, 0)
         self.render_origin = (0, 0)
 
     @property
