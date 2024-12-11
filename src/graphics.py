@@ -11,11 +11,14 @@ def _alloc():
     _next_codepoint += 1
     return ret
 
+def _alloc_pair():
+    return _alloc(), _alloc()
+
 # directional entity graphics
-PLAYER = (_alloc(), _alloc())
-RAT = (_alloc(), _alloc())
-ORC = (_alloc(), _alloc())
-TROLL = (_alloc(), _alloc())
+PLAYER = _alloc_pair(), _alloc_pair()
+RAT = _alloc_pair(), _alloc_pair()
+ORC = _alloc_pair(), _alloc_pair()
+TROLL = _alloc_pair(), _alloc_pair()
 
 CORPSE = _alloc()
 
@@ -90,21 +93,36 @@ def load_into(tileset):
     tileset.set_tile(DOOR_H, door_tiles.get_tile(0))
     tileset.set_tile(DOOR_V, door_tiles.get_tile(1))
 
-    player_tiles = tcod.tileset.load_tilesheet(
+
+    player0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
     )
-    _set_mirrored(tileset, PLAYER, player_tiles.get_tile(0))
+    _set_mirrored(tileset, PLAYER[0], player0_tiles.get_tile(0))
+    player1_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Characters/Player1.png", 8, 15, range(8*15)
+    )
+    _set_mirrored(tileset, PLAYER[1], player1_tiles.get_tile(0))
 
-    rodent_tiles = tcod.tileset.load_tilesheet(
+
+    rodent0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
     )
-    _set_mirrored(tileset, RAT, rodent_tiles.get_tile(9))
+    _set_mirrored(tileset, RAT[0], rodent0_tiles.get_tile(9))
+    rodent1_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Characters/Rodent1.png", 8, 4, range(8*4)
+    )
+    _set_mirrored(tileset, RAT[1], rodent1_tiles.get_tile(9))
 
-    humanoid_tiles = tcod.tileset.load_tilesheet(
+    humanoid0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
     )
-    _set_mirrored(tileset, TROLL, humanoid_tiles.get_tile(0))
-    _set_mirrored(tileset, ORC, humanoid_tiles.get_tile(64))
+    humanoid1_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Characters/Humanoid1.png", 8, 27, range(8*17)
+    )
+    _set_mirrored(tileset, TROLL[0], humanoid0_tiles.get_tile(0))
+    _set_mirrored(tileset, TROLL[1], humanoid1_tiles.get_tile(0))
+    _set_mirrored(tileset, ORC[0], humanoid0_tiles.get_tile(64))
+    _set_mirrored(tileset, ORC[1], humanoid1_tiles.get_tile(64))
 
     potion_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)

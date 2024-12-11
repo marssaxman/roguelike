@@ -74,7 +74,7 @@ def main():
                 context.present(root_console, integer_scaling=True)
 
                 try:
-                    for event in tcod.event.wait():
+                    for event in tcod.event.wait(timeout=0.3):
                         context.convert_event(event)
                         handler = handler.handle_events(event)
                 except Exception:  # Handle exceptions in game.

@@ -4,15 +4,21 @@ from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from components.appearance import Static, Directional
+from components.appearance import Static, Directional, Looped
 from entity import Actor, Item
 import graphics
 
 player = Actor(
-    appearance=Directional(
-        left=Static(char=graphics.PLAYER[0], color=(255, 255, 255)),
-        right=Static(char=graphics.PLAYER[1], color=(255, 255, 255)),
-    ),
+    appearance=Looped((
+        Directional(
+            left=Static(char=graphics.PLAYER[0][0], color=(255, 255, 255)),
+            right=Static(char=graphics.PLAYER[0][1], color=(255, 255, 255)),
+        ),
+        Directional(
+            left=Static(char=graphics.PLAYER[1][0], color=(255, 255, 255)),
+            right=Static(char=graphics.PLAYER[1][1], color=(255, 255, 255)),
+        ),
+    )),
     name="Player",
     ai_cls=Passive,
     equipment=Equipment(),
@@ -22,10 +28,16 @@ player = Actor(
 )
 
 orc = Actor(
-    appearance=Directional(
-        left=Static(char=graphics.ORC[0], color=(63, 127, 63)),
-        right=Static(char=graphics.ORC[1], color=(63, 127, 63)),
-    ),
+    appearance=Looped((
+        Directional(
+            left=Static(char=graphics.ORC[0][0], color=(63, 127, 63)),
+            right=Static(char=graphics.ORC[0][1], color=(63, 127, 63)),
+        ),
+        Directional(
+            left=Static(char=graphics.ORC[1][0], color=(63, 127, 63)),
+            right=Static(char=graphics.ORC[1][1], color=(63, 127, 63)),
+        ),
+    )),
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -35,10 +47,16 @@ orc = Actor(
 )
 
 troll=Actor(
-    appearance=Directional(
-        left=Static(char=graphics.TROLL[0], color=(0, 127, 0)),
-        right=Static(char=graphics.TROLL[1], color=(0, 127, 0)),
-    ),
+    appearance=Looped((
+        Directional(
+            left=Static(char=graphics.TROLL[0][0], color=(0, 127, 0)),
+            right=Static(char=graphics.TROLL[0][1], color=(0, 127, 0)),
+        ),
+        Directional(
+            left=Static(char=graphics.TROLL[1][0], color=(0, 127, 0)),
+            right=Static(char=graphics.TROLL[1][1], color=(0, 127, 0)),
+        ),
+    )),
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -48,10 +66,16 @@ troll=Actor(
 )
 
 rat=Actor(
-    appearance=Directional(
-        left=Static(char=graphics.RAT[0], color=(127, 127, 200)),
-        right=Static(char=graphics.RAT[1], color=(127, 127, 200)),
-    ),
+    appearance=Looped((
+        Directional(
+            left=Static(char=graphics.RAT[0][0], color=(127, 127, 200)),
+            right=Static(char=graphics.RAT[0][1], color=(127, 127, 200)),
+        ),
+        Directional(
+            left=Static(char=graphics.RAT[1][0], color=(127, 127, 200)),
+            right=Static(char=graphics.RAT[1][1], color=(127, 127, 200)),
+        ),
+    )),
     name="Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=4, base_defense=0, base_power=3),

@@ -195,6 +195,7 @@ class GameMap:
         for entity in entities_sorted_for_rendering:
             if not self.visible[entity.x, entity.y]:
                 continue
+            entity.appearance.animate()
             char, color = entity.appearance.render()
             # entity char can be a string or a codepoint; we draw codepoints
             if isinstance(char, str):

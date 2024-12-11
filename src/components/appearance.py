@@ -10,6 +10,8 @@ class Appearance(BaseComponent):
         return "?", (255, 255, 255)
     def move(self, dx: int, dy: int) -> None:
         pass
+    def animate(self) -> None:
+        pass
 
 
 class Default(Appearance):
@@ -39,7 +41,29 @@ class Directional(Appearance):
             self.current = self.right
         # if no horizontal motion, don't change appearance
 
+    def animate(self) -> None:
+        self.left.animate()
+        self.right.animate()
+
     def render(self):
         return self.current.render()
 
+
+class Looped(Appearance):
+    """Cycle through a sequence of different appearances on each render."""
+    def __init__(self, loop):
+        self.loop = loop
+        self.pos = 0
+
+    def move(self, dx: int, dy: int) -> None:
+        for a in self.loop:
+            a.move(dx, dy)
+
+    def animate(self):
+        self.pos += 1
+        if self.pos >= len(self.loop):
+            self.pos = 0
+
+    def render(self):
+        return self.loop[self.pos].render()
 
