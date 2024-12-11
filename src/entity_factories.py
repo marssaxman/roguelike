@@ -10,8 +10,8 @@ import graphics
 
 player = Actor(
     appearance=Directional(
-        left=Static(char=graphics.PLAYER_LEFT, color=(255, 255, 255)),
-        right=Static(char=graphics.PLAYER_RIGHT, color=(255, 255, 255)),
+        left=Static(char=graphics.PLAYER[0], color=(255, 255, 255)),
+        right=Static(char=graphics.PLAYER[1], color=(255, 255, 255)),
     ),
     name="Player",
     ai_cls=Passive,
@@ -22,7 +22,10 @@ player = Actor(
 )
 
 orc = Actor(
-    appearance=Static(char=graphics.ORC, color=(63, 127, 63)),
+    appearance=Directional(
+        left=Static(char=graphics.ORC[0], color=(63, 127, 63)),
+        right=Static(char=graphics.ORC[1], color=(63, 127, 63)),
+    ),
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -32,7 +35,10 @@ orc = Actor(
 )
 
 troll=Actor(
-    appearance=Static(char=graphics.TROLL, color=(0, 127, 0)),
+    appearance=Directional(
+        left=Static(char=graphics.TROLL[0], color=(0, 127, 0)),
+        right=Static(char=graphics.TROLL[1], color=(0, 127, 0)),
+    ),
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -42,7 +48,10 @@ troll=Actor(
 )
 
 rat=Actor(
-    appearance=Static(char=graphics.RAT, color=(127, 127, 200)),
+    appearance=Directional(
+        left=Static(char=graphics.RAT[0], color=(127, 127, 200)),
+        right=Static(char=graphics.RAT[1], color=(127, 127, 200)),
+    ),
     name="Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=4, base_defense=0, base_power=3),

@@ -11,11 +11,11 @@ def _alloc():
     _next_codepoint += 1
     return ret
 
-PLAYER_LEFT = _alloc()
-PLAYER_RIGHT = _alloc()
-RAT = _alloc()
-ORC = _alloc()
-TROLL = _alloc()
+# directional entity graphics
+PLAYER = (_alloc(), _alloc())
+RAT = (_alloc(), _alloc())
+ORC = (_alloc(), _alloc())
+TROLL = (_alloc(), _alloc())
 
 CORPSE = _alloc()
 
@@ -45,6 +45,12 @@ STAIRS_DOWN = _alloc()
 
 POTION = _alloc()
 SCROLL = _alloc()
+
+def _set_mirrored(tileset, left_right, image):
+    left, right = left_right
+    tileset.set_tile(left, image)
+    tileset.set_tile(right, image[...,::-1,:])
+
 
 def load_into(tileset):
     """Load all the graphics we might use and assign them codepoints."""
@@ -87,20 +93,18 @@ def load_into(tileset):
     player_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
     )
-    player_img = player_tiles.get_tile(0)
-    tileset.set_tile(PLAYER_LEFT, player_img)
-    tileset.set_tile(PLAYER_RIGHT, player_img[...,::-1,:])
+    _set_mirrored(tileset, PLAYER, player_tiles.get_tile(0))
 
     rodent_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
     )
-    tileset.set_tile(RAT, rodent_tiles.get_tile(9))
+    _set_mirrored(tileset, RAT, rodent_tiles.get_tile(9))
 
     humanoid_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
     )
-    tileset.set_tile(TROLL, humanoid_tiles.get_tile(0))
-    tileset.set_tile(ORC, humanoid_tiles.get_tile(64))
+    _set_mirrored(tileset, TROLL, humanoid_tiles.get_tile(0))
+    _set_mirrored(tileset, ORC, humanoid_tiles.get_tile(64))
 
     potion_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)
