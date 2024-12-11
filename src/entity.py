@@ -5,6 +5,7 @@ import math
 from typing import Optional, Tuple, TypeVar, TYPE_CHECKING, Union
 
 from render_order import RenderOrder
+from components import appearance
 
 if TYPE_CHECKING:
     from components.ai import BaseAI
@@ -14,6 +15,7 @@ if TYPE_CHECKING:
     from components.fighter import Fighter
     from components.inventory import Inventory
     from components.level import Level
+    from components.appearance import Appearance
     from game_map import GameMap
 
 T = TypeVar("T", bound="Entity")
@@ -29,16 +31,14 @@ class Entity:
         parent: Optional[GameMap] = None,
         x: int = 0,
         y: int = 0,
-        char: str = "?",
-        color: Tuple[int, int, int] = (255,255,255),
+        appearance: Appearance = appearance.Default(),
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
-        render_order: RenderOrder = RenderOrder.CORPSE,
+        render_order: RenderOrder = RenderOrder.LAST,
     ):
         self.x = x
         self.y = y
-        self.char = char
-        self.color = color
+        self.appearance = appearance
         self.name = name
         self.blocks_movement = blocks_movement
         self.render_order = render_order
@@ -86,8 +86,7 @@ class Actor(Entity):
         *,
         x: int = 0,
         y: int = 0,
-        char: str = "?",
-        color: Tuple[int, int, int] = (255, 255, 255),
+        appearance: Appearance = appearance.Default(),
         name: str = "<Unnamed>",
         ai_cls: Type[BaseAI],
         equipment: Equipment,
@@ -98,8 +97,7 @@ class Actor(Entity):
         super().__init__(
             x=x,
             y=y,
-            char=char,
-            color=color,
+            appearance=appearance,
             name=name,
             blocks_movement=True,
             render_order=RenderOrder.ACTOR,
@@ -116,7 +114,7 @@ class Actor(Entity):
         self.inventory.parent = self
 
         self.level = level
-        self.level.parent = self        
+        self.level.parent = self
 
     @property
     def is_alive(self) -> bool:
@@ -130,18 +128,15 @@ class Item(Entity):
         *,
         x: int = 0,
         y: int = 0,
-        char: str = "?",
-        color: Tuple[int, int, int] = (255, 255, 255),
+        appearance: Appearance = appearance.Default(),
         name: str = "<Unnamed>",
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
-        
     ):
         super().__init__(
             x=x,
             y=y,
-            char=char,
-            color=color,
+            appearance=appearance,
             name=name,
             blocks_movement=False,
             render_order=RenderOrder.ITEM,

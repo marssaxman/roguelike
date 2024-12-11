@@ -195,14 +195,14 @@ class GameMap:
         for entity in entities_sorted_for_rendering:
             if not self.visible[entity.x, entity.y]:
                 continue
-            char = entity.char
+            char, color = entity.appearance.render()
             # entity char can be a string or a codepoint; we draw codepoints
             if isinstance(char, str):
                 char = ord(char)
             x, y = entity.x - adjust_x, entity.y - adjust_y
             # reuse the tile's existing background color
             bg = window[x, y][2]
-            window[x, y] = (char, entity.color, bg)
+            window[x, y] = (char, color, bg)
 
         # Save the map-relative coordinate for the origin point in the
         # rendering window. This value can then be added to a position within

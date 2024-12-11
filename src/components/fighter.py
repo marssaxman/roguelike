@@ -5,6 +5,7 @@ import color
 import graphics
 
 from components.base_component import BaseComponent
+from components.appearance import Static
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
@@ -59,8 +60,7 @@ class Fighter(BaseComponent):
         else:
             death_message = f"{self.parent.name} is an idiot!"
             death_message_color = color.enemy_die
-        self.parent.char = graphics.CORPSE
-        self.parent.color = (191, 0, 0)
+        self.parent.appearance = Static(graphics.CORPSE, (191, 0, 0))
         self.parent.blocks_movement = False
         self.parent.ai = None
         self.parent.name = f"remains of {self.parent.name}"
