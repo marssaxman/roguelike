@@ -8,17 +8,23 @@ from components.appearance import Static, Directional, Looped
 from entity import Actor, Item
 import graphics
 
+def _ActorAppearance(quad):
+    # Assuming that the graphics module will return image quads for animated,
+    # directional characters, assemble an appropriate Appearance.
+    return Looped((
+        Directional(
+            left=Static(char=quad[0][0], color=(255, 255, 255)),
+            right=Static(char=quad[0][1], color=(255, 255, 255)),
+        ),
+        Directional(
+            left=Static(char=quad[1][0], color=(255, 255, 255)),
+            right=Static(char=quad[1][1], color=(255, 255, 255)),
+        ),
+    ))
+
+
 player = Actor(
-    appearance=Looped((
-        Directional(
-            left=Static(char=graphics.PLAYER[0][0], color=(255, 255, 255)),
-            right=Static(char=graphics.PLAYER[0][1], color=(255, 255, 255)),
-        ),
-        Directional(
-            left=Static(char=graphics.PLAYER[1][0], color=(255, 255, 255)),
-            right=Static(char=graphics.PLAYER[1][1], color=(255, 255, 255)),
-        ),
-    )),
+    appearance=_ActorAppearance(graphics.PLAYER),
     name="Player",
     ai_cls=Passive,
     equipment=Equipment(),
@@ -28,16 +34,7 @@ player = Actor(
 )
 
 orc = Actor(
-    appearance=Looped((
-        Directional(
-            left=Static(char=graphics.ORC[0][0], color=(63, 127, 63)),
-            right=Static(char=graphics.ORC[0][1], color=(63, 127, 63)),
-        ),
-        Directional(
-            left=Static(char=graphics.ORC[1][0], color=(63, 127, 63)),
-            right=Static(char=graphics.ORC[1][1], color=(63, 127, 63)),
-        ),
-    )),
+    appearance=_ActorAppearance(graphics.ORC),
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -47,16 +44,7 @@ orc = Actor(
 )
 
 troll=Actor(
-    appearance=Looped((
-        Directional(
-            left=Static(char=graphics.TROLL[0][0], color=(0, 127, 0)),
-            right=Static(char=graphics.TROLL[0][1], color=(0, 127, 0)),
-        ),
-        Directional(
-            left=Static(char=graphics.TROLL[1][0], color=(0, 127, 0)),
-            right=Static(char=graphics.TROLL[1][1], color=(0, 127, 0)),
-        ),
-    )),
+    appearance=_ActorAppearance(graphics.TROLL),
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -66,16 +54,7 @@ troll=Actor(
 )
 
 rat=Actor(
-    appearance=Looped((
-        Directional(
-            left=Static(char=graphics.RAT[0][0], color=(127, 127, 200)),
-            right=Static(char=graphics.RAT[0][1], color=(127, 127, 200)),
-        ),
-        Directional(
-            left=Static(char=graphics.RAT[1][0], color=(127, 127, 200)),
-            right=Static(char=graphics.RAT[1][1], color=(127, 127, 200)),
-        ),
-    )),
+    appearance=_ActorAppearance(graphics.RAT),
     name="Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=4, base_defense=0, base_power=3),
