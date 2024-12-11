@@ -4,23 +4,17 @@ from components.base_component import BaseComponent
 
 
 class Appearance(BaseComponent):
-    def __init__(
-        self,
-        equipment_type: EquipmentType,
-        power_bonus: int = 0,
-        defense_bonus: int = 0,
-    ):
-        self.equipment_type = equipment_type
-
-        self.power_bonus = power_bonus
-        self.defense_bonus = defense_bonus
+    def __init__(self):
+        pass
+    def render(self):
+        return "?", (255, 255, 255)
+    def move(self, dx: int, dy: int) -> None:
+        pass
 
 
 class Default(Appearance):
     def __init__(self):
         pass
-    def render(self):
-        return "?", (255, 255, 255)
 
 
 class Static(Appearance):
@@ -32,11 +26,20 @@ class Static(Appearance):
 
 
 class Directional(Appearance):
-    def __init__(self, left, right, color):
+    """Pick left or right appearance depending on last horizontal motion."""
+    def __init__(self, left: Appearance, right: Appearance):
         self.left = left
         self.right = right
-        self.color = color
+        self.current = left # arbitrary
+
+    def move(self, dx: int, dy: int) -> None:
+        if dx < 0:
+            self.current = self.left
+        elif dx > 0:
+            self.current = self.right
+        # if no horizontal motion, don't change appearance
+
     def render(self):
-        return self.left, self.color
+        return self.current.render()
 
 

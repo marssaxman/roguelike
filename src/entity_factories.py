@@ -4,12 +4,15 @@ from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from components.appearance import Static
+from components.appearance import Static, Directional
 from entity import Actor, Item
 import graphics
 
 player = Actor(
-    appearance=Static(char=graphics.PLAYER, color=(255, 255, 255)),
+    appearance=Directional(
+        left=Static(char=graphics.PLAYER_LEFT, color=(255, 255, 255)),
+        right=Static(char=graphics.PLAYER_RIGHT, color=(255, 255, 255)),
+    ),
     name="Player",
     ai_cls=Passive,
     equipment=Equipment(),

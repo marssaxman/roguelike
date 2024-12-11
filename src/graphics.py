@@ -11,7 +11,8 @@ def _alloc():
     _next_codepoint += 1
     return ret
 
-PLAYER = _alloc()
+PLAYER_LEFT = _alloc()
+PLAYER_RIGHT = _alloc()
 RAT = _alloc()
 ORC = _alloc()
 TROLL = _alloc()
@@ -86,7 +87,9 @@ def load_into(tileset):
     player_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
     )
-    tileset.set_tile(PLAYER, player_tiles.get_tile(0))
+    player_img = player_tiles.get_tile(0)
+    tileset.set_tile(PLAYER_LEFT, player_img)
+    tileset.set_tile(PLAYER_RIGHT, player_img[...,::-1,:])
 
     rodent_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)

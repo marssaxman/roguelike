@@ -78,6 +78,8 @@ class Entity:
         # Move the entity by a given amount
         self.x += dx
         self.y += dy
+        # Inform the appearance, in case it changes with direction
+        self.appearance.move(dx, dy)
 
 
 class Actor(Entity):
