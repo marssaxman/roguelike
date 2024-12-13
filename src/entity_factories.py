@@ -4,27 +4,13 @@ from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from components.appearance import Static, Directional, Looped
+from components.appearance import Static
 from entity import Actor, Item
 import graphics
 
-def _ActorAppearance(quad):
-    # Assuming that the graphics module will return image quads for animated,
-    # directional characters, assemble an appropriate Appearance.
-    return Looped((
-        Directional(
-            left=Static(char=quad[0][0], color=(255, 255, 255)),
-            right=Static(char=quad[0][1], color=(255, 255, 255)),
-        ),
-        Directional(
-            left=Static(char=quad[1][0], color=(255, 255, 255)),
-            right=Static(char=quad[1][1], color=(255, 255, 255)),
-        ),
-    ))
-
 
 player = Actor(
-    appearance=_ActorAppearance(graphics.PLAYER),
+    appearance=graphics.player,
     name="Player",
     ai_cls=Passive,
     equipment=Equipment(),
@@ -34,7 +20,7 @@ player = Actor(
 )
 
 orc = Actor(
-    appearance=_ActorAppearance(graphics.ORC),
+    appearance=graphics.orc,
     name="Orc",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -44,7 +30,7 @@ orc = Actor(
 )
 
 troll=Actor(
-    appearance=_ActorAppearance(graphics.TROLL),
+    appearance=graphics.troll,
     name="Troll",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
@@ -54,7 +40,7 @@ troll=Actor(
 )
 
 rat=Actor(
-    appearance=_ActorAppearance(graphics.RAT),
+    appearance=graphics.rat,
     name="Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=4, base_defense=0, base_power=3),

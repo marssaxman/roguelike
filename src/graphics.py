@@ -1,5 +1,19 @@
 
 import tcod
+from components import appearance
+
+"""
+Load the graphic tiles we will use from the files in the assets directory.
+Allocate a private-use codepoint for each graphic.
+Create appearances which govern the use and animation of these graphics.
+
+The main program must call `load_into`, passing in the tcod tileset. This will
+load all the graphics into the tileset under the allocated codepoints.
+
+Published codepoints are names in ALL_CAPS. Appearance objects are published
+using lower_case names.
+"""
+
 
 # Basic multilingual plane private use area: 6400 code points
 PUA = 0xE000
@@ -14,12 +28,42 @@ def _alloc():
 def _alloc_pair():
     return _alloc(), _alloc()
 
-# directional entity graphics
-PLAYER = _alloc_pair(), _alloc_pair()
-RAT = _alloc_pair(), _alloc_pair()
-ORC = _alloc_pair(), _alloc_pair()
-TROLL = _alloc_pair(), _alloc_pair()
+def _alloc_actor():
+    # inner pairs are the left and right directionals
+    # outer pair represents 0/1 animation frames
+    return _alloc_pair(), _alloc_pair()
 
+def _actor_appearance(quad):
+    # Using an actor quad returned by _alloc_actor(), create an Appearance
+    return appearance.Looped((
+        appearance.Directional(
+            left=appearance.Static(char=quad[0][0], color=(255, 255, 255)),
+            right=appearance.Static(char=quad[0][1], color=(255, 255, 255)),
+        ),
+        appearance.Directional(
+            left=appearance.Static(char=quad[1][0], color=(255, 255, 255)),
+            right=appearance.Static(char=quad[1][1], color=(255, 255, 255)),
+        ),
+    ))
+
+
+# We have to store the codepoints we allocated, instead of just passing them
+# directly in to the appearance constructor, so we can load the relevant
+# graphic tiles in later.
+_PLAYER = _alloc_actor()
+player = _actor_appearance(_PLAYER)
+
+_RAT = _alloc_pair(), _alloc_pair()
+rat = _actor_appearance(_RAT)
+
+_ORC = _alloc_pair(), _alloc_pair()
+orc = _actor_appearance(_ORC)
+
+_TROLL = _alloc_pair(), _alloc_pair()
+troll = _actor_appearance(_TROLL)
+
+
+# The rest of these are just codepoints.
 CORPSE = _alloc()
 
 COLUMN = _alloc()
@@ -97,21 +141,21 @@ def load_into(tileset):
     player0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
     )
-    _set_mirrored(tileset, PLAYER[0], player0_tiles.get_tile(0))
+    _set_mirrored(tileset, _PLAYER[0], player0_tiles.get_tile(0))
     player1_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player1.png", 8, 15, range(8*15)
     )
-    _set_mirrored(tileset, PLAYER[1], player1_tiles.get_tile(0))
+    _set_mirrored(tileset, _PLAYER[1], player1_tiles.get_tile(0))
 
 
     rodent0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
     )
-    _set_mirrored(tileset, RAT[0], rodent0_tiles.get_tile(9))
+    _set_mirrored(tileset, _RAT[0], rodent0_tiles.get_tile(9))
     rodent1_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent1.png", 8, 4, range(8*4)
     )
-    _set_mirrored(tileset, RAT[1], rodent1_tiles.get_tile(9))
+    _set_mirrored(tileset, _RAT[1], rodent1_tiles.get_tile(9))
 
     humanoid0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
@@ -119,10 +163,10 @@ def load_into(tileset):
     humanoid1_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid1.png", 8, 27, range(8*17)
     )
-    _set_mirrored(tileset, TROLL[0], humanoid0_tiles.get_tile(0))
-    _set_mirrored(tileset, TROLL[1], humanoid1_tiles.get_tile(0))
-    _set_mirrored(tileset, ORC[0], humanoid0_tiles.get_tile(64))
-    _set_mirrored(tileset, ORC[1], humanoid1_tiles.get_tile(64))
+    _set_mirrored(tileset, _TROLL[0], humanoid0_tiles.get_tile(0))
+    _set_mirrored(tileset, _TROLL[1], humanoid1_tiles.get_tile(0))
+    _set_mirrored(tileset, _ORC[0], humanoid0_tiles.get_tile(64))
+    _set_mirrored(tileset, _ORC[1], humanoid1_tiles.get_tile(64))
 
     potion_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)
