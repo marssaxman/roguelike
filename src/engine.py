@@ -21,11 +21,13 @@ class Engine:
     message_log: MessageLog
     mouse_location: Tuple[int, int] # map coordinates, not console coordinates
     player: Actor
+    rng: np.random.Generator
 
-    def __init__(self, player: Actor):
+    def __init__(self, player: Actor, rng: np.random.Generator):
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+        self.rng = rng
 
     def save_as(self, filename: str) -> None:
         """Save this game engine instance as a compressed file."""

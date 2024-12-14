@@ -142,8 +142,7 @@ def generate_dungeon(
     player = engine.player
     dungeon = GameMap(engine, map_shape, entities=[player])
 
-    # temporary: this should become part of the Engine
-    rng = np.random.default_rng()
+    rng = engine.rng
     level = maze.create.level(shape=map_shape, rng=rng)
 
     palette = maze.render.Palette(

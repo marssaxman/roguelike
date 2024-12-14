@@ -6,6 +6,8 @@ import lzma
 import pickle
 import traceback
 from typing import Optional
+import numpy as np
+import time
 
 import tcod
 from tcod import libtcodpy
@@ -25,10 +27,13 @@ def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
     map_shape = 50, 50
     tower_floors = 10
+    # TODO: provide seed as an argument so the same game can be replayed
+    seed = np.int64(time.time_ns())
+    rng = np.random.default_rng(seed)
 
     player = copy.deepcopy(entity_factories.player)
 
-    engine = Engine(player=player)
+    engine = Engine(player=player, rng=rng)
     engine.game_world = GameWorld(
         engine=engine,
         tower_floors=tower_floors,
