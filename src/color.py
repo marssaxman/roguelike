@@ -26,3 +26,20 @@ bar_empty = (0x40, 0x10, 0x10)
 menu_title = (255, 255, 63)
 menu_text = white
 
+
+# Kate Morley's 12-bit rainbow palette, described here:
+# https://iamkate.com/data/12-bit-rainbow/
+rainbow = [
+    (136, 17, 119), #817
+    (170, 51, 85), #a35
+    (204, 102, 102), #c66
+    (238, 153, 68), #e94
+    (238, 221, 0), #ed0
+    (153, 221, 85), #9d5
+    (68, 221, 136), #4d8
+    (34, 204, 187), #2cb
+    (0, 187, 204), #0bc
+    (0, 153, 204), #09c
+    (51, 102, 187), #36b
+    (10, 51, 153), #639
+]
