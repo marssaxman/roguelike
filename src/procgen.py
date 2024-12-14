@@ -140,10 +140,10 @@ def generate_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_shape, entities=[player])
 
     rng = engine.rng
     level = maze.create.level(shape=map_shape, rng=rng)
+    dungeon = GameMap(engine, map_shape, entities=[player])
 
     palette = maze.render.Palette(
         void = tile_types.wall,

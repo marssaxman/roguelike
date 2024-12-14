@@ -1,11 +1,10 @@
 from typing import Tuple
 from engine import Engine
-
+import maze.create
 
 class GameWorld:
    """
-   Holds the settings for the GameMap, and generates new maps when moving down
-   the stairs.
+   Contains all the state for the entire game.
    """
 
    def __init__(
@@ -21,7 +20,16 @@ class GameWorld:
         self.tower_floors = tower_floors
         self.current_floor = current_floor
 
-   def generate_floor(self) -> None:
+        box_size = max(4, int((map_shape[0]+map_shape[1])//16))
+
+        self.tower = maze.create.tower(
+            shape=map_shape,
+            box_size=box_size,
+            stories=tower_floors,
+            rng=engine.rng,
+        )
+
+   def go_to_next_level(self) -> None:
         from procgen import generate_dungeon
 
         self.current_floor += 1
