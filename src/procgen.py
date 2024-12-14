@@ -36,7 +36,11 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.orc, 80), (entity_factories.rat, 100), (entity_factories.silly, 200)],
+    0: [
+        (entity_factories.orc, 80),
+        (entity_factories.rat, 100),
+        (entity_factories.silly, 20)
+    ],
     3: [(entity_factories.troll, 15)],
     5: [(entity_factories.troll, 30)],
     7: [(entity_factories.troll, 60)],
@@ -131,9 +135,6 @@ def populate_rooms(
 
 
 def generate_dungeon(
-    max_rooms: int,
-    room_min_size: int,
-    room_max_size: int,
     map_shape: Tuple[int, int],
     engine: Engine,
 ) -> GameMap:

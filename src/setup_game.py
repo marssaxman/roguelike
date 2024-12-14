@@ -24,18 +24,14 @@ background_image = tcod.image.load("assets/menu_background.png")[:, :, :3]
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
     map_shape = 50, 50
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
+    tower_floors = 10
 
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
     engine.game_world = GameWorld(
         engine=engine,
-        max_rooms=max_rooms,
-        room_min_size=room_min_size,
-        room_max_size=room_max_size,
+        tower_floors=tower_floors,
         map_shape=map_shape,
     )
     engine.game_world.generate_floor()

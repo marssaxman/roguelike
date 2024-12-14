@@ -13,16 +13,12 @@ class GameWorld:
         *,
         engine: Engine,
         map_shape: Tuple[int, int],
-        max_rooms: int,
-        room_min_size: int,
-        room_max_size: int,
+        tower_floors: int,
         current_floor: int = 0
     ):
         self.engine = engine
         self.map_shape = map_shape
-        self.max_rooms = max_rooms
-        self.room_min_size = room_min_size
-        self.room_max_size = room_max_size
+        self.tower_floors = tower_floors
         self.current_floor = current_floor
 
    def generate_floor(self) -> None:
@@ -31,9 +27,6 @@ class GameWorld:
         self.current_floor += 1
 
         self.engine.game_map = generate_dungeon(
-            max_rooms=self.max_rooms,
-            room_min_size=self.room_min_size,
-            room_max_size=self.room_max_size,
             map_shape=self.map_shape,
             engine=self.engine,
         )
