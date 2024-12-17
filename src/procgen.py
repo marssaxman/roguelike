@@ -135,14 +135,14 @@ def populate_rooms(
 
 
 def generate_dungeon(
-    map_shape: Tuple[int, int],
+    base_map: maze.basemap.BaseMap,
     engine: Engine,
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
 
     rng = engine.rng
-    level = maze.create.level(shape=map_shape, rng=rng)
+    map_shape = base_map.shape
     dungeon = GameMap(engine, map_shape, entities=[player])
 
     palette = maze.render.Palette(
@@ -170,10 +170,10 @@ def generate_dungeon(
         wall_LAR = tile_types.wall_LAR,
         wall_LARB = tile_types.wall_LARB,
     )
-    maze.render.tiles(level.tiles, dungeon.tiles, palette)
+    maze.render.tiles(base_map.tiles, dungeon.tiles, palette)
 
     # Get only the non-corridor rooms.
-    rooms = [r for r in level.rooms if not r.is_corridor()]
+    rooms = [r for r in base_map.rooms if not r.is_corridor()]
     # Position the player in an arbitrarily chosen room.
     start_point = rooms[0].random_location(rng)
     player.place(*start_point, dungeon)

@@ -35,7 +35,7 @@ class GameWorld:
         self.current_floor += 1
 
         self.engine.game_map = generate_dungeon(
-            map_shape=self.map_shape,
+            base_map = self.tower[-self.current_floor],
             engine=self.engine,
         )
 

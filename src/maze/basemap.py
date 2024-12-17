@@ -128,6 +128,10 @@ class BaseMap:
         self.tiles = tiles
         self.rooms = rooms
 
+    @property
+    def shape(self):
+        return self.tiles.shape
+
 
 
 # Create and manipulate a base map for a game level.
