@@ -121,10 +121,10 @@ def place_entities(
 def populate_rooms(
     dungeon: GameMap,
     rooms: Iterator[RectangularRoom],
+    floor: int,
     rng: np.random.Generator,
 ):
     """Populate all of these rooms with appropriate entities for the level."""
-    floor = dungeon.engine.game_world.current_floor
     for room in rooms:
         # Put some monsters in the room
         place_entities(room, dungeon, floor, rng)
@@ -137,6 +137,7 @@ def populate_rooms(
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,
     engine: Engine,
+    floor: int,
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
@@ -178,6 +179,6 @@ def generate_dungeon(
     start_point = rooms[0].random_location(rng)
     player.place(*start_point, dungeon)
     # Populate each room with appropriate entities.
-    populate_rooms(dungeon, rooms, rng)
+    populate_rooms(dungeon, rooms, floor=floor, rng=rng)
 
     return dungeon

@@ -31,11 +31,14 @@ class GameWorld:
 
    def go_to_next_level(self) -> None:
         from procgen import generate_dungeon
-
-        self.current_floor += 1
-
+        # The dungeon generator thinks the game begins at level 1, but the
+        # tower generator returns an array, which begins at level 0, and
+        # that's why we add 1 to the `floor` parameter instead of incrementing
+        # `current_floor` before calling `generate_dungeon`.
         self.engine.game_map = generate_dungeon(
-            base_map = self.tower[-self.current_floor],
+            base_map = self.tower[self.current_floor],
             engine=self.engine,
+            floor=self.current_floor+1
         )
+        self.current_floor += 1
 
