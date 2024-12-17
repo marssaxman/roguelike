@@ -1,6 +1,7 @@
 
 import tcod
 from components import appearance
+from dataclasses import dataclass
 
 """
 Load the graphic tiles we will use from the files in the assets directory.
@@ -13,7 +14,6 @@ load all the graphics into the tileset under the allocated codepoints.
 Published codepoints are names in ALL_CAPS. Appearance objects are published
 using lower_case names.
 """
-
 
 # Basic multilingual plane private use area: 6400 code points
 PUA = 0xE000
@@ -32,6 +32,67 @@ def _alloc_actor():
     # inner pairs are the left and right directionals
     # outer pair represents 0/1 animation frames
     return _alloc_pair(), _alloc_pair()
+
+
+@dataclass
+class FloorTiles:
+    """Group of codepoints representing a single floor style."""
+    UpperLeft: int
+    UpperCenter: int
+    UpperRight: int
+    UpperVert: int
+    Solo: int
+    MiddleLeft: int
+    MiddleCenter: int
+    MiddleRight: int
+    MiddleVert: int
+    HorzLeft: int
+    HorzCenter: int
+    HorzRight: int
+    LowerLeft: int
+    LowerCenter: int
+    LowerRight: int
+    LowerVert: int
+
+    @staticmethod
+    def alloc():
+        return FloorTiles(
+            UpperLeft=_alloc(),
+            UpperCenter=_alloc(),
+            UpperRight=_alloc(),
+            UpperVert=_alloc(),
+            Solo=_alloc(),
+            MiddleLeft=_alloc(),
+            MiddleCenter=_alloc(),
+            MiddleRight=_alloc(),
+            MiddleVert=_alloc(),
+            HorzLeft=_alloc(),
+            HorzCenter=_alloc(),
+            HorzRight=_alloc(),
+            LowerLeft=_alloc(),
+            LowerCenter=_alloc(),
+            LowerRight=_alloc(),
+            LowerVert=_alloc(),
+        )
+
+    def load(self, tileset, floorpng, start):
+        tileset.set_tile(self.UpperLeft, floorpng.get_tile(start + 0))
+        tileset.set_tile(self.UpperCenter, floorpng.get_tile(start + 1))
+        tileset.set_tile(self.UpperRight, floorpng.get_tile(start + 2))
+        tileset.set_tile(self.UpperVert, floorpng.get_tile(start + 3))
+        tileset.set_tile(self.Solo, floorpng.get_tile(start + 5))
+        tileset.set_tile(self.MiddleLeft, floorpng.get_tile(start + 21))
+        tileset.set_tile(self.MiddleCenter, floorpng.get_tile(start + 22))
+        tileset.set_tile(self.MiddleRight, floorpng.get_tile(start + 23))
+        tileset.set_tile(self.MiddleVert, floorpng.get_tile(start + 24))
+        tileset.set_tile(self.HorzLeft, floorpng.get_tile(start + 25))
+        tileset.set_tile(self.HorzCenter, floorpng.get_tile(start + 26))
+        tileset.set_tile(self.HorzRight, floorpng.get_tile(start + 27))
+        tileset.set_tile(self.LowerLeft, floorpng.get_tile(start + 42))
+        tileset.set_tile(self.LowerCenter, floorpng.get_tile(start + 43))
+        tileset.set_tile(self.LowerRight, floorpng.get_tile(start + 44))
+        tileset.set_tile(self.LowerVert, floorpng.get_tile(start + 45))
+
 
 def _actor_appearance(quad):
     # Using an actor quad returned by _alloc_actor(), create an Appearance
@@ -87,6 +148,20 @@ DOOR_H = _alloc()
 DOOR_V = _alloc()
 DOOR = DOOR_H
 
+FLOOR_STONE = [
+    FloorTiles.alloc(),
+    FloorTiles.alloc(),
+    FloorTiles.alloc(),
+    FloorTiles.alloc()
+]
+FLOOR_WOOD = [
+    FloorTiles.alloc(),
+    FloorTiles.alloc(),
+    FloorTiles.alloc(),
+    FloorTiles.alloc()
+]
+FLOORS = FLOOR_STONE + FLOOR_WOOD
+
 STAIRS_UP = _alloc()
 STAIRS_DOWN = _alloc()
 
@@ -98,6 +173,12 @@ def _set_mirrored(tileset, left_right, image):
     tileset.set_tile(left, image)
     tileset.set_tile(right, image[...,::-1,:])
 
+def _load_floor(tileset, floors, startpoint):
+    """Load one set of floor tiles and return a FloorTiles instance."""
+    # Floor.png is 21 tiles wide, and the first three rows are just filler.
+    out = FloorTiles.alloc()
+    out.load(tileset, floors, startpoint)
+    return out
 
 def load_into(tileset):
     """Load all the graphics we might use and assign them codepoints."""
@@ -137,6 +218,17 @@ def load_into(tileset):
     tileset.set_tile(DOOR_H, door_tiles.get_tile(0))
     tileset.set_tile(DOOR_V, door_tiles.get_tile(1))
 
+    floor_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Objects/Floor.png", 21, 39, range(819)
+    )
+    FLOOR_STONE[0].load(tileset, floor_tiles, 21)
+    FLOOR_STONE[1].load(tileset, floor_tiles, 42)
+    FLOOR_STONE[2].load(tileset, floor_tiles, 63)
+    FLOOR_STONE[3].load(tileset, floor_tiles, 84)
+    FLOOR_WOOD[0].load(tileset, floor_tiles, 112)
+    FLOOR_WOOD[1].load(tileset, floor_tiles, 133)
+    FLOOR_WOOD[2].load(tileset, floor_tiles, 154)
+    FLOOR_WOOD[3].load(tileset, floor_tiles, 175)
 
     player0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
@@ -163,8 +255,8 @@ def load_into(tileset):
     humanoid1_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid1.png", 8, 27, range(8*17)
     )
-    _set_mirrored(tileset, _TROLL[0], humanoid0_tiles.get_tile(0))
-    _set_mirrored(tileset, _TROLL[1], humanoid1_tiles.get_tile(0))
+    _set_mirrored(tileset, _TROLL[0], humanoid0_tiles.get_tile(8))
+    _set_mirrored(tileset, _TROLL[1], humanoid1_tiles.get_tile(8))
     _set_mirrored(tileset, _ORC[0], humanoid0_tiles.get_tile(64))
     _set_mirrored(tileset, _ORC[1], humanoid1_tiles.get_tile(64))
 
