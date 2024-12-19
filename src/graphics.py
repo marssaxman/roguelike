@@ -93,6 +93,27 @@ class FloorTiles:
         tileset.set_tile(self.LowerRight, floorpng.get_tile(start + 44))
         tileset.set_tile(self.LowerVert, floorpng.get_tile(start + 45))
 
+    def larb(self):
+        # Return an array of codes in LARB bitfield order.
+        return [                # L A R B
+            self.Solo,          # . . . .
+            self.UpperVert,     # . . . B
+            self.HorzLeft,      # . . R .
+            self.UpperLeft,     # . . R B
+            self.LowerVert,     # . A . .
+            self.MiddleVert,    # . A . B
+            self.LowerLeft,     # . A R .
+            self.MiddleLeft,    # . A R B
+            self.HorzRight,     # L . . .
+            self.UpperRight,    # L . . B
+            self.HorzCenter,    # L . R .
+            self.UpperCenter,   # L . R B
+            self.LowerRight,    # L A . .
+            self.MiddleRight,   # L A . B
+            self.LowerCenter,   # L A R .
+            self.MiddleCenter,  # L A R B
+        ]
+
 
 def _actor_appearance(quad):
     # Using an actor quad returned by _alloc_actor(), create an Appearance
@@ -173,13 +194,6 @@ def _set_mirrored(tileset, left_right, image):
     tileset.set_tile(left, image)
     tileset.set_tile(right, image[...,::-1,:])
 
-def _load_floor(tileset, floors, startpoint):
-    """Load one set of floor tiles and return a FloorTiles instance."""
-    # Floor.png is 21 tiles wide, and the first three rows are just filler.
-    out = FloorTiles.alloc()
-    out.load(tileset, floors, startpoint)
-    return out
-
 def load_into(tileset):
     """Load all the graphics we might use and assign them codepoints."""
     # load some graphics for the walls
@@ -221,14 +235,14 @@ def load_into(tileset):
     floor_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Floor.png", 21, 39, range(819)
     )
-    FLOOR_STONE[0].load(tileset, floor_tiles, 21)
-    FLOOR_STONE[1].load(tileset, floor_tiles, 42)
-    FLOOR_STONE[2].load(tileset, floor_tiles, 63)
-    FLOOR_STONE[3].load(tileset, floor_tiles, 84)
-    FLOOR_WOOD[0].load(tileset, floor_tiles, 112)
-    FLOOR_WOOD[1].load(tileset, floor_tiles, 133)
-    FLOOR_WOOD[2].load(tileset, floor_tiles, 154)
-    FLOOR_WOOD[3].load(tileset, floor_tiles, 175)
+    FLOOR_STONE[0].load(tileset, floor_tiles, 63)
+    FLOOR_STONE[1].load(tileset, floor_tiles, 126)
+    FLOOR_STONE[2].load(tileset, floor_tiles, 189)
+    FLOOR_STONE[3].load(tileset, floor_tiles, 252)
+    FLOOR_WOOD[0].load(tileset, floor_tiles, 322)
+    FLOOR_WOOD[1].load(tileset, floor_tiles, 385)
+    FLOOR_WOOD[2].load(tileset, floor_tiles, 448)
+    FLOOR_WOOD[3].load(tileset, floor_tiles, 511)
 
     player0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)

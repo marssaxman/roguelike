@@ -49,6 +49,13 @@ def new_door(char_id):
         light=(char_id, (255, 255, 255), (200, 180, 50)),
     )
 
+def new_floor(char_id):
+    return new_tile(
+        walkable=True,
+        transparent=True,
+        dark=(char_id, (127, 127, 127), (0, 0, 0)),
+        light=(char_id, (255, 255, 255), (0, 0, 0)),
+    )
 
 # Shroud represents tiles which have not yet been explored
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)

@@ -11,6 +11,7 @@ import tile_types
 import maze.create
 import maze.render
 from maze import basemap
+import graphics
 
 
 if TYPE_CHECKING:
@@ -133,6 +134,32 @@ def populate_rooms(
     dungeon.tiles[stairs_x, stairs_y] = tile_types.exit_stairs
     dungeon.exit_location = stairs_x, stairs_y
 
+def paint_floors(
+    base_map: maze.basemap.BaseMap,
+    dungeon: GameMap,
+    rng: np.random.Generator,
+):
+    """Paint the dungeon with floor tiles appropriate to each room."""
+    map_shape = base_map.shape
+    for room in base_map.rooms:
+        # Pick a floor style completely at random.
+        # I don't like depending on `graphics` here but let's fix that later
+        style = rng.integers(0, len(graphics.FLOORS))
+        glyphs = graphics.FLOORS[style].larb()
+        tiles = base_map.tiles
+        FLOOR = basemap.Tile.FLOOR
+        for x, y in room.tiles():
+            left = x > 0 and tiles[x-1, y] == FLOOR
+            above = y > 0 and tiles[x, y-1] == FLOOR
+            right = (x+1) < map_shape[0] and tiles[x+1, y] == FLOOR
+            below = (y+1) < map_shape[1] and tiles[x, y+1] == FLOOR
+            index = 0
+            index += 8 if left else 0
+            index += 4 if above else 0
+            index += 2 if right else 0
+            index += 1 if below else 0
+            dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
+
 
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,
@@ -172,6 +199,7 @@ def generate_dungeon(
         wall_LARB = tile_types.wall_LARB,
     )
     maze.render.tiles(base_map.tiles, dungeon.tiles, palette)
+    paint_floors(base_map=base_map, dungeon=dungeon, rng=rng)
 
     # Get only the non-corridor rooms.
     rooms = [r for r in base_map.rooms if not r.is_corridor()]
