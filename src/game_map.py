@@ -8,6 +8,7 @@ from tcod.console import Console
 
 from entity import Actor, Item
 import tile_types
+import graphics
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -202,9 +203,10 @@ class GameMap:
             if isinstance(char, str):
                 char = ord(char)
             x, y = entity.x - adjust_x, entity.y - adjust_y
-            # reuse the tile's existing background color
-            bg = window[x, y][2]
-            window[x, y] = (char, color, bg)
+            # composite the new tile onto the existing one
+            bg_char = window[x, y][0]
+            new_char = graphics.composite(bg_char, char)
+            window[x, y][0] = new_char
 
         # Save the map-relative coordinate for the origin point in the
         # rendering window. This value can then be added to a position within

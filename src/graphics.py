@@ -2,6 +2,8 @@
 import tcod
 from components import appearance
 from dataclasses import dataclass
+from functools import cache
+import numpy as np
 
 """
 Load the graphic tiles we will use from the files in the assets directory.
@@ -16,13 +18,16 @@ using lower_case names.
 """
 
 # Basic multilingual plane private use area: 6400 code points
-PUA = 0xE000
+PUA_BEGIN = 0xE000
+PUA_END = 0xF8FF
 
-_next_codepoint = PUA
+_next_codepoint = PUA_BEGIN
 def _alloc():
     global _next_codepoint
     ret = _next_codepoint
     _next_codepoint += 1
+    # in future, switch from the BMP PUA to the plane 15 PUA
+    assert _next_codepoint <= PUA_END
     return ret
 
 def _alloc_pair():
@@ -189,6 +194,30 @@ STAIRS_DOWN = _alloc()
 POTION = _alloc()
 SCROLL = _alloc()
 
+@cache
+def composite(below: int, above: int):
+    """Layer one tile on another to create a new tile."""
+    global _tileset
+    below_tile = _tileset.get_tile(below)
+    above_tile = _tileset.get_tile(above)
+    # Extract the RGB channels
+    srcRGB = above_tile[...,:3]
+    dstRGB = below_tile[...,:3]
+    # Extract the alpha channels and normalise to range 0..1
+    srcA = above_tile[...,3]/255.0
+    dstA = below_tile[...,3]/255.0
+    # Work out resultant alpha channel
+    outA = srcA + dstA*(1-srcA)
+    # Work out resultant RGB
+    outRGB = (srcRGB*srcA[...,np.newaxis] + dstRGB*dstA[...,np.newaxis]*(1-srcA[...,np.newaxis])) / outA[...,np.newaxis]
+    # Merge RGB and alpha (scaled back up to 0..255) back into single image
+    outRGBA = np.dstack((outRGB,outA*255)).astype(np.uint8)
+    # Allocate a new codepoint and store the new tile image
+    out_code = _alloc()
+    _tileset.set_tile(out_code, outRGBA)
+    return out_code
+
+
 def _set_mirrored(tileset, left_right, image):
     left, right = left_right
     tileset.set_tile(left, image)
@@ -196,6 +225,8 @@ def _set_mirrored(tileset, left_right, image):
 
 def load_into(tileset):
     """Load all the graphics we might use and assign them codepoints."""
+    global _tileset
+    _tileset = tileset
     # load some graphics for the walls
     wall_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Wall.png", (320//16), (816//16), range(1020)
