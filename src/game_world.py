@@ -19,9 +19,7 @@ class GameWorld:
         self.map_shape = map_shape
         self.tower_floors = tower_floors
         self.current_floor = current_floor
-
-        box_size = max(4, int((map_shape[0]+map_shape[1])//16))
-
+        box_size = 8
         self.tower = maze.create.tower(
             shape=map_shape,
             box_size=box_size,
