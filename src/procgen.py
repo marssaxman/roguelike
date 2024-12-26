@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
+from dataclasses import dataclass
 
 import tcod
 import numpy as np
@@ -134,25 +135,30 @@ def populate_rooms(
     dungeon.tiles[stairs_x, stairs_y] = tile_types.exit_stairs
     dungeon.exit_location = stairs_x, stairs_y
 
+@dataclass
+class RoomStyle:
+    floor_glyphs: List[int]
+
 def paint_floors(
     base_map: maze.basemap.BaseMap,
     dungeon: GameMap,
+    room_styles: Dict[int, RoomStyle],
     rng: np.random.Generator,
 ):
     """Paint the dungeon with floor tiles appropriate to each room."""
     map_shape = base_map.shape
     for room in base_map.rooms:
         # Pick a floor style completely at random.
-        # I don't like depending on `graphics` here but let's fix that later
-        style = rng.integers(0, len(graphics.FLOORS))
-        glyphs = graphics.FLOORS[style].larb()
+        # I don't like depending on `graphics` here, but perhaps we can fix
+        # that later on.
+        glyphs = room_styles[room.id].floor_glyphs
         tiles = base_map.tiles
-        FLOOR = basemap.Tile.FLOOR
+        WALL = basemap.Tile.WALL
         for x, y in room.tiles():
-            left = x > 0 and tiles[x-1, y] == FLOOR
-            above = y > 0 and tiles[x, y-1] == FLOOR
-            right = (x+1) < map_shape[0] and tiles[x+1, y] == FLOOR
-            below = (y+1) < map_shape[1] and tiles[x, y+1] == FLOOR
+            left = x > 0 and tiles[x-1, y] != WALL
+            above = y > 0 and tiles[x, y-1] != WALL
+            right = (x+1) < map_shape[0] and tiles[x+1, y] != WALL
+            below = (y+1) < map_shape[1] and tiles[x, y+1] != WALL
             index = 0
             index += 8 if left else 0
             index += 4 if above else 0
@@ -160,6 +166,18 @@ def paint_floors(
             index += 1 if below else 0
             dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
 
+def style_rooms(
+    base_map: maze.basemap.BaseMap,
+    rng: np.random.Generator,
+):
+    room_styles: Dict[int, RoomStyle] = dict()
+    for room in base_map.rooms:
+        # Pick a floor style completely at random.
+        # I don't like depending on `graphics` here but let's fix that later
+        style = rng.integers(0, len(graphics.FLOORS))
+        glyphs = graphics.FLOORS[style].larb()
+        room_styles[room.id] = RoomStyle(floor_glyphs=glyphs)
+    return room_styles
 
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,
@@ -199,7 +217,13 @@ def generate_dungeon(
         wall_LARB = tile_types.wall_LARB,
     )
     maze.render.tiles(base_map.tiles, dungeon.tiles, palette)
-    paint_floors(base_map=base_map, dungeon=dungeon, rng=rng)
+    room_styles = style_rooms(base_map, rng=rng)
+    paint_floors(
+        base_map=base_map,
+        dungeon=dungeon,
+        room_styles=room_styles,
+        rng=rng
+    )
 
     # Get only the non-corridor rooms.
     rooms = [r for r in base_map.rooms if not r.is_corridor()]
