@@ -190,6 +190,7 @@ def paint_doors(
     rng: np.random.Generator,
 ):
     WALL = basemap.Tile.WALL
+    DOOR = basemap.Tile.DOOR
     for wall in base_map.walls:
         if not wall.has_door():
             continue
@@ -208,8 +209,14 @@ def paint_doors(
             index = 8 + 2#left & right
             left_code = left_glyphs[index]
             right_code = right_glyphs[index]
-            door_code = graphics.adjoin(left_code, right_code)
-            dungeon.tiles[x,y] = tile_types.new_floor(door_code)
+            pass_code = graphics.adjoin(left_code, right_code)
+            if base_map.tiles[x,y] == DOOR:
+                # doorway
+                door_code = graphics.composite(pass_code, graphics.DOOR_V)
+                dungeon.tiles[x,y] = tile_types.new_door(door_code)
+            else:
+                # open passageway
+                dungeon.tiles[x,y] = tile_types.new_floor(pass_code)
         elif base_map.tiles[x-1, y] == WALL:
             assert base_map.tiles[x+1, y] == WALL
             assert base_map.tiles[x, y-1] != WALL
@@ -218,8 +225,14 @@ def paint_doors(
             below_room_id = room_grid[x, y+1]
             glyphs = room_styles[below_room_id].floor_glyphs
             index = 4 + 1# above + below
-            dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
-
+            pass_code = glyphs[index]
+            if base_map.tiles[x,y] == DOOR:
+                # doorway
+                door_code = graphics.composite(pass_code, graphics.DOOR_H)
+                dungeon.tiles[x,y] = tile_types.new_door(door_code)
+            else:
+                # open passageway
+                dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
 
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,
