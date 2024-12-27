@@ -88,12 +88,12 @@ class Wall:
     _a: int
     _b: int
     _tiles: Set[Tuple[int, int]]
-    _has_door: bool
+    _door: Tuple[int, int]
     def __init__(self, a, b):
         self._a = a
         self._b = b
         self._tiles = set()
-        self._has_door = False
+        self._door = None
 
     @property
     def a(self):
@@ -110,7 +110,11 @@ class Wall:
         return self._a == id or self._b == id
 
     def has_door(self):
-        return self._has_door
+        return self._door != None
+
+    @property
+    def door(self):
+        return self._door
 
     def area(self):
         return len(self._tiles)
@@ -122,11 +126,18 @@ class Wall:
     def _add_tile(self, x, y):
         self._tiles.add((x, y))
 
+    def _place_door(self, x, y):
+        assert self._door == None
+        assert (x,y) in self._tiles
+        self._door = (x, y)
+
 
 class BaseMap:
-    def __init__(self, tiles, rooms):
+    def __init__(self, tiles, rooms, walls):
         self.tiles = tiles
         self.rooms = rooms
+        self.walls = walls
+        assert isinstance(walls, list)
 
     @property
     def shape(self):
@@ -211,7 +222,8 @@ class Builder:
     def build(self):
         return BaseMap(
             tiles=np.copy(self.map),
-            rooms=list(self.rooms())
+            rooms=list(self.rooms()),
+            walls=list(self._walls.values())
         )
 
 
@@ -253,7 +265,7 @@ class Builder:
         wall = self._get_wall(a_id, b_id)
         assert (x, y) in wall._tiles
         assert not wall.has_door()
-        wall._has_door = True
+        wall._place_door(x, y)
         self.map[x, y] = tile_type
         self._get_room(a_id)._add_connection(b_id)
         self._get_room(b_id)._add_connection(a_id)

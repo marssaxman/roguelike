@@ -139,6 +139,19 @@ def populate_rooms(
 class RoomStyle:
     floor_glyphs: List[int]
 
+def style_rooms(
+    base_map: maze.basemap.BaseMap,
+    rng: np.random.Generator,
+):
+    room_styles: Dict[int, RoomStyle] = dict()
+    for room in base_map.rooms:
+        # Pick a floor style completely at random.
+        # I don't like depending on `graphics` here but let's fix that later
+        style = rng.integers(0, len(graphics.FLOORS))
+        glyphs = graphics.FLOORS[style].larb()
+        room_styles[room.id] = RoomStyle(floor_glyphs=glyphs)
+    return room_styles
+
 def paint_floors(
     base_map: maze.basemap.BaseMap,
     dungeon: GameMap,
@@ -147,6 +160,7 @@ def paint_floors(
 ):
     """Paint the dungeon with floor tiles appropriate to each room."""
     map_shape = base_map.shape
+    out = np.zeros_like(base_map.tiles, dtype=np.uint)
     for room in base_map.rooms:
         # Pick a floor style completely at random.
         # I don't like depending on `graphics` here, but perhaps we can fix
@@ -165,19 +179,40 @@ def paint_floors(
             index += 2 if right else 0
             index += 1 if below else 0
             dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
+            out[x, y] = room.id
+    return out
 
-def style_rooms(
+def paint_doors(
     base_map: maze.basemap.BaseMap,
+    room_grid,
+    dungeon: GameMap,
+    room_styles: Dict[int, RoomStyle],
     rng: np.random.Generator,
 ):
-    room_styles: Dict[int, RoomStyle] = dict()
-    for room in base_map.rooms:
-        # Pick a floor style completely at random.
-        # I don't like depending on `graphics` here but let's fix that later
-        style = rng.integers(0, len(graphics.FLOORS))
-        glyphs = graphics.FLOORS[style].larb()
-        room_styles[room.id] = RoomStyle(floor_glyphs=glyphs)
-    return room_styles
+    WALL = basemap.Tile.WALL
+    for wall in base_map.walls:
+        if not wall.has_door():
+            continue
+        # Is it a vertical or horizontal door?
+        # Every door must have either walls above and below, or left and right.
+        x, y = wall.door
+        if base_map.tiles[x, y-1] == WALL:
+            assert base_map.tiles[x, y+1] == WALL
+            assert base_map.tiles[x-1, y] != WALL
+            assert base_map.tiles[x+1, y] != WALL
+            # Vertical door: use adjoining tile left & right
+            left_room_id = room_grid[x-1, y]
+            right_room_id = room_grid[x+1, y]
+        elif base_map.tiles[x-1, y] == WALL:
+            assert base_map.tiles[x+1, y] == WALL
+            assert base_map.tiles[x, y-1] != WALL
+            assert base_map.tiles[x, y+1] != WALL
+            # Horizontal door: use lower tile
+            below_room_id = room_grid[x, y+1]
+            glyphs = room_styles[below_room_id].floor_glyphs
+            index = 4 + 1# above + below
+            dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
+
 
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,
@@ -218,8 +253,15 @@ def generate_dungeon(
     )
     maze.render.tiles(base_map.tiles, dungeon.tiles, palette)
     room_styles = style_rooms(base_map, rng=rng)
-    paint_floors(
+    room_grid = paint_floors(
         base_map=base_map,
+        dungeon=dungeon,
+        room_styles=room_styles,
+        rng=rng
+    )
+    paint_doors(
+        base_map=base_map,
+        room_grid=room_grid,
         dungeon=dungeon,
         room_styles=room_styles,
         rng=rng
