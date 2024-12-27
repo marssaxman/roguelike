@@ -22,7 +22,6 @@ tile_dt = np.dtype(
     ]
 )
 
-
 def new_tile(
     *,  # Enforce the use of keywords, so that parameter order doesn't matter.
     walkable: int,
@@ -60,34 +59,23 @@ def new_floor(char_id):
 # Shroud represents tiles which have not yet been explored
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 
+# Default values used for map initialization prior to style painting
 floor = new_tile(
     walkable=True,
     transparent=True,
     dark=(ord(" "), (127, 127, 127), (50, 50, 150)),
     light=(ord(" "), (255, 255, 255), (200, 180, 50)),
 )
+wall = new_tile(
+    walkable=False,
+    transparent=False,
+    dark=(ord("#"), (127, 127, 127), (50, 50, 150)),
+    light=(ord("#"), (255, 255, 255), (200, 180, 50)),
+)
 
 door = new_door(graphics.DOOR)
 door_H = new_door(graphics.DOOR_H)
 door_V = new_door(graphics.DOOR_V)
-wall = new_wall(graphics.WALL)
-wall_L = new_wall(graphics.WALL_L)
-wall_A = new_wall(graphics.WALL_A)
-wall_R = new_wall(graphics.WALL_R)
-wall_B = new_wall(graphics.WALL_B)
-wall_LR = new_wall(graphics.WALL_LR)
-wall_AB = new_wall(graphics.WALL_AB)
-wall_RB = new_wall(graphics.WALL_RB)
-wall_LB = new_wall(graphics.WALL_LB)
-wall_AR = new_wall(graphics.WALL_AR)
-wall_LA = new_wall(graphics.WALL_LA)
-wall_ARB = new_wall(graphics.WALL_ARB)
-wall_LAB = new_wall(graphics.WALL_LAB)
-wall_LRB = new_wall(graphics.WALL_LRB)
-wall_LAR = new_wall(graphics.WALL_LAR)
-wall_LARB = new_wall(graphics.WALL_LARB)
-
-
 
 exit_stairs = new_tile(
     walkable=True,

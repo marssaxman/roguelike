@@ -121,23 +121,6 @@ troll = _actor_appearance(_TROLL)
 # The rest of these are just codepoints.
 CORPSE = _alloc()
 
-COLUMN = _alloc()
-WALL = _alloc()
-WALL_L = _alloc()
-WALL_A = _alloc()
-WALL_R = _alloc()
-WALL_B = _alloc()
-WALL_LR = _alloc()
-WALL_AB = _alloc()
-WALL_RB = _alloc()
-WALL_LB = _alloc()
-WALL_AR = _alloc()
-WALL_LA = _alloc()
-WALL_ARB = _alloc()
-WALL_LAB = _alloc()
-WALL_LRB = _alloc()
-WALL_LAR = _alloc()
-WALL_LARB = _alloc()
 DOOR_H = _alloc()
 DOOR_V = _alloc()
 DOOR = DOOR_H
@@ -203,43 +186,6 @@ def load_into(tileset):
     """Load all the graphics we might use and assign them codepoints."""
     global _tileset
     _tileset = tileset
-    # load some graphics for the walls
-    wall_tiles = tcod.tileset.load_tilesheet(
-        "assets/DawnLike/Objects/Wall.png", (320//16), (816//16), range(1020)
-    )
-    WALL_BRICK[0].load(tileset, wall_tiles, 60)
-    WALL_BRICK[1].load(tileset, wall_tiles, 120)
-    WALL_BRICK[2].load(tileset, wall_tiles, 180)
-    WALL_BRICK[3].load(tileset, wall_tiles, 240)
-    WALL_WOOD[0].load(tileset, wall_tiles, 67)
-    WALL_WOOD[1].load(tileset, wall_tiles, 127)
-    WALL_WOOD[2].load(tileset, wall_tiles, 187)
-    WALL_WOOD[3].load(tileset, wall_tiles, 247)
-    # 20 tiles in a row, 51 rows
-    # Wall tiles exist in a 6x3 cluster with 1 space between columns
-    # Clusters exist in a 4-high group (6x12 tiles) of color variants
-    # We'll use the brick cluster in row 1
-    # Within a cluster, tiles are located like thus:
-    # RB    LR    LB    #       LRB
-    # AB    A           ARB     LARB    LAB
-    # AR          LA            LAR
-    # (B = AB, L = AL, R=AR)
-    tileset.set_tile(WALL, wall_tiles.get_tile(63))
-    tileset.set_tile(WALL_L, wall_tiles.get_tile(61))
-    tileset.set_tile(WALL_A, wall_tiles.get_tile(81))
-    tileset.set_tile(WALL_R, wall_tiles.get_tile(61))
-    tileset.set_tile(WALL_B, wall_tiles.get_tile(80))
-    tileset.set_tile(WALL_LR, wall_tiles.get_tile(61))
-    tileset.set_tile(WALL_AB, wall_tiles.get_tile(80))
-    tileset.set_tile(WALL_RB, wall_tiles.get_tile(60))
-    tileset.set_tile(WALL_LB, wall_tiles.get_tile(62))
-    tileset.set_tile(WALL_AR, wall_tiles.get_tile(100))
-    tileset.set_tile(WALL_LA, wall_tiles.get_tile(102))
-    tileset.set_tile(WALL_ARB, wall_tiles.get_tile(83))
-    tileset.set_tile(WALL_LAB, wall_tiles.get_tile(85))
-    tileset.set_tile(WALL_LRB, wall_tiles.get_tile(64))
-    tileset.set_tile(WALL_LAR, wall_tiles.get_tile(104))
-    tileset.set_tile(WALL_LARB, wall_tiles.get_tile(84))
 
     door_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Door0.png", 8, 6, range(48)
@@ -258,6 +204,18 @@ def load_into(tileset):
     FLOOR_WOOD[1].load(tileset, floor_tiles, 385)
     FLOOR_WOOD[2].load(tileset, floor_tiles, 448)
     FLOOR_WOOD[3].load(tileset, floor_tiles, 511)
+
+    wall_tiles = tcod.tileset.load_tilesheet(
+        "assets/DawnLike/Objects/Wall.png", (320//16), (816//16), range(1020)
+    )
+    WALL_BRICK[0].load(tileset, wall_tiles, 60)
+    WALL_BRICK[1].load(tileset, wall_tiles, 120)
+    WALL_BRICK[2].load(tileset, wall_tiles, 180)
+    WALL_BRICK[3].load(tileset, wall_tiles, 240)
+    WALL_WOOD[0].load(tileset, wall_tiles, 67)
+    WALL_WOOD[1].load(tileset, wall_tiles, 127)
+    WALL_WOOD[2].load(tileset, wall_tiles, 187)
+    WALL_WOOD[3].load(tileset, wall_tiles, 247)
 
     player0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)

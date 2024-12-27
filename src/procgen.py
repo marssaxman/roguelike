@@ -10,7 +10,6 @@ import entity_factories
 from game_map import GameMap
 import tile_types
 import maze.create
-import maze.render
 from maze import basemap
 import graphics
 
