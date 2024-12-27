@@ -237,11 +237,29 @@ def paint_walls(
     room_styles: Dict[int, RoomStyle],
     rng: np.random.Generator,
 ):
+    """
+    Paint all the wall tiles on this map.
+    Use the style defined by the adjoining room.
+    """
     map_shape = room_grid.shape
     assert map_shape == base_map.tiles.shape
     assert map_shape == dungeon.tiles.shape
     WALL = basemap.Tile.WALL
     tiles = base_map.tiles
+    # Simplify the wall-painting logic by munging the room grid, in which all
+    # wall squares are currently zero. Our quasi-isometric perspective means
+    # that horizontal walls take their style from the room below. We will
+    # fill each zero square with the value from the row above, and this way we
+    # don't have to worry so much about corners and T-pieces.
+    smear_grid = np.zeros_like(room_grid)
+    for y in range(map_shape[1]):
+        for x in range(map_shape[0]):
+            if room_grid[x,y]:
+                smear_grid[x,y] = room_grid[x,y]
+            elif (y+1)<map_shape[1]:
+                smear_grid[x,y] = room_grid[x,y+1]
+    room_grid = smear_grid
+
     for x, y in np.ndindex(map_shape):
         if base_map.tiles[x, y] != WALL:
             continue
@@ -249,15 +267,35 @@ def paint_walls(
         above = y > 0 and tiles[x, y-1] == WALL
         right = (x+1) < map_shape[0] and tiles[x+1, y] == WALL
         below = (y+1) < map_shape[1] and tiles[x, y+1] == WALL
-        # Wall style is tricky because walls take their style from rooms,
-        # which are defined by floors. Horizontal walls use the style defined
-        # by the room below; vertical walls use both the left and the right
-        # styles, split down the middle.
 
-        # temporary hack
-        glyphs = graphics.WALLS[0]
-        code = glyphs.pick(left=left, above=above, right=right, below=below)
-        dungeon.tiles[x,y] = tile_types.new_wall(code)
+        mono_style = room_grid[x,y]
+        left_style = room_grid[x-1,y] if x > 0 else 0
+        right_style = room_grid[x+1,y] if (x+1) < map_shape[0] else 0
+        # handle edge cases for outer walls
+        if not mono_style and (not left_style or not right_style):
+            if right_style:
+                mono_style = right_style
+            elif left_style:
+                mono_style = left_style
+            elif y > 0:
+                mono_style = room_grid[x, y-1]
+                if not mono_style and x > 0:
+                    mono_style = room_grid[x-1, y-1]
+                if not mono_style and (x+1) < map_shape[0]:
+                    mono_style = room_grid[x+1, y-1]
+
+        if mono_style:
+            code = room_styles[mono_style].wall_glyphs.pick(
+                left=left, above=above, right=right, below=below
+            )
+            dungeon.tiles[x,y] = tile_types.new_wall(code)
+        elif left_style and right_style:
+            l_glyphs = room_styles[left_style].wall_glyphs
+            r_glyphs = room_styles[right_style].wall_glyphs
+            l_code = l_glyphs.pick(left=left, above=above, right=right, below=below)
+            r_code = r_glyphs.pick(left=left, above=above, right=right, below=below)
+            wall_code = graphics.adjoin(l_code, r_code)
+            dungeon.tiles[x,y] = tile_types.new_wall(wall_code)
 
 
 def generate_dungeon(

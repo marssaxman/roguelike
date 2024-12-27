@@ -130,7 +130,7 @@ FLOOR_WOOD = [FloorTiles() for _ in range(4)]
 FLOORS = FLOOR_STONE + FLOOR_WOOD
 WALL_BRICK = [WallTiles() for _ in range(4)]
 WALL_WOOD = [WallTiles() for _ in range(4)]
-WALLS = WALL_BRICK + WALL_WOOD
+WALLS = WALL_BRICK #+ WALL_WOOD
 
 STAIRS_UP = _alloc()
 STAIRS_DOWN = _alloc()
