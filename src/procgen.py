@@ -202,7 +202,14 @@ def paint_doors(
             assert base_map.tiles[x+1, y] != WALL
             # Vertical door: use adjoining tile left & right
             left_room_id = room_grid[x-1, y]
+            left_glyphs = room_styles[left_room_id].floor_glyphs
             right_room_id = room_grid[x+1, y]
+            right_glyphs = room_styles[right_room_id].floor_glyphs
+            index = 8 + 2#left & right
+            left_code = left_glyphs[index]
+            right_code = right_glyphs[index]
+            door_code = graphics.adjoin(left_code, right_code)
+            dungeon.tiles[x,y] = tile_types.new_floor(door_code)
         elif base_map.tiles[x-1, y] == WALL:
             assert base_map.tiles[x+1, y] == WALL
             assert base_map.tiles[x, y-1] != WALL

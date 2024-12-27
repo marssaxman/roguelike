@@ -217,6 +217,21 @@ def composite(below: int, above: int):
     _tileset.set_tile(out_code, outRGBA)
     return out_code
 
+@cache
+def adjoin(left: int, right: int):
+    """Combine the left half of one tile with the right half of another."""
+    global _tileset
+    left_tile = _tileset.get_tile(left)
+    right_tile = _tileset.get_tile(right)
+    assert left_tile.shape == right_tile.shape
+    outRGBA = np.zeros_like(left_tile)
+    half_width = left_tile.shape[0] // 2
+    outRGBA[::,:half_width,...] = left_tile[::,:half_width,...]
+    outRGBA[::,half_width:,...] = right_tile[::,half_width:,...]
+    out_code = _alloc()
+    _tileset.set_tile(out_code, outRGBA)
+    return out_code
+
 
 def _set_mirrored(tileset, left_right, image):
     left, right = left_right
