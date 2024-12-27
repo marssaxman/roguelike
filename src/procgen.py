@@ -148,7 +148,7 @@ def style_rooms(
         # Pick a floor style completely at random.
         # I don't like depending on `graphics` here but let's fix that later
         style = rng.integers(0, len(graphics.FLOORS))
-        glyphs = graphics.FLOORS[style].larb()
+        glyphs = graphics.FLOORS[style]
         room_styles[room.id] = RoomStyle(floor_glyphs=glyphs)
     return room_styles
 
@@ -173,12 +173,8 @@ def paint_floors(
             above = y > 0 and tiles[x, y-1] != WALL
             right = (x+1) < map_shape[0] and tiles[x+1, y] != WALL
             below = (y+1) < map_shape[1] and tiles[x, y+1] != WALL
-            index = 0
-            index += 8 if left else 0
-            index += 4 if above else 0
-            index += 2 if right else 0
-            index += 1 if below else 0
-            dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
+            code = glyphs.pick(left=left, above=above, right=right, below=below)
+            dungeon.tiles[x,y] = tile_types.new_floor(code)
             out[x, y] = room.id
     return out
 
@@ -206,9 +202,8 @@ def paint_doors(
             left_glyphs = room_styles[left_room_id].floor_glyphs
             right_room_id = room_grid[x+1, y]
             right_glyphs = room_styles[right_room_id].floor_glyphs
-            index = 8 + 2#left & right
-            left_code = left_glyphs[index]
-            right_code = right_glyphs[index]
+            left_code = left_glyphs.pick(left=True, right=True)
+            right_code = right_glyphs.pick(left=True, right=True)
             pass_code = graphics.adjoin(left_code, right_code)
             if base_map.tiles[x,y] == DOOR:
                 # doorway
@@ -224,15 +219,14 @@ def paint_doors(
             # Horizontal door: use lower tile
             below_room_id = room_grid[x, y+1]
             glyphs = room_styles[below_room_id].floor_glyphs
-            index = 4 + 1# above + below
-            pass_code = glyphs[index]
+            pass_code = glyphs.pick(above=True, below=True)
             if base_map.tiles[x,y] == DOOR:
                 # doorway
                 door_code = graphics.composite(pass_code, graphics.DOOR_H)
                 dungeon.tiles[x,y] = tile_types.new_door(door_code)
             else:
                 # open passageway
-                dungeon.tiles[x,y] = tile_types.new_floor(glyphs[index])
+                dungeon.tiles[x,y] = tile_types.new_floor(pass_code)
 
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,

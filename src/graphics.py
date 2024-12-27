@@ -39,85 +39,41 @@ def _alloc_actor():
     return _alloc_pair(), _alloc_pair()
 
 
-@dataclass
-class FloorTiles:
-    """Group of codepoints representing a single floor style."""
-    UpperLeft: int
-    UpperCenter: int
-    UpperRight: int
-    UpperVert: int
-    Solo: int
-    MiddleLeft: int
-    MiddleCenter: int
-    MiddleRight: int
-    MiddleVert: int
-    HorzLeft: int
-    HorzCenter: int
-    HorzRight: int
-    LowerLeft: int
-    LowerCenter: int
-    LowerRight: int
-    LowerVert: int
+class TileGroup:
+    """Group of tile codes related by LARB proximity."""
+    def __init__(self):
+        self._codes = [_alloc() for _ in range(16)]
 
-    @staticmethod
-    def alloc():
-        return FloorTiles(
-            UpperLeft=_alloc(),
-            UpperCenter=_alloc(),
-            UpperRight=_alloc(),
-            UpperVert=_alloc(),
-            Solo=_alloc(),
-            MiddleLeft=_alloc(),
-            MiddleCenter=_alloc(),
-            MiddleRight=_alloc(),
-            MiddleVert=_alloc(),
-            HorzLeft=_alloc(),
-            HorzCenter=_alloc(),
-            HorzRight=_alloc(),
-            LowerLeft=_alloc(),
-            LowerCenter=_alloc(),
-            LowerRight=_alloc(),
-            LowerVert=_alloc(),
-        )
+    def index(
+        self,
+        *,
+        left: bool=False,
+        above: bool=False,
+        right: bool=False,
+        below: bool=False
+    ):
+        index = 0
+        index += 8 if left else 0
+        index += 4 if above else 0
+        index += 2 if right else 0
+        index += 1 if below else 0
+        return index
 
+    def pick(self, **kwargs):
+        return self._codes[self.index(**kwargs)]
+
+
+class FloorTiles(TileGroup):
     def load(self, tileset, floorpng, start):
-        tileset.set_tile(self.UpperLeft, floorpng.get_tile(start + 0))
-        tileset.set_tile(self.UpperCenter, floorpng.get_tile(start + 1))
-        tileset.set_tile(self.UpperRight, floorpng.get_tile(start + 2))
-        tileset.set_tile(self.UpperVert, floorpng.get_tile(start + 3))
-        tileset.set_tile(self.Solo, floorpng.get_tile(start + 5))
-        tileset.set_tile(self.MiddleLeft, floorpng.get_tile(start + 21))
-        tileset.set_tile(self.MiddleCenter, floorpng.get_tile(start + 22))
-        tileset.set_tile(self.MiddleRight, floorpng.get_tile(start + 23))
-        tileset.set_tile(self.MiddleVert, floorpng.get_tile(start + 24))
-        tileset.set_tile(self.HorzLeft, floorpng.get_tile(start + 25))
-        tileset.set_tile(self.HorzCenter, floorpng.get_tile(start + 26))
-        tileset.set_tile(self.HorzRight, floorpng.get_tile(start + 27))
-        tileset.set_tile(self.LowerLeft, floorpng.get_tile(start + 42))
-        tileset.set_tile(self.LowerCenter, floorpng.get_tile(start + 43))
-        tileset.set_tile(self.LowerRight, floorpng.get_tile(start + 44))
-        tileset.set_tile(self.LowerVert, floorpng.get_tile(start + 45))
-
-    def larb(self):
-        # Return an array of codes in LARB bitfield order.
-        return [                # L A R B
-            self.Solo,          # . . . .
-            self.UpperVert,     # . . . B
-            self.HorzLeft,      # . . R .
-            self.UpperLeft,     # . . R B
-            self.LowerVert,     # . A . .
-            self.MiddleVert,    # . A . B
-            self.LowerLeft,     # . A R .
-            self.MiddleLeft,    # . A R B
-            self.HorzRight,     # L . . .
-            self.UpperRight,    # L . . B
-            self.HorzCenter,    # L . R .
-            self.UpperCenter,   # L . R B
-            self.LowerRight,    # L A . .
-            self.MiddleRight,   # L A . B
-            self.LowerCenter,   # L A R .
-            self.MiddleCenter,  # L A R B
-        ]
+        """
+        Load a group of floor tiles from the DawnLike set.
+        floorpng is "Floor.png" loaded as a tileset.
+        start is an offset identifying the tile group.
+        """
+        offsets = [5, 3, 25, 0, 45, 24, 42, 21, 27, 2, 26, 1, 44, 23, 43, 22]
+        for i in range(16):
+            tile = floorpng.get_tile(start + offsets[i])
+            tileset.set_tile(self._codes[i], tile)
 
 
 def _actor_appearance(quad):
@@ -174,18 +130,8 @@ DOOR_H = _alloc()
 DOOR_V = _alloc()
 DOOR = DOOR_H
 
-FLOOR_STONE = [
-    FloorTiles.alloc(),
-    FloorTiles.alloc(),
-    FloorTiles.alloc(),
-    FloorTiles.alloc()
-]
-FLOOR_WOOD = [
-    FloorTiles.alloc(),
-    FloorTiles.alloc(),
-    FloorTiles.alloc(),
-    FloorTiles.alloc()
-]
+FLOOR_STONE = [FloorTiles() for _ in range(4)]
+FLOOR_WOOD = [FloorTiles() for _ in range(4)]
 FLOORS = FLOOR_STONE + FLOOR_WOOD
 
 STAIRS_UP = _alloc()
