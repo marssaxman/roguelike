@@ -76,6 +76,18 @@ class FloorTiles(TileGroup):
             tileset.set_tile(self._codes[i], tile)
 
 
+class WallTiles(TileGroup):
+    def load(self, tileset, wallpng, start):
+        """Load a group of wall tiles from the DawnLike set.
+        wallpng is "Wall.png" loaded as a tileset.
+        start is an offset in the tileset identifying the tile group.
+        """
+        offsets = [21, 20, 1, 0, 20, 20, 40, 23, 1, 2, 1, 4, 42, 25, 44, 24]
+        for i in range(16):
+            tile = wallpng.get_tile(start + offsets[i])
+            tileset.set_tile(self._codes[i], tile)
+
+
 def _actor_appearance(quad):
     # Using an actor quad returned by _alloc_actor(), create an Appearance
     return appearance.Looped((
@@ -133,6 +145,9 @@ DOOR = DOOR_H
 FLOOR_STONE = [FloorTiles() for _ in range(4)]
 FLOOR_WOOD = [FloorTiles() for _ in range(4)]
 FLOORS = FLOOR_STONE + FLOOR_WOOD
+WALL_BRICK = [WallTiles() for _ in range(4)]
+WALL_WOOD = [WallTiles() for _ in range(4)]
+WALLS = WALL_BRICK + WALL_WOOD
 
 STAIRS_UP = _alloc()
 STAIRS_DOWN = _alloc()
@@ -192,6 +207,14 @@ def load_into(tileset):
     wall_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Wall.png", (320//16), (816//16), range(1020)
     )
+    WALL_BRICK[0].load(tileset, wall_tiles, 60)
+    WALL_BRICK[1].load(tileset, wall_tiles, 120)
+    WALL_BRICK[2].load(tileset, wall_tiles, 180)
+    WALL_BRICK[3].load(tileset, wall_tiles, 240)
+    WALL_WOOD[0].load(tileset, wall_tiles, 67)
+    WALL_WOOD[1].load(tileset, wall_tiles, 127)
+    WALL_WOOD[2].load(tileset, wall_tiles, 187)
+    WALL_WOOD[3].load(tileset, wall_tiles, 247)
     # 20 tiles in a row, 51 rows
     # Wall tiles exist in a 6x3 cluster with 1 space between columns
     # Clusters exist in a 4-high group (6x12 tiles) of color variants

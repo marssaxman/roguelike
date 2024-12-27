@@ -137,7 +137,9 @@ def populate_rooms(
 
 @dataclass
 class RoomStyle:
-    floor_glyphs: List[int]
+    floor_glyphs: graphics.FloorTiles
+    wall_glyphs: graphics.WallTiles
+
 
 def style_rooms(
     base_map: maze.basemap.BaseMap,
@@ -146,10 +148,14 @@ def style_rooms(
     room_styles: Dict[int, RoomStyle] = dict()
     for room in base_map.rooms:
         # Pick a floor style completely at random.
-        # I don't like depending on `graphics` here but let's fix that later
-        style = rng.integers(0, len(graphics.FLOORS))
-        glyphs = graphics.FLOORS[style]
-        room_styles[room.id] = RoomStyle(floor_glyphs=glyphs)
+        floor_style = rng.integers(0, len(graphics.FLOORS))
+        floor_glyphs = graphics.FLOORS[floor_style]
+        wall_style = rng.integers(0, len(graphics.WALLS))
+        wall_glyphs = graphics.WALLS[wall_style]
+        room_styles[room.id] = RoomStyle(
+            floor_glyphs=floor_glyphs,
+            wall_glyphs=wall_glyphs
+        )
     return room_styles
 
 def paint_floors(
@@ -162,9 +168,6 @@ def paint_floors(
     map_shape = base_map.shape
     out = np.zeros_like(base_map.tiles, dtype=np.uint)
     for room in base_map.rooms:
-        # Pick a floor style completely at random.
-        # I don't like depending on `graphics` here, but perhaps we can fix
-        # that later on.
         glyphs = room_styles[room.id].floor_glyphs
         tiles = base_map.tiles
         WALL = basemap.Tile.WALL
@@ -228,6 +231,36 @@ def paint_doors(
                 # open passageway
                 dungeon.tiles[x,y] = tile_types.new_floor(pass_code)
 
+def paint_walls(
+    base_map: maze.basemap.BaseMap,
+    room_grid,
+    dungeon: GameMap,
+    room_styles: Dict[int, RoomStyle],
+    rng: np.random.Generator,
+):
+    map_shape = room_grid.shape
+    assert map_shape == base_map.tiles.shape
+    assert map_shape == dungeon.tiles.shape
+    WALL = basemap.Tile.WALL
+    tiles = base_map.tiles
+    for x, y in np.ndindex(map_shape):
+        if base_map.tiles[x, y] != WALL:
+            continue
+        left = x > 0 and tiles[x-1, y] == WALL
+        above = y > 0 and tiles[x, y-1] == WALL
+        right = (x+1) < map_shape[0] and tiles[x+1, y] == WALL
+        below = (y+1) < map_shape[1] and tiles[x, y+1] == WALL
+        # Wall style is tricky because walls take their style from rooms,
+        # which are defined by floors. Horizontal walls use the style defined
+        # by the room below; vertical walls use both the left and the right
+        # styles, split down the middle.
+
+        # temporary hack
+        glyphs = graphics.WALLS[0]
+        code = glyphs.pick(left=left, above=above, right=right, below=below)
+        dungeon.tiles[x,y] = tile_types.new_wall(code)
+
+
 def generate_dungeon(
     base_map: maze.basemap.BaseMap,
     engine: Engine,
@@ -240,32 +273,6 @@ def generate_dungeon(
     map_shape = base_map.shape
     dungeon = GameMap(engine, map_shape, entities=[player])
 
-    palette = maze.render.Palette(
-        void = tile_types.wall,
-        floor = tile_types.floor,
-        entry = tile_types.floor,
-        exit = tile_types.floor,
-        door = tile_types.door,
-        door_H = tile_types.door_H,
-        door_V = tile_types.door_V,
-        wall = tile_types.wall,
-        wall_B = tile_types.wall_B,
-        wall_R = tile_types.wall_R,
-        wall_RB = tile_types.wall_RB,
-        wall_A = tile_types.wall_A,
-        wall_AB = tile_types.wall_AB,
-        wall_AR = tile_types.wall_AR,
-        wall_ARB = tile_types.wall_ARB,
-        wall_L = tile_types.wall_L,
-        wall_LB = tile_types.wall_LB,
-        wall_LR = tile_types.wall_LR,
-        wall_LRB = tile_types.wall_LRB,
-        wall_LA = tile_types.wall_LA,
-        wall_LAB = tile_types.wall_LAB,
-        wall_LAR = tile_types.wall_LAR,
-        wall_LARB = tile_types.wall_LARB,
-    )
-    maze.render.tiles(base_map.tiles, dungeon.tiles, palette)
     room_styles = style_rooms(base_map, rng=rng)
     room_grid = paint_floors(
         base_map=base_map,
@@ -274,6 +281,13 @@ def generate_dungeon(
         rng=rng
     )
     paint_doors(
+        base_map=base_map,
+        room_grid=room_grid,
+        dungeon=dungeon,
+        room_styles=room_styles,
+        rng=rng
+    )
+    paint_walls(
         base_map=base_map,
         room_grid=room_grid,
         dungeon=dungeon,
