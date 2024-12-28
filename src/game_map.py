@@ -203,6 +203,8 @@ class GameMap:
             if isinstance(char, str):
                 char = ord(char)
             x, y = entity.x - adjust_x, entity.y - adjust_y
+            if x < 0 or y < 0 or x >= window.shape[0] or y >= window.shape[1]:
+                continue
             # composite the new tile onto the existing one
             bg_char = window[x, y][0]
             new_char = graphics.composite(bg_char, char)
