@@ -6,6 +6,7 @@ from typing import Tuple, TYPE_CHECKING
 
 from tcod.console import Console
 from tcod.map import compute_fov
+from tcod import libtcodpy
 
 import exceptions
 from message_log import MessageLog
@@ -48,7 +49,8 @@ class Engine:
         self.game_map.visible[:] = compute_fov(
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
-            radius=8,
+            radius=0,
+            algorithm=libtcodpy.FOV_SYMMETRIC_SHADOWCAST,
         )
         # If a tile is visible, add it to the "explored" map.
         self.game_map.explored |= self.game_map.visible
