@@ -87,6 +87,17 @@ class WallTiles(TileGroup):
             tile = wallpng.get_tile(start + offsets[i])
             tileset.set_tile(self._codes[i], tile)
 
+    def flip_red_and_blue(self, tileset):
+        """
+        Recolor all of these tiles by swapping the red and blue channels.
+        This is useful because DawnLike only includes one set of brick tiles,
+        which are all cool-toned. We'd like warmer-toned brick options.
+        """
+        for code in self._codes:
+            old = tileset.get_tile(code)
+            new = old[:, :, [2,1,0,3]]
+            tileset.set_tile(code, new)
+
 
 def _actor_appearance(quad):
     # Using an actor quad returned by _alloc_actor(), create an Appearance
@@ -128,7 +139,7 @@ DOOR = DOOR_H
 FLOOR_STONE = [FloorTiles() for _ in range(4)]
 FLOOR_WOOD = [FloorTiles() for _ in range(4)]
 FLOORS = FLOOR_STONE + FLOOR_WOOD
-WALL_BRICK = [WallTiles() for _ in range(4)]
+WALL_BRICK = [WallTiles() for _ in range(8)]
 WALL_ROCK = [WallTiles() for _ in range(8)]
 WALLS = WALL_BRICK + WALL_ROCK
 
@@ -176,7 +187,6 @@ def adjoin(left: int, right: int):
     _tileset.set_tile(out_code, outRGBA)
     return out_code
 
-
 def _set_mirrored(tileset, left_right, image):
     left, right = left_right
     tileset.set_tile(left, image)
@@ -212,6 +222,15 @@ def load_into(tileset):
     WALL_BRICK[1].load(tileset, wall_tiles, 120)
     WALL_BRICK[2].load(tileset, wall_tiles, 180)
     WALL_BRICK[3].load(tileset, wall_tiles, 240)
+    # The second set of brick tiles are the same as the first, color-swapped.
+    WALL_BRICK[4].load(tileset, wall_tiles, 60)
+    WALL_BRICK[4].flip_red_and_blue(tileset)
+    WALL_BRICK[5].load(tileset, wall_tiles, 120)
+    WALL_BRICK[5].flip_red_and_blue(tileset)
+    WALL_BRICK[6].load(tileset, wall_tiles, 180)
+    WALL_BRICK[6].flip_red_and_blue(tileset)
+    WALL_BRICK[7].load(tileset, wall_tiles, 240)
+    WALL_BRICK[7].flip_red_and_blue(tileset)
     WALL_ROCK[0].load(tileset, wall_tiles, 307)
     WALL_ROCK[1].load(tileset, wall_tiles, 367)
     WALL_ROCK[2].load(tileset, wall_tiles, 427)
