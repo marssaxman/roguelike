@@ -129,8 +129,8 @@ FLOOR_STONE = [FloorTiles() for _ in range(4)]
 FLOOR_WOOD = [FloorTiles() for _ in range(4)]
 FLOORS = FLOOR_STONE + FLOOR_WOOD
 WALL_BRICK = [WallTiles() for _ in range(4)]
-WALL_WOOD = [WallTiles() for _ in range(4)]
-WALLS = WALL_BRICK #+ WALL_WOOD
+WALL_ROCK = [WallTiles() for _ in range(8)]
+WALLS = WALL_BRICK + WALL_ROCK
 
 STAIRS_UP = _alloc()
 STAIRS_DOWN = _alloc()
@@ -212,10 +212,14 @@ def load_into(tileset):
     WALL_BRICK[1].load(tileset, wall_tiles, 120)
     WALL_BRICK[2].load(tileset, wall_tiles, 180)
     WALL_BRICK[3].load(tileset, wall_tiles, 240)
-    WALL_WOOD[0].load(tileset, wall_tiles, 67)
-    WALL_WOOD[1].load(tileset, wall_tiles, 127)
-    WALL_WOOD[2].load(tileset, wall_tiles, 187)
-    WALL_WOOD[3].load(tileset, wall_tiles, 247)
+    WALL_ROCK[0].load(tileset, wall_tiles, 307)
+    WALL_ROCK[1].load(tileset, wall_tiles, 367)
+    WALL_ROCK[2].load(tileset, wall_tiles, 427)
+    WALL_ROCK[3].load(tileset, wall_tiles, 487)
+    WALL_ROCK[4].load(tileset, wall_tiles, 314)
+    WALL_ROCK[5].load(tileset, wall_tiles, 374)
+    WALL_ROCK[6].load(tileset, wall_tiles, 434)
+    WALL_ROCK[7].load(tileset, wall_tiles, 494)
 
     player0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Player0.png", 8, 15, range(8*15)
