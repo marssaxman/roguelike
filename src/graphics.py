@@ -62,6 +62,17 @@ class TileGroup:
     def pick(self, **kwargs):
         return self._codes[self.index(**kwargs)]
 
+    def flip_red_and_blue(self, tileset):
+        """
+        Recolor all of these tiles by swapping the red and blue channels.
+        This is useful because DawnLike only includes one set of brick tiles,
+        which are all cool-toned. We'd like warmer-toned brick options.
+        """
+        for code in self._codes:
+            old = tileset.get_tile(code)
+            new = old[:, :, [2,1,0,3]]
+            tileset.set_tile(code, new)
+
 
 class FloorTiles(TileGroup):
     def load(self, tileset, floorpng, start):
@@ -86,17 +97,6 @@ class WallTiles(TileGroup):
         for i in range(16):
             tile = wallpng.get_tile(start + offsets[i])
             tileset.set_tile(self._codes[i], tile)
-
-    def flip_red_and_blue(self, tileset):
-        """
-        Recolor all of these tiles by swapping the red and blue channels.
-        This is useful because DawnLike only includes one set of brick tiles,
-        which are all cool-toned. We'd like warmer-toned brick options.
-        """
-        for code in self._codes:
-            old = tileset.get_tile(code)
-            new = old[:, :, [2,1,0,3]]
-            tileset.set_tile(code, new)
 
 
 def _actor_appearance(quad):
@@ -136,7 +136,7 @@ DOOR_H = _alloc()
 DOOR_V = _alloc()
 DOOR = DOOR_H
 
-FLOOR_STONE = [FloorTiles() for _ in range(4)]
+FLOOR_STONE = [FloorTiles() for _ in range(8)]
 FLOOR_WOOD = [FloorTiles() for _ in range(4)]
 FLOORS = FLOOR_STONE + FLOOR_WOOD
 WALL_BRICK = [WallTiles() for _ in range(8)]
@@ -211,6 +211,14 @@ def load_into(tileset):
     FLOOR_STONE[1].load(tileset, floor_tiles, 126)
     FLOOR_STONE[2].load(tileset, floor_tiles, 189)
     FLOOR_STONE[3].load(tileset, floor_tiles, 252)
+    FLOOR_STONE[4].load(tileset, floor_tiles, 63)
+    FLOOR_STONE[4].flip_red_and_blue(tileset)
+    FLOOR_STONE[5].load(tileset, floor_tiles, 126)
+    FLOOR_STONE[5].flip_red_and_blue(tileset)
+    FLOOR_STONE[6].load(tileset, floor_tiles, 189)
+    FLOOR_STONE[6].flip_red_and_blue(tileset)
+    FLOOR_STONE[7].load(tileset, floor_tiles, 252)
+    FLOOR_STONE[7].flip_red_and_blue(tileset)
     FLOOR_WOOD[0].load(tileset, floor_tiles, 322)
     FLOOR_WOOD[1].load(tileset, floor_tiles, 385)
     FLOOR_WOOD[2].load(tileset, floor_tiles, 448)
