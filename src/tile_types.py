@@ -1,5 +1,6 @@
 from typing import Tuple
 import numpy as np  # type: ignore
+from functools import cache
 
 import graphics
 
@@ -32,7 +33,8 @@ def new_tile(
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
-def new_wall(char_id):
+@cache
+def wall(char_id):
     return new_tile(
         walkable=False,
         transparent=False,
@@ -40,7 +42,8 @@ def new_wall(char_id):
         light=(char_id, (255, 255, 255), (130, 110, 50)),
     )
 
-def new_door(char_id):
+@cache
+def door(char_id):
     return new_tile(
         walkable=True,
         transparent=False,
@@ -48,7 +51,8 @@ def new_door(char_id):
         light=(char_id, (255, 255, 255), (200, 180, 50)),
     )
 
-def new_floor(char_id):
+@cache
+def floor(char_id):
     return new_tile(
         walkable=True,
         transparent=True,
@@ -59,23 +63,13 @@ def new_floor(char_id):
 # Shroud represents tiles which have not yet been explored
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 
-# Default values used for map initialization prior to style painting
-floor = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(ord(" "), (127, 127, 127), (50, 50, 150)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
-)
-wall = new_tile(
+# Map initialization value used prior to style painting
+DEFAULT = new_tile(
     walkable=False,
     transparent=False,
     dark=(ord("#"), (127, 127, 127), (50, 50, 150)),
     light=(ord("#"), (255, 255, 255), (200, 180, 50)),
 )
-
-door = new_door(graphics.DOOR)
-door_H = new_door(graphics.DOOR_H)
-door_V = new_door(graphics.DOOR_V)
 
 exit_stairs = new_tile(
     walkable=True,

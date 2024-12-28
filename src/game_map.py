@@ -25,7 +25,7 @@ class GameMap:
         self.engine = engine
         self.width, self.height = shape
         self.entities = set(entities)
-        self.tiles = np.full(shape, fill_value=tile_types.wall, order="F")
+        self.tiles = np.full(shape, fill_value=tile_types.DEFAULT, order="F")
         self.visible = np.full(shape, fill_value=False, order="F")
         self.explored = np.full(shape, fill_value=False, order="F")
         self.exit_location = (0, 0)

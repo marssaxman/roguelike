@@ -176,7 +176,7 @@ def paint_floors(
             right = (x+1) < map_shape[0] and tiles[x+1, y] != WALL
             below = (y+1) < map_shape[1] and tiles[x, y+1] != WALL
             code = glyphs.pick(left=left, above=above, right=right, below=below)
-            dungeon.tiles[x,y] = tile_types.new_floor(code)
+            dungeon.tiles[x,y] = tile_types.floor(code)
             out[x, y] = room.id
     return out
 
@@ -210,10 +210,10 @@ def paint_doors(
             if base_map.tiles[x,y] == DOOR:
                 # doorway
                 door_code = graphics.composite(pass_code, graphics.DOOR_V)
-                dungeon.tiles[x,y] = tile_types.new_door(door_code)
+                dungeon.tiles[x,y] = tile_types.door(door_code)
             else:
                 # open passageway
-                dungeon.tiles[x,y] = tile_types.new_floor(pass_code)
+                dungeon.tiles[x,y] = tile_types.floor(pass_code)
         elif base_map.tiles[x-1, y] == WALL:
             assert base_map.tiles[x+1, y] == WALL
             assert base_map.tiles[x, y-1] != WALL
@@ -225,10 +225,10 @@ def paint_doors(
             if base_map.tiles[x,y] == DOOR:
                 # doorway
                 door_code = graphics.composite(pass_code, graphics.DOOR_H)
-                dungeon.tiles[x,y] = tile_types.new_door(door_code)
+                dungeon.tiles[x,y] = tile_types.door(door_code)
             else:
                 # open passageway
-                dungeon.tiles[x,y] = tile_types.new_floor(pass_code)
+                dungeon.tiles[x,y] = tile_types.floor(pass_code)
 
 def paint_walls(
     base_map: maze.basemap.BaseMap,
@@ -288,14 +288,14 @@ def paint_walls(
             code = room_styles[mono_style].wall_glyphs.pick(
                 left=left, above=above, right=right, below=below
             )
-            dungeon.tiles[x,y] = tile_types.new_wall(code)
+            dungeon.tiles[x,y] = tile_types.wall(code)
         elif left_style and right_style:
             l_glyphs = room_styles[left_style].wall_glyphs
             r_glyphs = room_styles[right_style].wall_glyphs
             l_code = l_glyphs.pick(left=left, above=above, right=right, below=below)
             r_code = r_glyphs.pick(left=left, above=above, right=right, below=below)
             wall_code = graphics.adjoin(l_code, r_code)
-            dungeon.tiles[x,y] = tile_types.new_wall(wall_code)
+            dungeon.tiles[x,y] = tile_types.wall(wall_code)
 
 
 def generate_dungeon(
