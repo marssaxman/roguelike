@@ -108,13 +108,13 @@ def _actor_appearance(quad):
 _PLAYER = _alloc_actor()
 player = _actor_appearance(_PLAYER)
 
-_RAT = _alloc_pair(), _alloc_pair()
+_RAT = _alloc_actor()
 rat = _actor_appearance(_RAT)
 
-_ORC = _alloc_pair(), _alloc_pair()
+_ORC = _alloc_actor()
 orc = _actor_appearance(_ORC)
 
-_TROLL = _alloc_pair(), _alloc_pair()
+_TROLL = _alloc_actor()
 troll = _actor_appearance(_TROLL)
 
 
