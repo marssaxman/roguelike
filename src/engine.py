@@ -3,6 +3,7 @@ from __future__ import annotations
 import lzma
 import pickle
 from typing import Tuple, TYPE_CHECKING
+import numpy as np
 
 from tcod.console import Console
 from tcod.map import compute_fov
@@ -46,14 +47,23 @@ class Engine:
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the player's point of view."""
-        self.game_map.visible[:] = compute_fov(
+        fov = compute_fov(
             self.game_map.tiles["transparent"],
             (self.player.x, self.player.y),
             radius=0,
             algorithm=libtcodpy.FOV_SYMMETRIC_SHADOWCAST,
         )
         # If a tile is visible, add it to the "explored" map.
-        self.game_map.explored |= self.game_map.visible
+        self.game_map.explored |= fov
+        # Subtract walls along the bottom edge of the FOV from visibility.
+        # Our quasi-isometric tile perspective shows the face of the wall
+        # which belongs to the room below, not above: it doesn't make sense
+        # to light up a wall the player cannot currently see.
+        lower_edge = fov > np.roll(fov, shift=-1, axis=1)
+        walls = np.invert(self.game_map.tiles["walkable"])
+        darken = np.logical_and(lower_edge, walls)
+        viz = np.logical_and(fov, np.invert(darken))
+        self.game_map.visible[:] = viz
 
     def render(self, console: Console) -> None:
         self.game_map.render(console.rgb[:, :-7])
