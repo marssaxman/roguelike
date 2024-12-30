@@ -5,7 +5,8 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from components.appearance import Static
-from entity import Actor, Item
+from entity import Actor, Item, Fixture
+import color
 import graphics
 
 
@@ -84,25 +85,30 @@ lightning_scroll = Item(
 )
 
 dagger = Item(
-    appearance=Static(char="/", color=(0, 191, 255)),
+    appearance=Static(char=ord("/"), color=(0, 191, 255)),
     name="Dagger",
     equippable=equippable.Dagger(),
 )
 
 sword = Item(
-    appearance=Static(char="/", color=(0, 191, 255)),
+    appearance=Static(char=ord("/"), color=(0, 191, 255)),
     name="Sword",
     equippable=equippable.Sword()
 )
 
 leather_armor = Item(
-    appearance=Static(char="[", color=(139, 69, 19)),
+    appearance=Static(char=ord("["), color=(139, 69, 19)),
     name="Leather Armor",
     equippable=equippable.LeatherArmor(),
 )
 
 chain_mail = Item(
-    appearance=Static(char="[", color=(139, 69, 19)),
+    appearance=Static(char=ord("["), color=(139, 69, 19)),
     name="Chain Mail",
     equippable=equippable.ChainMail(),
+)
+
+entry_stairs = Fixture(
+    appearance=Static(char=graphics.STAIRS_DOWN, color=color.white),
+    name="Stairs Downward",
 )

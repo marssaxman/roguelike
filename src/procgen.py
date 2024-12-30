@@ -133,6 +133,9 @@ def populate_rooms(
     if dungeon.exit_location:
         x, y = dungeon.exit_location
         dungeon.tiles[x, y] = tile_types.exit_stairs
+    if dungeon.entry_location:
+        x, y = dungeon.entry_location
+        entity_factories.entry_stairs.spawn(dungeon, x, y)
 
 
 @dataclass
@@ -260,6 +263,7 @@ def paint_walls(
             elif (y+1)<map_shape[1]:
                 smear_grid[x,y] = room_grid[x,y+1]
     room_grid = smear_grid
+    outer_glyphs = graphics.WALL_BRICK[3]
 
     for x, y in np.ndindex(map_shape):
         if base_map.tiles[x, y] != WALL:
@@ -268,8 +272,6 @@ def paint_walls(
         above = y > 0 and tiles[x, y-1] == WALL
         right = (x+1) < map_shape[0] and tiles[x+1, y] == WALL
         below = (y+1) < map_shape[1] and tiles[x, y+1] == WALL
-
-        outer_glyphs = graphics.WALL_BRICK[0]
 
         mono_style = room_grid[x,y]
         left_style = room_grid[x-1,y] if x > 0 else 0
