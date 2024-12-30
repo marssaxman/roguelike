@@ -191,11 +191,11 @@ def paint_doors(
     WALL = basemap.Tile.WALL
     DOOR = basemap.Tile.DOOR
     for wall in base_map.walls:
-        if not wall.has_door():
+        if not wall.has_doorway():
             continue
         # Is it a vertical or horizontal door?
         # Every door must have either walls above and below, or left and right.
-        x, y = wall.door
+        x, y = wall.doorway
         if base_map.tiles[x, y-1] == WALL:
             assert base_map.tiles[x, y+1] == WALL
             assert base_map.tiles[x-1, y] != WALL

@@ -80,7 +80,7 @@ def corridors(builder):
     for room in filter(lambda x: x.is_corridor(), builder.rooms()):
         walls = builder.walls_around(room.id)
         for wall in filter(lambda x: 1 == x.area(), walls):
-            if not wall.has_door():
+            if not wall.has_doorway():
                 x,y = next(iter(wall.tiles()))
                 builder.open_door(x, y, wall.a, wall.b)
 

@@ -93,7 +93,7 @@ class Wall:
         self._a = a
         self._b = b
         self._tiles = set()
-        self._door = None
+        self._doorway = None
 
     @property
     def a(self):
@@ -109,12 +109,12 @@ class Wall:
     def adjoins(self, id):
         return self._a == id or self._b == id
 
-    def has_door(self):
-        return self._door != None
+    def has_doorway(self):
+        return self._doorway != None
 
     @property
-    def door(self):
-        return self._door
+    def doorway(self):
+        return self._doorway
 
     def area(self):
         return len(self._tiles)
@@ -126,10 +126,10 @@ class Wall:
     def _add_tile(self, x, y):
         self._tiles.add((x, y))
 
-    def _place_door(self, x, y):
-        assert self._door == None
+    def _place_doorway(self, x, y):
+        assert self._doorway == None
         assert (x,y) in self._tiles
-        self._door = (x, y)
+        self._doorway = (x, y)
 
 
 class BaseMap:
@@ -266,8 +266,8 @@ class Builder:
         assert b_id in self._rooms[a_id]._neighbors
         wall = self._get_wall(a_id, b_id)
         assert (x, y) in wall._tiles
-        assert not wall.has_door()
-        wall._place_door(x, y)
+        assert not wall.has_doorway()
+        wall._place_doorway(x, y)
         self.map[x, y] = tile_type
         self._get_room(a_id)._add_connection(b_id)
         self._get_room(b_id)._add_connection(a_id)
