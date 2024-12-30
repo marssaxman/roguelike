@@ -269,34 +269,46 @@ def paint_walls(
         right = (x+1) < map_shape[0] and tiles[x+1, y] == WALL
         below = (y+1) < map_shape[1] and tiles[x, y+1] == WALL
 
+        outer_glyphs = graphics.WALL_BRICK[0]
+
         mono_style = room_grid[x,y]
         left_style = room_grid[x-1,y] if x > 0 else 0
         right_style = room_grid[x+1,y] if (x+1) < map_shape[0] else 0
-        # handle edge cases for outer walls
-        if not mono_style and (not left_style or not right_style):
-            if right_style:
-                mono_style = right_style
-            elif left_style:
-                mono_style = left_style
-            elif y > 0:
-                mono_style = room_grid[x, y-1]
-                if not mono_style and x > 0:
-                    mono_style = room_grid[x-1, y-1]
-                if not mono_style and (x+1) < map_shape[0]:
-                    mono_style = room_grid[x+1, y-1]
-
         if mono_style:
+            # associated with a single room
             code = room_styles[mono_style].wall_glyphs.pick(
                 left=left, above=above, right=right, below=below
             )
             dungeon.tiles[x,y] = tile_types.wall(code)
         elif left_style and right_style:
+            # a wall adjoining two rooms
             l_glyphs = room_styles[left_style].wall_glyphs
             r_glyphs = room_styles[right_style].wall_glyphs
             l_code = l_glyphs.pick(left=left, above=above, right=right, below=below)
             r_code = r_glyphs.pick(left=left, above=above, right=right, below=below)
             wall_code = graphics.adjoin(l_code, r_code)
             dungeon.tiles[x,y] = tile_types.wall(wall_code)
+        elif right_style:
+            # outer wall on left side of tower
+            l_code = outer_glyphs.pick(left=left, above=above, right=right, below=below)
+            r_glyphs = room_styles[right_style].wall_glyphs
+            r_code = r_glyphs.pick(left=left, above=above, right=right, below=below)
+            wall_code = graphics.adjoin(l_code, r_code)
+            dungeon.tiles[x,y] = tile_types.wall(wall_code)
+        elif left_style:
+            # outer wall on right side of tower
+            r_code = outer_glyphs.pick(left=left, above=above, right=right, below=below)
+            l_glyphs = room_styles[left_style].wall_glyphs
+            l_code = l_glyphs.pick(left=left, above=above, right=right, below=below)
+            wall_code = graphics.adjoin(l_code, r_code)
+            dungeon.tiles[x,y] = tile_types.wall(wall_code)
+        elif y > 0:
+            #outer wall below tower
+            code = outer_glyphs.pick(
+                left=left, above=above, right=right, below=below
+            )
+            dungeon.tiles[x,y] = tile_types.wall(code)
+
 
 
 def generate_dungeon(
