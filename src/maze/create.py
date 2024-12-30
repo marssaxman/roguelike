@@ -207,6 +207,6 @@ def tower(
 
     # We generate floors from the top down, appending each one as we create
     # it, but we want to start the game on the bottom floor and move upward.
-    # Solution: reverse the list before returning it.
     levels.reverse()
+    connect.entrance(levels[0], rng)
     return levels

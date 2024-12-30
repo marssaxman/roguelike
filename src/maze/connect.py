@@ -120,5 +120,46 @@ def floors(above, below, rng):
     assert above.tiles[x, y] == Tile.FLOOR
     assert below.tiles[x, y] == Tile.FLOOR
     above.tiles[x, y] = Tile.ENTRY
+    above.entry = (x, y)
     below.tiles[x, y] = Tile.EXIT
+    below.exit = (x, y)
+
+def entrance(level, rng):
+    """
+    Place an outside entrance point in this ground-floor level.
+    For purely aesthetic reasons, we'll put it in the bottom wall.
+
+    """
+    # Find the lowest wall segment (or one of them, at least).
+    lowest_depth = level.shape[1]
+    lowest_left = 0
+    lowest_right = 0
+    track_right = False
+    for x in range(level.shape[0]):
+        # How many tiles up from the bottom is the floor in this column?
+        depth = 0
+        for y in range(level.shape[1]-1, 0, -1):
+            if level.tiles[x,y] == Tile.WALL:
+                break
+            depth += 1
+        if depth < lowest_depth:
+            lowest_depth = depth
+            lowest_left = x
+            track_right = True
+        if depth == lowest_depth and track_right:
+            lowest_right = x
+        if depth > lowest_depth:
+            track_right = False
+    # For each wall segment we found, look above: is there a floor?
+    # If so, add this wall coordinate to the candidate list.
+    candidates = []
+    y = level.shape[1] - lowest_depth - 1
+    for x in range(lowest_left, lowest_right):
+        if level.tiles[x, y-1] == Tile.FLOOR:
+            candidates.append((x, y))
+    # Pick whatever's at the middle of the list.
+    x,y = candidates[len(candidates)//2]
+    # Start the player one square above, on the floor tile.
+    level.entry = x,y-1
+    # Someday it would be nice to put an exterior door in the wall here.
 

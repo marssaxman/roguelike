@@ -130,9 +130,10 @@ def populate_rooms(
         # Put some monsters in the room
         place_entities(room, dungeon, floor, rng)
     # Put the exit stairway somewhere in the last room
-    stairs_x, stairs_y = room.random_location(rng)
-    dungeon.tiles[stairs_x, stairs_y] = tile_types.exit_stairs
-    dungeon.exit_location = stairs_x, stairs_y
+    if dungeon.exit_location:
+        x, y = dungeon.exit_location
+        dungeon.tiles[x, y] = tile_types.exit_stairs
+
 
 @dataclass
 class RoomStyle:
@@ -335,7 +336,8 @@ def generate_dungeon(
     # Get only the non-corridor rooms.
     rooms = [r for r in base_map.rooms if not r.is_corridor()]
     # Position the player in an arbitrarily chosen room.
-    dungeon.entry_location = rooms[0].random_location(rng)
+    dungeon.entry_location = base_map.entry
+    dungeon.exit_location = base_map.exit
     # Populate each room with appropriate entities.
     populate_rooms(dungeon, rooms, floor=floor, rng=rng)
 

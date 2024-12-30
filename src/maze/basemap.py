@@ -138,6 +138,8 @@ class BaseMap:
         self.rooms = rooms
         self.walls = walls
         assert isinstance(walls, list)
+        self.entry = None
+        self.exit = None
 
     @property
     def shape(self):
