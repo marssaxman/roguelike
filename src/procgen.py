@@ -335,8 +335,7 @@ def generate_dungeon(
     # Get only the non-corridor rooms.
     rooms = [r for r in base_map.rooms if not r.is_corridor()]
     # Position the player in an arbitrarily chosen room.
-    start_point = rooms[0].random_location(rng)
-    player.place(*start_point, dungeon)
+    dungeon.entry_location = rooms[0].random_location(rng)
     # Populate each room with appropriate entities.
     populate_rooms(dungeon, rooms, floor=floor, rng=rng)
 
