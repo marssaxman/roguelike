@@ -103,12 +103,12 @@ def _actor_appearance(quad):
     # Using an actor quad returned by _alloc_actor(), create an Appearance
     return appearance.Looped((
         appearance.Directional(
-            left=appearance.Static(char=quad[0][0], color=(255, 255, 255)),
-            right=appearance.Static(char=quad[0][1], color=(255, 255, 255)),
+            left=appearance.Static(char=quad[0][0]),
+            right=appearance.Static(char=quad[0][1]),
         ),
         appearance.Directional(
-            left=appearance.Static(char=quad[1][0], color=(255, 255, 255)),
-            right=appearance.Static(char=quad[1][1], color=(255, 255, 255)),
+            left=appearance.Static(char=quad[1][0]),
+            right=appearance.Static(char=quad[1][1]),
         ),
     ))
 
@@ -134,7 +134,7 @@ CORPSE = _alloc()
 
 DOOR_H = _alloc()
 DOOR_V = _alloc()
-DOOR = DOOR_H
+DOOR_OUTSIDE = _alloc()
 
 FLOOR_STONE = [FloorTiles() for _ in range(8)]
 FLOOR_WOOD = [FloorTiles() for _ in range(4)]
@@ -203,6 +203,7 @@ def load_into(tileset):
     )
     tileset.set_tile(DOOR_H, door_tiles.get_tile(0))
     tileset.set_tile(DOOR_V, door_tiles.get_tile(1))
+    tileset.set_tile(DOOR_OUTSIDE, door_tiles.get_tile(45))
 
     floor_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Floor.png", 21, 39, range(819)

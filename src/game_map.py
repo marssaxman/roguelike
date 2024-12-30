@@ -195,7 +195,13 @@ class GameMap:
             self.entities, key=lambda x: x.render_order.value
         )
         for entity in entities_sorted_for_rendering:
-            if not self.visible[entity.x, entity.y]:
+            # Only render mobile entities which are currently visible; other
+            # entities we'll draw if they have ever been explored.
+            if self.visible[entity.x, entity.y]:
+                entity.appearance.animate()
+            elif entity.mobile:
+                continue
+            elif not self.explored[entity.x, entity.y]:
                 continue
             entity.appearance.animate()
             char, color = entity.appearance.render()

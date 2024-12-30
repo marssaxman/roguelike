@@ -35,6 +35,7 @@ class Entity:
         name: str = "<Unnamed>",
         blocks_movement: bool = False,
         render_order: RenderOrder = RenderOrder.LAST,
+        mobile: bool = False,
     ):
         self.x = x
         self.y = y
@@ -42,6 +43,7 @@ class Entity:
         self.name = name
         self.blocks_movement = blocks_movement
         self.render_order = render_order
+        self.mobile = mobile
         if parent:
             self.parent = parent
             parent.entities.add(self)
@@ -103,6 +105,7 @@ class Actor(Entity):
             name=name,
             blocks_movement=True,
             render_order=RenderOrder.ACTOR,
+            mobile=True,
         )
         self.ai: Optional[BaseAI] = ai_cls(self)
 
@@ -142,6 +145,7 @@ class Item(Entity):
             name=name,
             blocks_movement=False,
             render_order=RenderOrder.ITEM,
+            mobile=False,
         )
 
         self.consumable = consumable
@@ -163,6 +167,7 @@ class Fixture(Entity):
         y: int = 0,
         appearance: Appearance = appearance.Default(),
         name: str = "<Unnamed>",
+        mechanism: Optional[Mechanism] = None,
     ):
         super().__init__(
             x=x,
@@ -171,5 +176,9 @@ class Fixture(Entity):
             name=name,
             blocks_movement=True,
             render_order=RenderOrder.FIXTURE,
+            mobile=False,
         )
+        self.mechanism = mechanism
+        if self.mechanism:
+            self.mechanism.parent = self
 

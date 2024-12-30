@@ -79,10 +79,3 @@ exit_stairs = new_tile(
     light=(graphics.STAIRS_UP, color.white, (200, 180, 50)),
 )
 
-entry_stairs = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(graphics.STAIRS_DOWN, (0, 0, 100), (50, 50, 150)),
-    light=(graphics.STAIRS_DOWN, color.white, (200, 180, 50)),
-)
-

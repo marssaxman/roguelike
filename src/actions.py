@@ -95,6 +95,7 @@ class WaitAction(Action):
     def perform(self) -> None:
         pass
 
+
 class TakeStairsAction(Action):
     def perform(self) -> None:
         """
@@ -107,7 +108,6 @@ class TakeStairsAction(Action):
             )
         else:
             raise exceptions.Impossible("There are no stairs here.")
-
 
 
 class ActionWithDirection(Action):
@@ -158,6 +158,16 @@ class MeleeAction(ActionWithDirection):
             )
 
 
+class FixtureAction(ActionWithDirection):
+    def perform(self) -> None:
+        target = self.blocking_entity
+        assert target
+        if target.mechanism:
+            return target.mechanism.operate(self.entity)
+        else:
+            name = target.name
+            raise exceptions.Impossible(f"You can't walk into the {name}.")
+
 
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
@@ -178,8 +188,11 @@ class MovementAction(ActionWithDirection):
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
-        if self.blocking_entity:
-            return MeleeAction(self.entity, self.dx, self.dy).perform()
+        action = None
+        if self.target_actor:
+            action = MeleeAction(self.entity, self.dx, self.dy)
+        elif self.blocking_entity:
+            action = FixtureAction(self.entity, self.dx, self.dy)
         else:
-            return MovementAction(self.entity, self.dx, self.dy).perform()
-
+            action = MovementAction(self.entity, self.dx, self.dy)
+        return action.perform() if action else None

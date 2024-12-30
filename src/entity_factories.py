@@ -1,5 +1,5 @@
 from components.ai import HostileEnemy, Passive, Epic_friend
-from components import consumable, equippable
+from components import consumable, equippable, mechanism
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -108,7 +108,16 @@ chain_mail = Item(
     equippable=equippable.ChainMail(),
 )
 
-entry_stairs = Fixture(
-    appearance=Static(char=graphics.STAIRS_DOWN, color=color.white),
-    name="Stairs Downward",
+door_outside = Fixture(
+    appearance=Static(char=graphics.DOOR_OUTSIDE, color=color.grey),
+    name="tower entrance",
+    mechanism=mechanism.DoorOutside(),
 )
+
+entry_stairs = Fixture(
+    appearance=Static(char=graphics.STAIRS_DOWN),
+    name="downward stairs",
+    mechanism=mechanism.DownStairs(),
+)
+
+

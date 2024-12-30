@@ -161,5 +161,5 @@ def entrance(level, rng):
     x,y = candidates[len(candidates)//2]
     # Start the player one square above, on the floor tile.
     level.entry = x,y-1
-    # Someday it would be nice to put an exterior door in the wall here.
-
+    # Perhaps we could explicitly place an exterior door in the wall, but
+    # for now we'll leave that up to the game engine.
