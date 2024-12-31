@@ -538,11 +538,12 @@ class MainGameEventHandler(EventHandler):
         modifier = event.mod
         player = self.engine.player
 
-        if key == tcod.event.KeySym.PERIOD and modifier & (
-            tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
-        ):
-            return actions.TakeStairsAction(player)
-
+        # this is how to detect the greater-than symbol, which we will
+        # someday care about when we can auto-navigate to a stairway
+        #if key == tcod.event.KeySym.PERIOD and modifier & (
+        #    tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+        #):
+        #    return actions.TakeStairsAction(player)
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
