@@ -23,8 +23,9 @@ class DownStairs(Mechanism):
     def operate(self, entity: Actor) -> None:
         """Move this entity to a lower-level game map."""
         if entity is self.engine.player:
+            self.engine.game_world.go_to_prev_level()
             self.engine.message_log.add_message(
-                f"the player would descend if possible", (127,127,127)
+                "You descend the staircase.", color.descend
             )
         else:
             self.engine.message_log.add_message(

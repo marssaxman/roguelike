@@ -43,3 +43,9 @@ class GameWorld:
         self.engine.player.place(*game_map.entry_location, game_map)
         self.current_floor += 1
 
+   def go_to_prev_level(self) -> None:
+        self.current_floor -= 1
+        game_map = self.tower[self.current_floor-1]
+        self.engine.game_map = game_map
+        self.engine.player.place(*game_map.exit_location, game_map)
+

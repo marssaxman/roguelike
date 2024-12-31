@@ -104,7 +104,7 @@ class TakeStairsAction(Action):
         if (self.entity.x, self.entity.y) == self.engine.game_map.exit_location:
             self.engine.game_world.go_to_next_level()
             self.engine.message_log.add_message(
-                "You descend the staircase.", color.descend
+                "You ascend the staircase.", color.ascend
             )
         else:
             raise exceptions.Impossible("There are no stairs here.")
