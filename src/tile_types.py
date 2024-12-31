@@ -72,10 +72,3 @@ DEFAULT = new_tile(
     light=(ord("#"), color.white, (200, 180, 50)),
 )
 
-exit_stairs = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(graphics.STAIRS_UP, (0, 0, 100), (50, 50, 150)),
-    light=(graphics.STAIRS_UP, color.white, (200, 180, 50)),
-)
-

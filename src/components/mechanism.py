@@ -29,7 +29,21 @@ class DownStairs(Mechanism):
             )
         else:
             self.engine.message_log.add_message(
-                f"{entity.name} wants to descend the stairs", (127,127,127)
+                f"{entity.name} wants to descend the stairs", color.impossible
+            )
+
+
+class UpStairs(Mechanism):
+    """Ascend the stairs to a higher level."""
+    def operate(self, entity: Actor) -> None:
+        if entity is self.engine.player:
+            self.engine.game_world.go_to_next_level()
+            self.engine.message_log.add_message(
+                "You ascend the staircase.", color.ascend
+            )
+        else:
+            self.engine.message_log.add_message(
+                f"{entity.name} wants to ascend the stairs", color.impossible
             )
 
 

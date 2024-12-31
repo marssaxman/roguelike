@@ -114,10 +114,15 @@ door_outside = Fixture(
     mechanism=mechanism.DoorOutside(),
 )
 
-entry_stairs = Fixture(
+downward_stairs = Fixture(
     appearance=Static(char=graphics.STAIRS_DOWN),
     name="downward stairs",
     mechanism=mechanism.DownStairs(),
 )
 
+upward_stairs = Fixture(
+    appearance=Static(char=graphics.STAIRS_UP),
+    name="upward stairs",
+    mechanism=mechanism.UpStairs(),
+)
 

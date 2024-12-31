@@ -129,16 +129,16 @@ def populate_rooms(
     for room in rooms:
         # Put some monsters in the room
         place_entities(room, dungeon, floor, rng)
-    # Put the exit stairway somewhere in the last room
     if dungeon.exit_location:
         x, y = dungeon.exit_location
-        dungeon.tiles[x, y] = tile_types.exit_stairs
+        entity_factories.upward_stairs.spawn(dungeon, x, y)
     if dungeon.entry_location:
         x, y = dungeon.entry_location
         if floor > 1:
-            entity_factories.entry_stairs.spawn(dungeon, x, y)
+            entity_factories.downward_stairs.spawn(dungeon, x, y)
         else:
             entity_factories.door_outside.spawn(dungeon, x, y+1)
+
 
 @dataclass
 class RoomStyle:
