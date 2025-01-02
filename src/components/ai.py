@@ -7,6 +7,8 @@ import numpy as np  # type: ignore
 import tcod
 
 from actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
+import graphics
+from components import appearance
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -149,3 +151,19 @@ class Epic_friend(BaseAI):
             ).perform()
 
         return WaitAction(self.entity).perform()
+
+
+class Corpse(BaseAI):
+    def __init__(self, entity:Actor):
+        super().__init__(entity)
+        self.wait = 64
+
+    def perform(self) -> None:
+        if self.wait:
+            self.wait -= 1
+        else:
+            if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+                return
+            self.entity.appearance = appearance.Static(graphics.SPATTER)
+            self.entity.ai = None
+

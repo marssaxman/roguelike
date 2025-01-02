@@ -6,6 +6,7 @@ import graphics
 
 from components.base_component import BaseComponent
 from components.appearance import Static
+from components import ai
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
@@ -62,9 +63,10 @@ class Fighter(BaseComponent):
             death_message_color = color.enemy_die
         self.parent.appearance = Static(graphics.CORPSE, (191, 0, 0))
         self.parent.blocks_movement = False
-        self.parent.ai = None
+        self.parent.ai = ai.Corpse(self.parent)
         self.parent.name = f"remains of {self.parent.name}"
         self.parent.render_order = RenderOrder.CORPSE
+        self.parent.fighter = None
 
         self.engine.message_log.add_message(death_message, death_message_color)
 

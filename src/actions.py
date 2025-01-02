@@ -113,9 +113,21 @@ class ActionWithDirection(Action):
         return self.engine.game_map.get_blocking_entity_at_location(*self.dest_xy)
 
     @property
+    def target_mechanism(self) -> Optional[component.Mechanism]:
+        """Return the fixture's mechanism at this action's destination."""
+        entity = self.blocking_entity
+        return entity.mechanism if entity else None
+
+    @property
     def target_actor(self) -> Optional[Actor]:
         """Return the actor at this action's destination."""
         return self.engine.game_map.get_actor_at_location(*self.dest_xy)
+
+    @property
+    def target_fighter(self) -> Optional[component.Fighter]:
+        """Return the actor at this action's destination."""
+        actor = self.target_actor
+        return actor.fighter if actor else None
 
     def perform(self) -> None:
         raise NotImplementedError()
@@ -124,7 +136,7 @@ class ActionWithDirection(Action):
 class MeleeAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.target_actor
-        if not target:
+        if not target or not target.fighter:
             raise exceptions.Impossible("Nothing to attack.")
         damage = self.entity.fighter.power - target.fighter.defense
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
@@ -175,9 +187,9 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         action = None
-        if self.target_actor:
+        if self.target_fighter:
             action = MeleeAction(self.entity, self.dx, self.dy)
-        elif self.blocking_entity:
+        elif self.target_mechanism:
             action = FixtureAction(self.entity, self.dx, self.dy)
         else:
             action = MovementAction(self.entity, self.dx, self.dy)
