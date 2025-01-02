@@ -164,6 +164,7 @@ class Corpse(BaseAI):
         else:
             if self.engine.game_map.visible[self.entity.x, self.entity.y]:
                 return
-            self.entity.appearance = appearance.Static(graphics.SPATTER)
+            code = self.engine.rng.choice(graphics.SPATTER)
+            self.entity.appearance = appearance.Static(code)
             self.entity.ai = None
 

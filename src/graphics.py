@@ -131,7 +131,7 @@ troll = _actor_appearance(_TROLL)
 
 # The rest of these are just codepoints.
 CORPSE = _alloc()
-SPATTER = _alloc()
+SPATTER = [_alloc() for _ in range(6)]
 
 DOOR_H = _alloc()
 DOOR_V = _alloc()
@@ -307,7 +307,12 @@ def load_into(tileset):
         "assets/Redjack17.png", 16, 16, range(16*16)
     )
     tileset.set_tile(CORPSE, redjack.get_tile((16*15)+13))
-    tileset.set_tile(SPATTER, redjack.get_tile((16*6)+0))
+    tileset.set_tile(SPATTER[0], redjack.get_tile((16*6)+0))
+    tileset.set_tile(SPATTER[1], redjack.get_tile((16*2)+14))
+    tileset.set_tile(SPATTER[2], redjack.get_tile((16*2)+12))
+    tileset.set_tile(SPATTER[3], redjack.get_tile((16*2)+7))
+    tileset.set_tile(SPATTER[4], redjack.get_tile((16*2)+5))
+    tileset.set_tile(SPATTER[5], redjack.get_tile((16*2)+3))
     tileset.set_tile(STAIRS_UP, redjack.get_tile((16*3)+12))
     tileset.set_tile(STAIRS_DOWN, redjack.get_tile((16*3)+14))
 
