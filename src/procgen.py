@@ -126,9 +126,6 @@ def populate_rooms(
     rng: np.random.Generator,
 ):
     """Populate all of these rooms with appropriate entities for the level."""
-    for room in rooms:
-        # Put some monsters in the room
-        place_entities(room, dungeon, floor, rng)
     if dungeon.exit_location:
         x, y = dungeon.exit_location
         entity_factories.upward_stairs.spawn(dungeon, x, y)
@@ -138,6 +135,9 @@ def populate_rooms(
             entity_factories.downward_stairs.spawn(dungeon, x, y)
         else:
             entity_factories.door_outside.spawn(dungeon, x, y+1)
+    for room in rooms:
+        # Put some monsters in the room
+        place_entities(room, dungeon, floor, rng)
 
 
 @dataclass
