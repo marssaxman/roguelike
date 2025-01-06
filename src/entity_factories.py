@@ -109,19 +109,19 @@ chain_mail = Item(
 )
 
 door_outside = Fixture(
-    appearance=Static(char=graphics.DOOR_OUTSIDE, color=color.grey),
+    appearance=graphics.door_outside,
     name="tower entrance",
     mechanism=mechanism.DoorOutside(),
 )
 
 downward_stairs = Fixture(
-    appearance=Static(char=graphics.STAIRS_DOWN),
+    appearance=graphics.stairs_down,
     name="downward stairs",
     mechanism=mechanism.DownStairs(),
 )
 
 upward_stairs = Fixture(
-    appearance=Static(char=graphics.STAIRS_UP),
+    appearance=graphics.stairs_up,
     name="upward stairs",
     mechanism=mechanism.UpStairs(),
 )

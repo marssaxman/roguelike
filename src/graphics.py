@@ -130,11 +130,11 @@ troll = _actor_appearance(_TROLL)
 
 
 # The rest of these are just codepoints.
-CORPSE = _alloc()
+corpse = appearance.Static(_alloc(), (191, 0, 0))
 
 DOOR_H = _alloc()
 DOOR_V = _alloc()
-DOOR_OUTSIDE = _alloc()
+door_outside = appearance.Static(_alloc(), (0x80,0x80,0x80))
 
 FLOOR_STONE = [FloorTiles() for _ in range(8)]
 FLOOR_WOOD = [FloorTiles() for _ in range(4)]
@@ -144,8 +144,8 @@ WALL_ROCK = [WallTiles() for _ in range(8)]
 WALL_STRIPE = [WallTiles() for _ in range(12)]
 WALLS = WALL_BRICK + WALL_ROCK + WALL_STRIPE
 
-STAIRS_UP = _alloc()
-STAIRS_DOWN = _alloc()
+stairs_up = appearance.Static(_alloc())
+stairs_down = appearance.Static(_alloc())
 
 POTION = _alloc()
 SCROLL = _alloc()
@@ -203,7 +203,7 @@ def load_into(tileset):
     )
     tileset.set_tile(DOOR_H, door_tiles.get_tile(0))
     tileset.set_tile(DOOR_V, door_tiles.get_tile(1))
-    tileset.set_tile(DOOR_OUTSIDE, door_tiles.get_tile(45))
+    tileset.set_tile(door_outside.char, door_tiles.get_tile(45))
 
     floor_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Objects/Floor.png", 21, 39, range(819)
@@ -305,7 +305,7 @@ def load_into(tileset):
     redjack = tcod.tileset.load_tilesheet(
         "assets/Redjack17.png", 16, 16, range(16*16)
     )
-    tileset.set_tile(CORPSE, redjack.get_tile((16*15)+13))
-    tileset.set_tile(STAIRS_UP, redjack.get_tile((16*3)+12))
-    tileset.set_tile(STAIRS_DOWN, redjack.get_tile((16*3)+14))
+    tileset.set_tile(corpse.char, redjack.get_tile((16*15)+13))
+    tileset.set_tile(stairs_up.char, redjack.get_tile((16*3)+12))
+    tileset.set_tile(stairs_down.char, redjack.get_tile((16*3)+14))
 
