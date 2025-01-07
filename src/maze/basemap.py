@@ -2,7 +2,7 @@
 
 import numpy as np
 from enum import Enum
-from typing import Dict, Set, Tuple
+from typing import Dict, Set, Tuple, List, Optional
 
 class Tile(Enum):
     VOID = 0,
@@ -131,11 +131,14 @@ class Wall:
 
 
 class BaseMap:
+    rooms: List[Room]
+    walls: List[Wall]
+    entry: Optional[Tuple[int, int]]
+    exit: Optional[Tuple[int, int]]
     def __init__(self, tiles, rooms, walls):
         self.tiles = tiles
         self.rooms = rooms
         self.walls = walls
-        assert isinstance(walls, list)
         self.entry = None
         self.exit = None
 

@@ -157,7 +157,7 @@ def tower(
     # The initial mask is a centered area large enough for Lair of Bob
     _make_lair_mask(mask, size=4)
     # Lair of Bob is special: we want exactly three rooms of reasonably
-    # proportional size: the antechamber, Bob's room, and the amulet room.
+    # proportional size - the antechamber, Bob's room, and the amulet room.
     # There should be exactly two doors and no corridors on this map.
     # We will set up the parameters to make this probable, then loop until
     # we get what we want.
