@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, Tuple, TYPE_CHECKING
+from typing import Iterable, Iterator, Optional, Tuple, Any, TYPE_CHECKING
 from numpy.typing import NDArray
 
 import numpy as np  # type: ignore
@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 
 class GameMap:
+    entry_location: Optional[Tuple[int, int]]
+    exit_location: Optional[Tuple[int, int]]
     def __init__(
         self,
         engine: Engine,

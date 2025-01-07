@@ -94,7 +94,7 @@ def get_entities_at_random(
 
 
 def place_entities(
-    room: Room,
+    room: basemap.Room,
     dungeon: GameMap,
     floor_number: int,
     rng: np.random.Generator
@@ -121,7 +121,7 @@ def place_entities(
 
 def populate_rooms(
     dungeon: GameMap,
-    rooms: Iterator[RectangularRoom],
+    rooms: Iterator[basemap.Room],
     floor: int,
     rng: np.random.Generator,
 ):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import math
-from typing import Optional, Tuple, TypeVar, TYPE_CHECKING, Union
+from typing import Optional, Tuple, TypeVar, TYPE_CHECKING, Union, Type
 
 from render_order import RenderOrder
 from components import appearance
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from components.inventory import Inventory
     from components.level import Level
     from components.appearance import Appearance
+    from components.mechanism import Mechanism
     from game_map import GameMap
 
 T = TypeVar("T", bound="Entity")

@@ -117,9 +117,6 @@ class Wall:
     def area(self):
         return len(self._tiles)
 
-    def adjoins(self, room_id):
-        return self._a == room_id or self._b == room_id
-
     # Internal manipulators for use by Builder
     def _add_tile(self, x, y):
         self._tiles.add((x, y))

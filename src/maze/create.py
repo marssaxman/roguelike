@@ -161,7 +161,7 @@ def tower(
     # There should be exactly two doors and no corridors on this map.
     # We will set up the parameters to make this probable, then loop until
     # we get what we want.
-    levels = list()
+    levels: List[basemap.BaseMap] = list()
     while not levels:
         grid_seed = _grid_seed(rng)
         # make slightly more regular rooms than normal to encourage the
