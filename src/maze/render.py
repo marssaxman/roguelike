@@ -12,8 +12,6 @@ from .basemap import Tile
 class Palette:
     void: Any
     floor: Any
-    entry: Any
-    exit: Any
     door: Any
     door_H: Any
     door_V: Any
@@ -93,9 +91,5 @@ def tiles(src, dest, palette: Palette):
             dest_val = place_door(src, x, y, palette)
         elif src_val == Tile.WALL:
             dest_val = place_wall(src, x, y, palette)
-        elif src_val == Tile.ENTRY:
-            dest_val = palette.entry
-        elif src_val == Tile.EXIT:
-            dest_val = palette.exit
         dest[x, y] = dest_val
 

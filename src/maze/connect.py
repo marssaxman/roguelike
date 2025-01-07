@@ -119,9 +119,7 @@ def floors(above, below, rng):
     x, y = rng.choice(np.argwhere(sites))
     assert above.tiles[x, y] == Tile.FLOOR
     assert below.tiles[x, y] == Tile.FLOOR
-    above.tiles[x, y] = Tile.ENTRY
     above.entry = (x, y)
-    below.tiles[x, y] = Tile.EXIT
     below.exit = (x, y)
 
 def entrance(level, rng):

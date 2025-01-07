@@ -32,13 +32,11 @@ BOX_DRAWINGS_DOUBLE_VERTICAL_HORIZONTAL = 0x256C
 WHITE_SQUARE_CONTAINING_BLACK_SMALL_SQUARE = 0x25A3
 
 
-def to_chars(grid):
-    maze = np.full(shape=grid.shape, dtype=np.uint32, fill_value=SPACE)
+def to_chars(maze):
+    grid = np.full(shape=maze.shape, dtype=np.uint32, fill_value=SPACE)
     palette = render.Palette(
         void=SPACE,
         floor=FULL_STOP,
-        entry=ord(">"),
-        exit=ord("<"),
         door=PLUS_SIGN,
         door_H=BOX_DRAWINGS_LIGHT_QUADRUPLE_DASH_HORIZONTAL,
         door_V=BOX_DRAWINGS_LIGHT_TRIPLE_DASH_VERTICAL,
@@ -59,8 +57,14 @@ def to_chars(grid):
         wall_LAR=BOX_DRAWINGS_DOUBLE_UP_HORIZONTAL,
         wall_LARB=BOX_DRAWINGS_DOUBLE_VERTICAL_HORIZONTAL,
     )
-    render.tiles(grid, maze, palette)
-    return maze
+    render.tiles(maze.tiles, grid, palette)
+    if maze.entry:
+        x,y = maze.entry
+        grid[x,y] = ord(">")
+    if maze.exit:
+        x,y = maze.exit
+        grid[x,y] = ord("<")
+    return grid
 
 
 def print_maze(maze):
@@ -74,9 +78,9 @@ def print_maze(maze):
 
 def print_tower(tower):
     for maze in tower:
-        print_maze(maze.tiles)
+        print_maze(maze)
         line = ""
-        for x in range(maze.tiles.shape[0]):
+        for x in range(maze.shape[0]):
             line += "-"
         print(line)
 
