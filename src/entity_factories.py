@@ -126,3 +126,7 @@ upward_stairs = Fixture(
     mechanism=mechanism.UpStairs(),
 )
 
+amulet_of_yendor = Item(
+    appearance=graphics.amulet_of_yendor,
+    name="Amulet of Yendor",
+)

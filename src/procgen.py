@@ -130,15 +130,37 @@ def populate_rooms(
     if dungeon.exit_location:
         x, y = dungeon.exit_location
         entity_factories.upward_stairs.spawn(dungeon, x, y)
+    else:
+        # this must be bob's lair, at the top of the tower
+        populate_lair(dungeon, rooms, rng)
     if dungeon.entry_location:
         x, y = dungeon.entry_location
         if floor > 1:
             entity_factories.downward_stairs.spawn(dungeon, x, y)
         else:
+            # outside door goes in the wall below the spawn point
             entity_factories.door_outside.spawn(dungeon, x, y+1)
     # Put some monsters and loot items in each room
     for room in rooms:
         place_entities(room, dungeon, floor, rng)
+
+
+def populate_lair(
+    dungeon: GameMap,
+    rooms: Iterator[basemap.Room],
+    rng: np.random.Generator
+):
+    # Place the Amulet of Yendor in the room furthest from the stairs.
+    # We know there are only three rooms in the lair, so the room which does
+    # not have the stairs, and has only one connection, must be the one.
+    for room in rooms:
+        if dungeon.entry_location in room.tiles():
+            continue
+        if len(room.connections) > 1:
+            continue
+        x, y = room.random_location(rng)
+        entity_factories.amulet_of_yendor.spawn(dungeon, x, y)
+        break
 
 
 @dataclass
