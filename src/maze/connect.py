@@ -107,16 +107,114 @@ def lair(builder, rng):
         builder.open_door(x, y, biggest.id, nb_ids[i])
     return True
 
+def adjacent_wall_count(maze):
+    # For each tile, how many adjacent tiles are walls?
+    # Utility function for `stair_scores`.
+    walls = np.where(maze.tiles == Tile.WALL, 1, 0)
+    mask = np.zeros_like(walls)
+    mask[0:-1,...] += walls[1::,...]
+    mask[1::,...] += walls[0:-1,...]
+    mask[::, 0:-1] += walls[::, 1::]
+    mask[::, 1::] += walls[::, 0:-1]
+    return mask
+
+def stair_scores(maze):
+    # Compute stair placement desirability score for each maze tile.
+    # Maximum score is 4; illegal placements are scored zero.
+    # Utility function for `floors`.
+    # Begin with all floor tiles available.
+    mask = np.where(maze.tiles == Tile.FLOOR, 1, 0)
+    # Exclude passages between rooms and all their adjacent tiles, so we
+    # do not block movement between rooms.
+    for wall in maze.walls:
+        for x,y in wall.tiles():
+            mask[x,y] = 0
+        if not wall.has_doorway():
+            continue
+        dx,dy = wall.doorway
+        for y in range(max(0, dy-1), min(maze.shape[1], dy+2)):
+            for x in range(max(0, dx-1), min(maze.shape[0], dx+2)):
+                mask[x,y] = 0
+    # Don't block narrow passageways: only their endpoints are usable.
+    for room in maze.rooms:
+        min_x, min_y = maze.shape
+        max_x, max_y = 0, 0
+        # identify the coordinate extremes
+        for x, y in room.tiles():
+            min_x, min_y = min(min_x, x), min(min_y, y)
+            max_x, max_y = max(max_x, x), max(max_y, y)
+        # this only applies to rooms where width or height == 1
+        # (corridors and closets)
+        if max_x != min_x and max_y != min_y:
+            continue
+        # block out any tiles which are not at one of the room's corners
+        for x, y in room.tiles():
+            if x != min_x and x != max_x:
+                mask[x,y] = 0
+            if y != min_y and y != max_y:
+                mask[x,y] = 0
+    # Having now identified all legal spots, score them: add one point for
+    # each adjacent wall tile, thus preferring enclosed spaces.
+    wall_bonus = adjacent_wall_count(maze) * mask
+    mask += wall_bonus
+    return mask
+
+def traverse_connections(room, steps, distances):
+    # Record this room's distance from the origin.
+    # Recursive helper for `room_remoteness`.
+    if room not in distances or distances[room] > steps:
+        distances[room] = steps
+    else:
+        return
+    for connection in room.connections:
+        traverse_connections(connection, steps+1, distances)
+
+def room_remoteness(maze):
+    """
+    How many walls must one cross to reach each room?
+    If the maze has an exit, we use that as a starting point.
+    Otherwise, we choose the largest room.
+    Why this formula? Because we expect to link the tower from the top down:
+    the top floor is Bob's lair, and the largest room is Bob's room, so we
+    don't want the stairs there. Each following floor will begin with its exit
+    already defined; we try to put the entry somewhere remote so the player
+    will organically have to explore the level before moving on to the next.
+    """
+    start = None
+    if maze.exit:
+        for room in maze.rooms:
+            if maze.exit in room.tiles():
+                start = room
+                break
+    if not start:
+        for room in maze.rooms:
+            if start and len(room.tiles()) < len(start.tiles()):
+                continue
+            start = room
+    # Compute roomwise distance to each other room.
+    distances = dict()
+    traverse_connections(start, 0, distances)
+    return distances
+
+def remoteness_scores(maze):
+    """
+    Compute the remoteness score for each floor square in this maze.
+    """
+    distances = room_remoteness(maze)
+    mask = np.zeros_like(maze.tiles)
+    for room, steps in distances.items():
+        for x, y in room.tiles():
+            mask[x, y] = steps
+    return mask
 
 def floors(above, below, rng):
     """Create a stairway linking these maps."""
-    aboves = np.zeros_like(above.tiles, dtype=np.uint)
-    aboves[above.tiles == Tile.FLOOR] = 1
-    belows = np.zeros_like(below.tiles, dtype=np.uint)
-    belows[below.tiles == Tile.FLOOR] = 1
-    sites = aboves * belows
-    # for now, pick any option at random
-    x, y = rng.choice(np.argwhere(sites))
+    # We want the best placement which is legal for both floors.
+    sites = stair_scores(above) * stair_scores(below)
+    weights = sites * remoteness_scores(above)
+    best_weight = weights.max()
+    # Pick at random from equivalent best options.
+    x, y = rng.choice(np.argwhere(weights == best_weight))
     assert above.tiles[x, y] == Tile.FLOOR
     assert below.tiles[x, y] == Tile.FLOOR
     above.entry = (x, y)
