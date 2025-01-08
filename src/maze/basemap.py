@@ -1,4 +1,4 @@
-# Build a map, composed of tiles.
+from __future__ import annotations
 
 import numpy as np
 from enum import Enum
@@ -16,13 +16,18 @@ class Room:
     """A room with ID 0 represents the void, which cannot contain anything."""
     id: int
     _tiles: Set[Tuple[int, int]]
-    _neighbors: Set[int]
-    _connections: Set[int]
+    _neighbor_ids: Set[int]
+    _connection_ids: Set[int]
+    neighbors: Set[Room]
+    connections: Set[Room]
     def __init__(self, id: int):
         self.id = id
         self._tiles = set()
-        self._neighbors = set()
-        self._connections = set()
+        self._neighbor_ids = set()
+        self._connection_ids = set()
+        # Builder will populate these when creating the BaseMap.
+        self.neighbors = None
+        self.connections = None
 
     # Public accessors
     def is_empty(self):
@@ -32,13 +37,13 @@ class Room:
         return frozenset(self._tiles) if self.id else frozenset()
 
     def neighbor_ids(self):
-        return frozenset(self._neighbors) if self.id else frozenset()
+        return frozenset(self._neighbor_ids) if self.id else frozenset()
 
     def connection_ids(self):
-        return frozenset(self._connections) if self.id else frozenset()
+        return frozenset(self._connection_ids) if self.id else frozenset()
 
     def is_connected(self):
-        return len(self._connections) if self.id else False
+        return len(self._connection_ids) if self.id else False
 
     def is_corridor(self):
         if not self.id or not self._tiles:
@@ -59,6 +64,9 @@ class Room:
     def random_location(self, rng) -> Tuple[int, int]:
         return rng.choice(list(self._tiles))
 
+    def area(self):
+        return len(self._tiles)
+
     # Internal manipulators for use by Builder
     def _add_tile(self, x, y):
         if self.id == 0:
@@ -70,15 +78,15 @@ class Room:
             return
         assert other_id != self.id
         if other_id != 0:
-            self._neighbors.add(other_id)
+            self._neighbor_ids.add(other_id)
 
     def _add_connection(self, other_id):
         if self.id == 0:
             return
         assert other_id != self.id
         if other_id != 0:
-            assert other_id in self._neighbors
-            self._connections.add(other_id)
+            assert other_id in self._neighbor_ids
+            self._connection_ids.add(other_id)
 
 
 class Wall:
@@ -220,6 +228,16 @@ class Builder:
 
     # Retrieve finished copy of contents
     def build(self):
+        # Resolve inter-object references
+        for room in self.rooms():
+            n_objs = set()
+            for n_id in room.neighbor_ids():
+                n_objs.add(self._rooms[n_id])
+            room.neighbors = frozenset(n_objs)
+            c_objs = set()
+            for c_id in room.connection_ids():
+                c_objs.add(self._rooms[c_id])
+            room.connections = frozenset(c_objs)
         return BaseMap(
             tiles=np.copy(self.map),
             rooms=list(self.rooms()),
@@ -260,8 +278,8 @@ class Builder:
         assert self.map[x, y] == Tile.WALL
         assert a_id in self._rooms
         assert b_id in self._rooms
-        assert a_id in self._rooms[b_id]._neighbors
-        assert b_id in self._rooms[a_id]._neighbors
+        assert a_id in self._rooms[b_id]._neighbor_ids
+        assert b_id in self._rooms[a_id]._neighbor_ids
         wall = self._get_wall(a_id, b_id)
         assert (x, y) in wall._tiles
         assert not wall.has_doorway()
