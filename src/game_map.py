@@ -205,7 +205,6 @@ class GameMap:
                 continue
             elif not self.explored[entity.x, entity.y]:
                 continue
-            entity.appearance.animate()
             char, color = entity.appearance.render()
             # entity char can be a string or a codepoint; we draw codepoints
             if isinstance(char, str):
