@@ -1,16 +1,16 @@
 import numpy as np
 from .basemap import Tile
 
-def collect_connections(builder, room_id, katamari):
+def _collect_connections(builder, room_id, katamari):
     if room_id in katamari:
         return katamari
     katamari.add(room_id)
     room = builder.room(room_id)
     for conex in room.connection_ids():
-        collect_connections(builder, conex, katamari)
+        _collect_connections(builder, conex, katamari)
 
 
-def disconnected_neighbors(builder, katamari):
+def _disconnected_neighbors(builder, katamari):
     for room_id in katamari:
         room = builder.room(room_id)
         for n_id in room.neighbor_ids():
@@ -19,7 +19,7 @@ def disconnected_neighbors(builder, katamari):
             yield (room_id, n_id)
 
 
-def open_random_door(builder, a, b, rng):
+def _open_random_door(builder, a, b, rng):
     wall = builder.wall_between(a, b)
     x, y = rng.choice(list(wall.tiles()))
     if rng.choice([0, 1]):
@@ -28,7 +28,6 @@ def open_random_door(builder, a, b, rng):
         builder.open_passage(x, y, a, b)
 
 
-#intentional entrypoint
 def fully(builder, rng):
     """Ensure that every room is reachable from every other room."""
     # Pick a room at random.
@@ -37,16 +36,16 @@ def fully(builder, rng):
     other_ids = set(builder.room_ids())
     start_id = rng.choice(list(builder.room_ids()))
     katamari = set()
-    collect_connections(builder, start_id, katamari)
+    _collect_connections(builder, start_id, katamari)
     other_ids -= katamari
     while other_ids:
-        options = list(disconnected_neighbors(builder, katamari))
+        options = list(_disconnected_neighbors(builder, katamari))
         # Pick a connection at random. Open a random spot in its wall.
         joint_a, joint_b = rng.choice(options)
-        open_random_door(builder, joint_a, joint_b, rng)
+        _open_random_door(builder, joint_a, joint_b, rng)
         # Absorb both neighboring connected sets into the work set.
-        collect_connections(builder, joint_a, katamari)
-        collect_connections(builder, joint_b, katamari)
+        _collect_connections(builder, joint_a, katamari)
+        _collect_connections(builder, joint_b, katamari)
         other_ids -= katamari
 
 
@@ -69,7 +68,7 @@ def some(builder, rng):
         if not unlinked_ids:
             continue
         other_id = rng.choice(list(unlinked_ids))
-        open_random_door(builder, r_id, other_id, rng)
+        _open_random_door(builder, r_id, other_id, rng)
 
 
 def corridors(builder):
@@ -107,9 +106,8 @@ def lair(builder, rng):
         builder.open_door(x, y, biggest.id, nb_ids[i])
     return True
 
-def adjacent_wall_count(maze):
+def _adjacent_wall_count(maze):
     # For each tile, how many adjacent tiles are walls?
-    # Utility function for `stair_scores`.
     walls = np.where(maze.tiles == Tile.WALL, 1, 0)
     mask = np.zeros_like(walls)
     mask[0:-1,...] += walls[1::,...]
@@ -118,7 +116,7 @@ def adjacent_wall_count(maze):
     mask[::, 1::] += walls[::, 0:-1]
     return mask
 
-def stair_scores(maze):
+def _stair_scores(maze):
     # Compute stair placement desirability score for each maze tile.
     # Maximum score is 4; illegal placements are scored zero.
     # Utility function for `floors`.
@@ -155,21 +153,20 @@ def stair_scores(maze):
                 mask[x,y] = 0
     # Having now identified all legal spots, score them: add one point for
     # each adjacent wall tile, thus preferring enclosed spaces.
-    wall_bonus = adjacent_wall_count(maze) * mask
+    wall_bonus = _adjacent_wall_count(maze) * mask
     mask += wall_bonus
     return mask
 
-def traverse_connections(room, steps, distances):
+def _traverse_connections(room, steps, distances):
     # Record this room's distance from the origin.
-    # Recursive helper for `room_remoteness`.
     if room not in distances or distances[room] > steps:
         distances[room] = steps
     else:
         return
     for connection in room.connections:
-        traverse_connections(connection, steps+1, distances)
+        _traverse_connections(connection, steps+1, distances)
 
-def room_remoteness(maze):
+def _room_remoteness(maze):
     """
     How many walls must one cross to reach each room?
     If the maze has an exit, we use that as a starting point.
@@ -193,14 +190,14 @@ def room_remoteness(maze):
             start = room
     # Compute roomwise distance to each other room.
     distances = dict()
-    traverse_connections(start, 0, distances)
+    _traverse_connections(start, 0, distances)
     return distances
 
-def remoteness_scores(maze):
+def _remoteness_scores(maze):
     """
     Compute the remoteness score for each floor square in this maze.
     """
-    distances = room_remoteness(maze)
+    distances = _room_remoteness(maze)
     mask = np.zeros_like(maze.tiles)
     for room, steps in distances.items():
         for x, y in room.tiles():
@@ -210,8 +207,8 @@ def remoteness_scores(maze):
 def floors(above, below, rng):
     """Create a stairway linking these maps."""
     # We want the best placement which is legal for both floors.
-    sites = stair_scores(above) * stair_scores(below)
-    weights = sites * remoteness_scores(above)
+    sites = _stair_scores(above) * _stair_scores(below)
+    weights = sites * _remoteness_scores(above)
     best_weight = weights.max()
     # Pick at random from equivalent best options.
     x, y = rng.choice(np.argwhere(weights == best_weight))
