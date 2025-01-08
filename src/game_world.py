@@ -40,12 +40,16 @@ class GameWorld:
         # `current_floor` before calling `generate_dungeon`.
         game_map = self.tower[self.current_floor]
         self.engine.game_map = game_map
-        self.engine.player.place(*game_map.entry_location, game_map)
+        assert game_map.entry_location
+        x, y = game_map.entry_location
+        self.engine.player.place(x, y, game_map)
         self.current_floor += 1
 
    def go_to_prev_level(self) -> None:
         self.current_floor -= 1
         game_map = self.tower[self.current_floor-1]
         self.engine.game_map = game_map
-        self.engine.player.place(*game_map.exit_location, game_map)
+        assert game_map.exit_location
+        x, y = game_map.exit_location
+        self.engine.player.place(x, y, game_map)
 

@@ -18,8 +18,8 @@ class Room:
     _tiles: Set[Tuple[int, int]]
     _neighbor_ids: Set[int]
     _connection_ids: Set[int]
-    neighbors: Set[Room]
-    connections: Set[Room]
+    neighbors: Optional[Set[Room]]
+    connections: Optional[Set[Room]]
     def __init__(self, id: int):
         self.id = id
         self._tiles = set()
@@ -157,7 +157,7 @@ class BaseMap:
 # All mutation happens through calls to the builder.
 # Returned objects are either copied or immutable.
 class Builder:
-    _rooms: Dict[np.uint, Room]
+    _rooms: Dict[int, Room]
     _walls: Dict[Tuple[int, int], Wall]
 
     def __init__(self, shape: Tuple[int, int]):
