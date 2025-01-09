@@ -2,29 +2,33 @@ from typing import Tuple
 from engine import Engine
 import maze.create
 from procgen import generate_dungeon
+import numpy as np
 
 class GameWorld:
-   """
-   Contains all the state for the entire game.
-   """
+    """
+    Contains all the state for the entire game.
+    """
+    engine: Engine
+    map_shape: Tuple[int, int]
+    current_floor: int
 
-   def __init__(
+    def __init__(
         self,
         *,
         engine: Engine,
         map_shape: Tuple[int, int],
-        tower_floors: int,
-        current_floor: int = 0
+        tower_floors: int = 1,
+        current_floor: int = 0,
     ):
         self.engine = engine
         self.map_shape = map_shape
         self.tower_floors = tower_floors
         self.current_floor = current_floor
-        box_size = 8
+        box_size = np.uint(8)
         base_tower = maze.create.tower(
             shape=map_shape,
             box_size=box_size,
-            stories=tower_floors,
+            stories=np.uint(tower_floors),
             rng=engine.rng,
         )
         self.tower = [generate_dungeon(
@@ -33,7 +37,7 @@ class GameWorld:
             floor=floor+1
         ) for floor, base_map in enumerate(base_tower)]
 
-   def go_to_starting_level(self) -> None:
+    def go_to_starting_level(self) -> None:
         game_map = self.tower[0]
         self.engine.game_map = game_map
         assert game_map.entry_location
@@ -47,7 +51,7 @@ class GameWorld:
             self.engine.player.place(x, y-1, game_map)
         self.current_floor = 1
 
-   def go_to_next_level(self) -> None:
+    def go_to_next_level(self) -> None:
         # The dungeon generator thinks the game begins at level 1, but the
         # tower generator returns an array, which begins at level 0, and
         # that's why we add 1 to the `floor` parameter instead of incrementing
@@ -59,7 +63,7 @@ class GameWorld:
         self.engine.player.place(x, y, game_map)
         self.current_floor += 1
 
-   def go_to_prev_level(self) -> None:
+    def go_to_prev_level(self) -> None:
         self.current_floor -= 1
         game_map = self.tower[self.current_floor-1]
         self.engine.game_map = game_map
