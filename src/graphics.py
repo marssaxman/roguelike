@@ -149,7 +149,11 @@ stairs_down = appearance.Static(_alloc())
 
 POTION = _alloc()
 SCROLL = _alloc()
-amulet_of_yendor = appearance.Static(_alloc())
+_AMULET_OF_YENDOR=(_alloc(), _alloc())
+amulet_of_yendor = appearance.Looped([
+    appearance.Static(_AMULET_OF_YENDOR[0]),
+    appearance.Static(_AMULET_OF_YENDOR[1]),
+])
 
 @cache
 def composite(below: int, above: int):
@@ -306,7 +310,8 @@ def load_into(tileset):
     amulet_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Amulet.png", 8, 3, range(24)
     )
-    tileset.set_tile(amulet_of_yendor.char, amulet_tiles.get_tile((8*2)+1))
+    tileset.set_tile(_AMULET_OF_YENDOR[0], amulet_tiles.get_tile((8*2)+1))
+    tileset.set_tile(_AMULET_OF_YENDOR[1], amulet_tiles.get_tile(8*2)[...,::-1,:])
 
     redjack = tcod.tileset.load_tilesheet(
         "assets/Redjack17.png", 16, 16, range(16*16)
