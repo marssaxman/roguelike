@@ -121,7 +121,7 @@ def place_entities(
 
 def populate_rooms(
     dungeon: GameMap,
-    rooms: Iterator[basemap.Room],
+    rooms: List[basemap.Room],
     floor: int,
     rng: np.random.Generator,
 ):

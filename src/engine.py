@@ -15,7 +15,8 @@ import render_functions
 
 if TYPE_CHECKING:
     from entity import Actor
-    from game_map import GameMap, GameWorld
+    from game_map import GameMap
+    from game_world import GameWorld
 
 class Engine:
     game_map: GameMap
