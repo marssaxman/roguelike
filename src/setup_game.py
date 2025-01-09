@@ -39,7 +39,7 @@ def new_game() -> Engine:
         tower_floors=tower_floors,
         map_shape=map_shape,
     )
-    engine.game_world.go_to_next_level()
+    engine.game_world.go_to_starting_level()
     engine.update_fov()
 
     engine.message_log.add_message(

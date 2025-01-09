@@ -138,8 +138,7 @@ def populate_rooms(
         if floor > 1:
             entity_factories.downward_stairs.spawn(dungeon, x, y)
         else:
-            # outside door goes in the wall below the spawn point
-            entity_factories.door_outside.spawn(dungeon, x, y+1)
+            entity_factories.door_outside.spawn(dungeon, x, y)
     # Put some monsters and loot items in each room
     for room in rooms:
         place_entities(room, dungeon, floor, rng)

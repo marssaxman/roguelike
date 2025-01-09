@@ -220,39 +220,27 @@ def floors(above, below, rng):
 def entrance(level, rng):
     """
     Place an outside entrance point in this ground-floor level.
-    For purely aesthetic reasons, we'll put it in the bottom wall.
+    We want this to be a prominent, face-on door, so it must be placed in the
+    perimeter wall on the top or the bottom of the tower. For gameplay reasons,
+    select a random tile from the the rooms which are furthest from the exit.
 
     """
-    # Find the lowest wall segment (or one of them, at least).
-    lowest_depth = level.shape[1]
-    lowest_left = 0
-    lowest_right = 0
-    track_right = False
-    for x in range(level.shape[0]):
-        # How many tiles up from the bottom is the floor in this column?
-        depth = 0
-        for y in range(level.shape[1]-1, 0, -1):
-            if level.tiles[x,y] == Tile.WALL:
-                break
-            depth += 1
-        if depth < lowest_depth:
-            lowest_depth = depth
-            lowest_left = x
-            track_right = True
-        if depth == lowest_depth and track_right:
-            lowest_right = x
-        if depth > lowest_depth:
-            track_right = False
-    # For each wall segment we found, look above: is there a floor?
-    # If so, add this wall coordinate to the candidate list.
-    candidates = []
-    y = level.shape[1] - lowest_depth - 1
-    for x in range(lowest_left, lowest_right):
-        if level.tiles[x, y-1] == Tile.FLOOR:
-            candidates.append((x, y))
-    # Pick whatever's at the middle of the list.
-    x,y = candidates[len(candidates)//2]
-    # Start the player one square above, on the floor tile.
-    level.entry = x,y-1
-    # Perhaps we could explicitly place an exterior door in the wall, but
-    # for now we'll leave that up to the game engine.
+    # Simplifying edge cases, add an empty row above and below the tile map.
+    expanded_shape = (level.shape[0], level.shape[1]+2)
+    tiles = np.full(expanded_shape, Tile.VOID, dtype=level.tiles.dtype)
+    tiles[::, 1:-1] = level.tiles
+    # Look for wall tiles bordering the void.
+    voids = np.where(tiles == Tile.VOID, 1, 0)
+    walls = np.where(tiles == Tile.WALL, 1, 0)
+    floors = np.where(tiles == Tile.FLOOR, 1, 0)
+    upper = np.roll(voids, 1, axis=1) * walls * np.roll(floors, -1, axis=1)
+    lower = np.roll(voids, -1, axis=1) * walls * np.roll(floors, 1, axis=1)
+    assert not np.any(lower * upper)
+    # Weight the perimeter tiles according to distance from the exit stairs.
+    weights = _remoteness_scores(level)
+    upper = upper[::, 1:-1] * np.roll(weights, -1, axis=1)
+    lower = lower[::, 1:-1] * np.roll(weights, 1, axis=1)
+    perimeter = upper + lower
+    # Pick any of the furthest wall tiles, at random.
+    options = list(np.transpose(np.where(perimeter == np.max(perimeter))))
+    level.entry = tuple(rng.choice(options))
