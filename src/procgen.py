@@ -146,7 +146,7 @@ def populate_rooms(
 
 def populate_lair(
     dungeon: GameMap,
-    rooms: Iterator[basemap.Room],
+    rooms: List[basemap.Room],
     rng: np.random.Generator
 ):
     # Place the Amulet of Yendor in the room furthest from the stairs.
@@ -155,7 +155,7 @@ def populate_lair(
     for room in rooms:
         if dungeon.entry_location in room.tiles():
             continue
-        if len(room.connections) > 1:
+        if room.connections and len(room.connections) > 1:
             continue
         x, y = room.random_location(rng)
         entity_factories.amulet_of_yendor.spawn(dungeon, x, y)

@@ -126,14 +126,14 @@ def generate(
             left: np.int64
             bottom: np.int64
             right: np.int64
-            top = np.int64( np.floor(box_size*theRect.top) ) + height/2 + 1
-            top = np.int64(top)
-            left =  np.int64( np.floor(box_size*theRect.left) ) + width/2 + 1
-            left = np.int64(left)
-            bottom = np.int64( np.floor(box_size*theRect.bottom) ) + height/2 + 1
-            bottom = np.int64(bottom)
-            right = np.int64( np.floor(box_size*theRect.right) ) + width/2 + 1
-            right = np.int64(right)
+            box_top = np.int64(np.floor(box_size * theRect.top))
+            box_left = np.int64(np.floor(box_size * theRect.left))
+            box_bottom = np.int64(np.floor(box_size * theRect.bottom))
+            box_right = np.int64(np.floor(box_size * theRect.right))
+            top = np.int64(box_top + height/2 + 1)
+            left = np.int64(box_left + width/2 + 1)
+            bottom = np.int64(box_bottom + height/2 + 1)
+            right = np.int64(box_right + width/2 + 1)
 
             yield (left, top, right, bottom)
 
@@ -143,7 +143,7 @@ def OffGridPrintf(
     height: np.uint,
     box_size: np.uint,
     seed: np.int64,
-    edge: np.double = 0.1 # range: 0..0.5
+    edge: np.double = np.double(0.1) # range: 0..0.5
 ):
     boxes_wide = np.floor_divide(width, box_size, dtype=np.int64)
     boxes_high = np.floor_divide(height, box_size, dtype=np.int64)
@@ -161,14 +161,14 @@ def OffGridPrintf(
             # edge values will always match up between rects, because of the
             # way they are calculated uniquely per edge
             # we just need to round consistently for them to draw correctly
-            top = np.int64( np.floor(box_size*theRect.top) ) + height/2 + 1
-            top = np.int64(top)
-            left = np.int64( np.floor(box_size*theRect.left) ) + width/2 + 1
-            left = np.int64(left)
-            bottom = np.int64( np.floor(box_size*theRect.bottom) ) + height/2 + 1
-            bottom = np.int64(bottom)
-            right = np.int64( np.floor(box_size*theRect.right) ) + width/2 + 1
-            right = np.int64(right)
+            box_top = np.int64( np.floor(box_size*theRect.top) )
+            top = np.int64(box_top + height/2 + 1)
+            box_left = np.int64( np.floor(box_size*theRect.left) )
+            left = np.int64(box_left + width/2 + 1)
+            box_bottom = np.int64( np.floor(box_size*theRect.bottom) )
+            bottom = np.int64(box_bottom + height/2 + 1)
+            box_right = np.int64( np.floor(box_size*theRect.right) )
+            right = np.int64(box_right + width/2 + 1)
 
             print(f"(x:{x}, y:{y}) = {{l:{left}, t:{top}, r:{right}, b:{bottom}}}")
 

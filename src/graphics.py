@@ -17,6 +17,8 @@ Published codepoints are names in ALL_CAPS. Appearance objects are published
 using lower_case names.
 """
 
+_tileset: tcod.tileset.Tileset
+
 # Basic multilingual plane private use area: 6400 code points
 PUA_BEGIN = 0xE000
 PUA_END = 0xF8FF

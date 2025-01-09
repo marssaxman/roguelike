@@ -174,7 +174,7 @@ class MovementAction(ActionWithDirection):
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
-        action = None
+        action: Optional[Action] = None
         if self.target_actor:
             action = MeleeAction(self.entity, self.dx, self.dy)
         elif self.blocking_entity:

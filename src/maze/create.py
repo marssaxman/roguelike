@@ -14,7 +14,7 @@ def _coarse_grid(
     shape: Tuple[np.uint, np.uint],
     box_size: np.uint,
     seed: np.int64,
-    edge: np.double, # range 0..0.5, controls irregularity of grid
+    edge: float, # range 0..0.5, controls irregularity of grid
 ):
     """Generate an offset grid using half the target resolution."""
     width = shape[0]
@@ -24,7 +24,7 @@ def _coarse_grid(
         height=np.floor_divide(np.uint(height), 2, dtype=np.uint),
         box_size=np.floor_divide(np.uint(box_size+1), 2, dtype=np.uint),
         seed=seed,
-        edge=edge
+        edge=np.double(edge),
     ):
         yield left * 2, top * 2, right * 2, bottom * 2
 
@@ -86,13 +86,13 @@ def level(
     # empty around every edge. That way we can convert each 2x2 group into
     # one map tile, overscanning the edges, to generate perimeter walls.
     grid = np.zeros((np.uint(width+1), np.uint(height+1)), dtype=np.uint)
-    inset = grid[1:np.uint(width), 1:np.uint(height)]
+    inset = grid[1:width, 1:height]
     grid_seed = _grid_seed(rng)
     rects = _coarse_grid(
         shape=inset.shape,
         box_size=box_size,
         seed=np.int64(grid_seed),
-        edge=0.15
+        edge=0.15,
     )
     assert rects
     _rasterize(rects, inset)
@@ -168,7 +168,7 @@ def tower(
         # desired layout to occur. 
         rects = _coarse_grid(
             shape=inset.shape,
-            box_size=5,
+            box_size=np.uint(5),
             seed=np.int64(grid_seed),
             edge=0.22,
         )
