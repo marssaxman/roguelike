@@ -84,6 +84,8 @@ def main():
                         handler.engine.message_log.add_message(
                             traceback.format_exc(), color.error
                         )
+                    else:
+                        raise
         except exceptions.QuitWithoutSaving:
             raise
         except SystemExit:  # Save and quit.
