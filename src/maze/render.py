@@ -31,6 +31,7 @@ class Palette:
     wall_LAB: Any
     wall_LAR: Any
     wall_LARB: Any
+    debug: Any
 
 
 def place_door(grid, x, y, palette: Palette):
@@ -91,5 +92,7 @@ def tiles(src, dest, palette: Palette):
             dest_val = place_door(src, x, y, palette)
         elif src_val == Tile.WALL:
             dest_val = place_wall(src, x, y, palette)
+        elif src_val == Tile.DEBUG:
+            dest_val = palette.debug
         dest[x, y] = dest_val
 

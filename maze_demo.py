@@ -29,10 +29,13 @@ BOX_DRAWINGS_DOWN_DOUBLE_HORIZONTAL_SINGLE = 0x2565
 BOX_DRAWINGS_UP_DOUBLE_HORIZONTAL_SINGLE = 0x2568
 BOX_DRAWINGS_DOUBLE_UP_HORIZONTAL = 0x2569
 BOX_DRAWINGS_DOUBLE_VERTICAL_HORIZONTAL = 0x256C
+BOX_DRAWINGS_LIGHT_DIAGONAL_CROSS = 0x2573
+WHITE_SQUARE_WITH_ROUNDED_CORNERS = 0x25A2
 WHITE_SQUARE_CONTAINING_BLACK_SMALL_SQUARE = 0x25A3
+GEAR = 0x2699
+BLACK_LARGE_SQUARE = 0x2B1B
 
-
-def to_chars(maze):
+def to_chars(maze, level: int):
     grid = np.full(shape=maze.shape, dtype=np.uint32, fill_value=SPACE)
     palette = render.Palette(
         void=SPACE,
@@ -56,19 +59,20 @@ def to_chars(maze):
         wall_LAB=BOX_DRAWINGS_DOUBLE_VERTICAL_LEFT,
         wall_LAR=BOX_DRAWINGS_DOUBLE_UP_HORIZONTAL,
         wall_LARB=BOX_DRAWINGS_DOUBLE_VERTICAL_HORIZONTAL,
+        debug=GEAR,
     )
     render.tiles(maze.tiles, grid, palette)
     if maze.entry:
         x,y = maze.entry
-        grid[x,y] = ord(">")
+        grid[x,y] = ord(">") if level > 0 else BOX_DRAWINGS_LIGHT_DIAGONAL_CROSS
     if maze.exit:
         x,y = maze.exit
         grid[x,y] = ord("<")
     return grid
 
 
-def print_maze(maze):
-    text = to_chars(maze)
+def print_maze(maze, level):
+    text = to_chars(maze, level)
     for y in range(maze.shape[1]):
         line = ""
         for x in range(maze.shape[0]):
@@ -77,8 +81,8 @@ def print_maze(maze):
 
 
 def print_tower(tower):
-    for maze in tower:
-        print_maze(maze)
+    for level, maze in enumerate(tower):
+        print_maze(maze, level)
         line = ""
         for x in range(maze.shape[0]):
             line += "-"
@@ -139,5 +143,5 @@ if __name__ == '__main__':
             box_size=box_size,
             rng=rng
         )
-        print_maze(maze.tiles)
+        print_maze(maze.tiles, 1)
 

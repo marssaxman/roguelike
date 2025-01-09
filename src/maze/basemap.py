@@ -9,6 +9,7 @@ class Tile(Enum):
     WALL = 1,
     FLOOR = 2,
     DOOR = 3,
+    DEBUG = 4,
 
 
 class Room:
