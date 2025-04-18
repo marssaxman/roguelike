@@ -12,6 +12,7 @@ from tcod import libtcodpy
 import exceptions
 from message_log import MessageLog
 import render_functions
+import color
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -91,4 +92,11 @@ class Engine:
             y=names_y,
             engine=self
         )
+
+    def win_game(self) -> None:
+        self.message_log.add_message(
+            f"You escape the tower with the Amulet of Yendor and complete the quest.", color.welcome_text
+        )
+        # Make the player not be "alive" any more: this ends the game loop
+        self.player.ai = None
 
