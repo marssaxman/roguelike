@@ -40,12 +40,13 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [
         (entity_factories.orc, 80),
         (entity_factories.rat, 100),
-        (entity_factories.silly, 20)
+        (entity_factories.silly, 0)
     ],
     3: [(entity_factories.troll, 15)],
     5: [(entity_factories.troll, 30)],
+    5: [(entity_factories.armored_rat, 50)],
+    5: [(entity_factories.rat, 0)],
     7: [(entity_factories.troll, 60)],
-    8: [(entity_factories.rat, 0)],
 }
 
 
@@ -59,10 +60,7 @@ def get_max_value_for_floor(
             break
         else:
             current_value = value
-
     return current_value
-
-
 def get_entities_at_random(
     weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
     number_of_entities: int,
@@ -70,7 +68,6 @@ def get_entities_at_random(
     rng: np.random.Generator
  ) -> List[Entity]:
     entity_weighted_chances = {}
-
     for key, values in weighted_chances_by_floor.items():
         if key > floor:
             break

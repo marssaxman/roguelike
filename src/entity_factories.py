@@ -60,6 +60,17 @@ silly=Actor(
     level=Level(xp_given=0)
 )
 
+armored_rat=Actor(
+    appearance=Static(char=ord("A"), color=(255, 0, 255)),
+    name="Armored Rat",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=8, base_defense=1, base_power=4),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30)
+
+)
+
 confusion_scroll = Item(
     appearance=Static(char=graphics.SCROLL, color=(207, 63, 255)),
     name="Confusion Scroll",
