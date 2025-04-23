@@ -555,10 +555,10 @@ class MainGameEventHandler(EventHandler):
         elif key == tcod.event.KeySym.v:
             return HistoryViewer(self.engine)
 
-        elif key == tcod.event.KeySym.g:
+        elif key == tcod.event.KeySym.z:
             action = PickupAction(player)
 
-        elif key == tcod.event.KeySym.i:
+        elif key == tcod.event.KeySym.e:
             return InventoryActivateHandler(self.engine)
         elif key == tcod.event.KeySym.d:
             return InventoryDropHandler(self.engine)
