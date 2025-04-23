@@ -12,7 +12,7 @@ import tile_types
 import maze.create
 from maze import basemap
 import graphics
-
+from src.entity_factories import lightning_scroll
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -30,10 +30,10 @@ max_monsters_by_floor = [
  ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35), (entity_factories.confusion_scroll, 5)],
-    2: [(entity_factories.confusion_scroll, 10)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
-    6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
+    0: [(entity_factories.health_potion, 35),(entity_factories.confusion_scroll, 5),(lightning_scroll, 2)],
+    2: [(entity_factories.confusion_scroll, 10),(lightning_scroll, 10)],
+    3: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
+    5: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
@@ -43,8 +43,17 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (entity_factories.silly, 0)
     ],
     2: [(entity_factories.troll, 15), (entity_factories.trained_orc, 30)],
-    4: [(entity_factories.troll, 30),(entity_factories.armored_rat, 50),(entity_factories.rat, 0),(entity_factories.orc, 0)],
-    5: [(entity_factories.troll, 60),(entity_factories.giant, 30)]
+    4: [
+        (entity_factories.troll, 30),
+        (entity_factories.armored_rat, 60),
+        (entity_factories.rat, 40),
+        (entity_factories.orc, 30)
+    ],
+    5: [(entity_factories.troll, 60),
+        (entity_factories.giant, 30),
+        (entity_factories.rat, 0),
+        (entity_factories.orc, 0)
+    ],
 }
 
 
