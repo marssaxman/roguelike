@@ -43,7 +43,7 @@ def new_game() -> Engine:
     engine.update_fov()
 
     engine.message_log.add_message(
-        "why are u in my dungeon ):< get out of me dungeon!!!", color.welcome_text
+        "Bob: Hey, what the fablocks are you doing in my dungeon? Get out of it immediately. ", color.welcome_text
     )
 
     # Give the player armor and a weapon to start out with.
@@ -85,7 +85,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height - 2,
-            "By Stella, Mars and bob",
+            "By Stella, Mars and Bob, (We didn't ask bob for help)",
             fg=color.menu_title,
             alignment=libtcodpy.CENTER,
         )

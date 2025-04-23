@@ -1,6 +1,6 @@
 from typing import Tuple
 import numpy as np  # type: ignore
-from functools import cache
+from functools import lru_cache
 
 import graphics
 import color
@@ -34,7 +34,7 @@ def new_tile(
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
-@cache
+@lru_cache(maxsize=None)
 def wall(char_id):
     return new_tile(
         walkable=False,
@@ -43,7 +43,7 @@ def wall(char_id):
         light=(char_id, color.white, color.black),
     )
 
-@cache
+@lru_cache(maxsize=None)
 def door(char_id):
     return new_tile(
         walkable=True,
@@ -52,7 +52,7 @@ def door(char_id):
         light=(char_id, color.white, color.black),
     )
 
-@cache
+@lru_cache(maxsize=None)
 def floor(char_id):
     return new_tile(
         walkable=True,

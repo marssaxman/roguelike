@@ -41,7 +41,7 @@ class PickupAction(Action):
         for item in self.engine.game_map.items:
             if actor_location_x == item.x and actor_location_y == item.y:
                 if len(inventory.items) >= inventory.capacity:
-                    raise exceptions.Impossible("Your inventory is full.")
+                    raise exceptions.Impossible("You can't carry all this stuff, Drop something")
 
                 self.engine.game_map.entities.remove(item)
                 item.parent = self.entity.inventory
@@ -49,8 +49,6 @@ class PickupAction(Action):
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
                 return
-
-        raise exceptions.Impossible("There is nothing here to pick up.")
 
 
 class ItemAction(Action):
@@ -161,13 +159,13 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # can't move outside the map
-            raise exceptions.Impossible("you can't walk outside the map idiot")
+            raise exceptions.Impossible("You can't walk outside the map.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # can't move into a non-walkable map tile
-            raise exceptions.Impossible("why is bro trying to walk into a wall")
+            raise exceptions.Impossible("Sorry man, I don't think you walk there")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # destination is blocked by some entity
-            raise exceptions.Impossible("bro get ur glasses theres a creature right there")
+            raise exceptions.Impossible("Are you blind? There is a creature RIGHT there")
 
         self.entity.move(self.dx, self.dy)
 

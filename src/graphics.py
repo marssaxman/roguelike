@@ -2,7 +2,7 @@
 import tcod
 from components import appearance
 from dataclasses import dataclass
-from functools import cache
+from functools import lru_cache
 import numpy as np
 
 """
@@ -157,7 +157,7 @@ amulet_of_yendor = appearance.Looped([
     appearance.Static(_AMULET_OF_YENDOR[1]),
 ])
 
-@cache
+@lru_cache(maxsize=None)
 def composite(below: int, above: int):
     """Layer one tile on another to create a new tile."""
     global _tileset
@@ -180,7 +180,7 @@ def composite(below: int, above: int):
     _tileset.set_tile(out_code, outRGBA)
     return out_code
 
-@cache
+@lru_cache(maxsize=None)
 def adjoin(left: int, right: int):
     """Combine the left half of one tile with the right half of another."""
     global _tileset
