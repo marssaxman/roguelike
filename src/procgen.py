@@ -37,19 +37,19 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [
+    0:[
         (entity_factories.orc, 80),
         (entity_factories.rat, 100),
         (entity_factories.silly, 0)
     ],
-    2: [(entity_factories.troll, 15), (entity_factories.trained_orc, 30)],
-    4: [
+    2:[(entity_factories.troll, 15), (entity_factories.trained_orc, 30)],
+    4:[
         (entity_factories.troll, 30),
         (entity_factories.armored_rat, 60),
         (entity_factories.rat, 40),
         (entity_factories.orc, 30)
     ],
-    5: [(entity_factories.troll, 60),
+    5:[(entity_factories.troll, 60),
         (entity_factories.giant, 30),
         (entity_factories.rat, 0),
         (entity_factories.orc, 0)
@@ -135,7 +135,7 @@ def populate_rooms(
         x, y = dungeon.exit_location
         entity_factories.upward_stairs.spawn(dungeon, x, y)
     else:
-        # this must be bob's lair, at the top of the tower
+        # this must be Bob's lair, at the top of the tower
         populate_lair(dungeon, rooms, rng)
     if dungeon.entry_location:
         x, y = dungeon.entry_location
@@ -153,7 +153,7 @@ def populate_lair(
     rooms: List[basemap.Room],
     rng: np.random.Generator
 ):
-    # Take bob's savings in the room furthest from the stairs.
+    # Take Bob's savings in the room furthest from the stairs.
     # We know there are only three rooms in the lair, so the room which does
     # not have the stairs, and has only one connection, must be the one.
     for room in rooms:
