@@ -139,5 +139,5 @@ upward_stairs = Fixture(
 
 amulet_of_yendor = Item(
     appearance=graphics.amulet_of_yendor,
-    name="Amulet of Yendor",
+    name="Bob's life savings",
 )
