@@ -53,7 +53,19 @@ class DoorOutside(Mechanism):
         # Only the player can leave the tower.
         if entity is not self.engine.player:
             return
-        self.engine.message_log.add_message(
-            f"The door outside is firmly locked.", color.impossible
-        )
+        amulet = None
+        if entity.inventory:
+            for item in entity.inventory.items:
+                # this is a terrible way to identify the amulet!
+                # if we introduce locked doors with keys, maybe the amulet
+                # could be just a fancy-looking sort of key.
+                if item.name == "Bob's life savings":
+                    amulet = item
+                    break
+        if amulet:
+            self.engine.win_game()
+        else:
+            self.engine.message_log.add_message(
+                f"The door outside is firmly locked.", color.impossible
+            )
 
