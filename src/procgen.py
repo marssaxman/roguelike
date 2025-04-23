@@ -95,7 +95,7 @@ def place_entities(
     rng: np.random.Generator
 ) -> None:
     number_of_monsters = rng.integers(
-        0, get_max_value_for_floor(max_monsters_by_floor, floor_number),
+        1, get_max_value_for_floor(max_monsters_by_floor, floor_number),
         endpoint=True
     )
     number_of_items = rng.integers(
