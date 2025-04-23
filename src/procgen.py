@@ -144,7 +144,7 @@ def populate_lair(
     rooms: List[basemap.Room],
     rng: np.random.Generator
 ):
-    # Place the Amulet of Yendor in the room furthest from the stairs.
+    # Take bob's savings in the room furthest from the stairs.
     # We know there are only three rooms in the lair, so the room which does
     # not have the stairs, and has only one connection, must be the one.
     for room in rooms:
