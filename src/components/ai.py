@@ -27,7 +27,7 @@ class BaseAI(Action):
         cost = np.array(self.entity.gamemap.tiles["walkable"], dtype=np.int8)
 
         for entity in self.entity.gamemap.entities:
-            # Check that an enitiy blocks movement and the cost isn't zero (blocking.)
+            # Check that an entity blocks movement and the cost isn't zero (blocking.)
             if entity.blocks_movement and cost[entity.x, entity.y]:
                 # Add to the cost of a blocked position.
                 # A lower number means more enemies will crowd behind each other in
