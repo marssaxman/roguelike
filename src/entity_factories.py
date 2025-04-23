@@ -71,6 +71,28 @@ armored_rat=Actor(
 
 )
 
+trained_orc=Actor(
+    appearance=Static(char=ord("T"), color=(255, 0, 255)),
+    name="Trained Orc",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=20, base_defense=1, base_power=6),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30)
+
+)
+
+trained_giant=Actor(
+    appearance=Static(char=ord("G"), color=(255, 0, 255)),
+    name="Giant",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=30, base_defense=0, base_power=8),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30)
+
+)
+
 confusion_scroll = Item(
     appearance=Static(char=graphics.SCROLL, color=(207, 63, 255)),
     name="Confusion Scroll",
