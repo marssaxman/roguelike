@@ -111,10 +111,10 @@ health_potion = Item(
     consumable=consumable.HealingConsumable(amount=4),
 )
 
-lightning_scroll = Item(
+Death_Scroll = Item(
     appearance=Static(char=graphics.SCROLL, color=(255, 255, 0)),
     name="Death Scroll",
-    consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5)
+    consumable=consumable.DeathDamageConsumable(damage=20, maximum_range=5)
 )
 
 dagger = Item(

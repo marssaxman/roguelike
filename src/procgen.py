@@ -12,7 +12,7 @@ import tile_types
 import maze.create
 from maze import basemap
 import graphics
-from src.entity_factories import lightning_scroll
+from src.entity_factories import death_scroll
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -30,9 +30,9 @@ max_monsters_by_floor = [
  ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35),(entity_factories.confusion_scroll, 5),(lightning_scroll, 2)],
-    2: [(entity_factories.confusion_scroll, 10),(lightning_scroll, 10)],
-    3: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
+    0: [(entity_factories.health_potion, 35),(entity_factories.confusion_scroll, 5),(death_scroll, 2)],
+    2: [(entity_factories.confusion_scroll, 10),(death_scroll, 10)],
+    3: [(entity_factories.death_scroll, 25), (entity_factories.sword, 5)],
     5: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
 }
 
