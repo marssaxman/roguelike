@@ -59,7 +59,7 @@ class DoorOutside(Mechanism):
                 # this is a terrible way to identify the amulet!
                 # if we introduce locked doors with keys, maybe the amulet
                 # could be just a fancy-looking sort of key.
-                if item.name == "Amulet of Yendor":
+                if item.name == "Bob's life savings":
                     amulet = item
                     break
         if amulet:

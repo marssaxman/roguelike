@@ -58,7 +58,7 @@ def main():
         screen_width,
         screen_height,
         tileset = tileset,
-        title = "bob's house of uncleanliness",
+        title = "Bob really fucking hates you",
         vsync = True,
         sdl_window_flags=tcod.context.SDL_WINDOW_MAXIMIZED,
     ) as context:

@@ -95,7 +95,7 @@ class Engine:
 
     def win_game(self) -> None:
         self.message_log.add_message(
-            f"You escape the tower with the Amulet of Yendor and complete the quest.", color.welcome_text
+            f"You escape the tower with Bob's life savings and ruin his life.", color.welcome_text
         )
         # Make the player not be "alive" any more: this ends the game loop
         self.player.ai = None
