@@ -82,7 +82,7 @@ trained_orc=Actor(
 
 )
 
-trained_giant=Actor(
+giant=Actor(
     appearance=Static(char=ord("G"), color=(255, 0, 255)),
     name="Giant",
     ai_cls=HostileEnemy,
