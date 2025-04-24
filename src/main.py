@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import traceback
 import tcod
+import tcod.sdl.video
 import color
 import exceptions
 import setup_game
@@ -66,6 +67,9 @@ def main():
         root_console = tcod.console.Console(
             screen_width, screen_height, order="F"
         )
+        # take over the whole screen - no window chrome
+        if context.sdl_window:
+            context.sdl_window.fullscreen = tcod.sdl.video.WindowFlags.FULLSCREEN_DESKTOP
         # run the game loop forever
         try:
             while True:
