@@ -71,9 +71,9 @@ armored_rat=Actor(
 
 )
 
-trained_orc=Actor(
-    appearance=Static(char=ord("T"), color=(255, 0, 255)),
-    name="Trained Orc",
+soldier=Actor(
+    appearance=graphics.soldier,
+    name="Soldier",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=20, base_defense=1, base_power=6),
     equipment=Equipment(),

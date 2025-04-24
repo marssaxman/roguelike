@@ -130,8 +130,14 @@ armored_rat = _actor_appearance(_ARMORED_RAT)
 _ORC = _alloc_actor()
 orc = _actor_appearance(_ORC)
 
+_SOLDIER =_alloc_actor()
+soldier =_actor_appearance(_SOLDIER)
+
 _TROLL = _alloc_actor()
 troll = _actor_appearance(_TROLL)
+
+_GIANT =_alloc_actor()
+giant =_actor_appearance(_GIANT)
 
 
 # The rest of these are just codepoints.
@@ -303,6 +309,8 @@ def load_into(tileset):
     _set_mirrored(tileset, _TROLL[1], humanoid1_tiles.get_tile(8))
     _set_mirrored(tileset, _ORC[0], humanoid0_tiles.get_tile(64))
     _set_mirrored(tileset, _ORC[1], humanoid1_tiles.get_tile(64))
+    _set_mirrored(tileset, _SOLDIER[0], humanoid0_tiles.get_tile(32))
+    _set_mirrored(tileset, _SOLDIER[1], humanoid1_tiles.get_tile(32))
 
     potion_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)
