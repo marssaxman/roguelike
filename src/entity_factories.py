@@ -50,6 +50,16 @@ rat=Actor(
     level=Level(xp_given=10)
 )
 
+archer=Actor(
+    appearance=Static(char=ord("x"), color=(255, 0, 255)),
+    name="Archer",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=3, base_defense=0, base_power=4),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=10)
+)
+
 silly=Actor(
     appearance=Static(char=ord("x"), color=(255, 0, 255)),
     name="Helper",
