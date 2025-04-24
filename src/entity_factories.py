@@ -61,7 +61,7 @@ silly=Actor(
 )
 
 armored_rat=Actor(
-    appearance=Static(char=ord("A"), color=(255, 0, 255)),
+    appearance=graphics.armored_rat,
     name="Armored Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=8, base_defense=1, base_power=4),
