@@ -396,6 +396,9 @@ class InventoryActivateHandler(InventoryEventHandler):
         else:
             return None
 
+class InventoryHandler(InventoryEventHandler):
+    pass
+
 
 class InventoryDropHandler(InventoryEventHandler):
     """Handle dropping an inventory item."""
@@ -570,6 +573,8 @@ class MainGameEventHandler(EventHandler):
             # yeah, we already use escape, but I keep trying to quit this way,
             # so we might as well support both
             raise SystemExit()
+        elif key == tcod.event.KeySym.e:
+            return InventoryHandler(self.engine)
 
         # No valid key was pressed
         return action

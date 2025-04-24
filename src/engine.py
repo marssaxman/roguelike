@@ -92,6 +92,8 @@ class Engine:
             y=names_y,
             engine=self
         )
+        console.draw_frame(console.width -24, console.height -3, width=15, height=3, fg=(139, 128, 0))
+        console.print(console.width -23, console.height - 2, "Inventory (E)")
 
     def win_game(self) -> None:
         self.message_log.add_message(
