@@ -578,7 +578,9 @@ class MainGameEventHandler(EventHandler):
 
         # No valid key was pressed
         return action
-
+    def ev_mousebuttondown(self, event):
+        return InventoryHandler(self.engine)
+        x, y = event.tile
 
 class GameOverEventHandler(EventHandler):
     def on_quit(self) -> None:
