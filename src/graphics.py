@@ -124,6 +124,9 @@ player = _actor_appearance(_PLAYER)
 _RAT = _alloc_actor()
 rat = _actor_appearance(_RAT)
 
+_ARMORED_RAT = _alloc_actor()
+armored_rat = _actor_appearance(_ARMORED_RAT)
+
 _ORC = _alloc_actor()
 orc = _actor_appearance(_ORC)
 
@@ -282,11 +285,13 @@ def load_into(tileset):
     rodent0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
     )
-    _set_mirrored(tileset, _RAT[0], rodent0_tiles.get_tile(9))
     rodent1_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent1.png", 8, 4, range(8*4)
     )
+    _set_mirrored(tileset, _RAT[0], rodent0_tiles.get_tile(9))
     _set_mirrored(tileset, _RAT[1], rodent1_tiles.get_tile(9))
+    _set_mirrored(tileset, _ARMORED_RAT[0], rodent0_tiles.get_tile(11))
+    _set_mirrored(tileset, _ARMORED_RAT[1], rodent1_tiles.get_tile(11))
 
     humanoid0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
