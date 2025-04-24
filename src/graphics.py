@@ -311,6 +311,8 @@ def load_into(tileset):
     _set_mirrored(tileset, _ORC[1], humanoid1_tiles.get_tile(64))
     _set_mirrored(tileset, _SOLDIER[0], humanoid0_tiles.get_tile(32))
     _set_mirrored(tileset, _SOLDIER[1], humanoid1_tiles.get_tile(32))
+    _set_mirrored(tileset, _GIANT[0], humanoid1_tiles.get_tile(168))
+    _set_mirrored(tileset, _GIANT[1], humanoid1_tiles.get_tile(168))
 
     potion_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)

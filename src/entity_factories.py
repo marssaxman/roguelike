@@ -83,7 +83,7 @@ soldier=Actor(
 )
 
 giant=Actor(
-    appearance=Static(char=ord("G"), color=(255, 0, 255)),
+    appearance=graphics.giant,
     name="Giant",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=30, base_defense=0, base_power=8),
