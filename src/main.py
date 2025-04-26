@@ -49,7 +49,7 @@ def load_tiles():
 def main():
     # how big should the game window be?
     screen_width = 60
-    screen_height = 30
+    screen_height = 32
 
     tileset = load_tiles()
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
