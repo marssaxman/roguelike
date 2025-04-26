@@ -333,7 +333,7 @@ def load_into(tileset):
     redjack = tcod.tileset.load_tilesheet(
         "assets/Redjack17.png", 16, 16, range(16*16)
     )
-    tileset.set_tile(corpse.char, redjack.get_tile((16*15)+13))
+    tileset.set_tile(corpse.char, redjack.get_tile(35))
     tileset.set_tile(stairs_up.char, redjack.get_tile((16*3)+12))
     tileset.set_tile(stairs_down.char, redjack.get_tile((16*3)+14))
 
