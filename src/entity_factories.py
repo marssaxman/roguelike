@@ -1,4 +1,4 @@
-from components.ai import HostileEnemy, Passive, Epic_friend
+from components.ai import HostileEnemy, Passive, Epic_friend, HostileArcher
 from components import consumable, equippable, mechanism
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -6,7 +6,6 @@ from components.inventory import Inventory
 from components.level import Level
 from components.appearance import Static
 from entity import Actor, Item, Fixture
-import color
 import graphics
 
 
@@ -53,7 +52,7 @@ rat=Actor(
 archer=Actor(
     appearance=Static(char=ord("a"), color=(255, 0, 255)),
     name="Archer",
-    ai_cls=HostileEnemy,
+    ai_cls=HostileArcher,
     fighter=Fighter(hp=3, base_defense=0, base_power=4), # This damage is ranged, also when people get close this enemy should run away
     equipment=Equipment(),
     inventory=Inventory(capacity=0),
