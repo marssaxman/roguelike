@@ -124,6 +124,7 @@ class MeleeAction(ActionWithDirection):
         target = self.target_actor
         if not target:
             raise exceptions.Impossible("Nothing to attack.")
+        self.entity.appearance.move(self.dx, self.dy)
         damage = self.entity.fighter.power - target.fighter.defense
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:
@@ -145,6 +146,7 @@ class MeleeAction(ActionWithDirection):
 class FixtureAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.blocking_entity
+        self.entity.appearance.move(self.dx, self.dy)
         assert target
         if target.mechanism:
             return target.mechanism.operate(self.entity)
@@ -159,12 +161,15 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # can't move outside the map
+            self.entity.appearance.move(self.dx, self.dy)
             raise exceptions.Impossible("You can't walk outside the map.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # can't move into a non-walkable map tile
+            self.entity.appearance.move(self.dx, self.dy)
             raise exceptions.Impossible("Sorry man, I don't think you walk there")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # destination is blocked by some entity
+            self.entity.appearance.move(self.dx, self.dy)
             raise exceptions.Impossible("Are you blind? There is a creature RIGHT there")
 
         self.entity.move(self.dx, self.dy)
@@ -185,6 +190,7 @@ class ShootBowAction(ActionWithDirection):
     def perform(self) -> None:
         target=self.target_actor
         damage=4
+        self.entity.appearance.move(self.dx, self.dy)
         self.engine.message_log.add_message(
             f"A lighting bolt strikes the {target.name} with a loud thunder, for {damage} damage!"
         )
