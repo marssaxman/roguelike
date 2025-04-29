@@ -127,7 +127,7 @@ class FireballDamageConsumable(Consumable):
         self.consume()
 
 
-class LightningDamageConsumable(Consumable):
+class DeathDamageConsumable(Consumable):
     def __init__(self, damage: int, maximum_range: int):
         self.damage = damage
         self.maximum_range = maximum_range

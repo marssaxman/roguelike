@@ -12,7 +12,7 @@ import tile_types
 import maze.create
 from maze import basemap
 import graphics
-
+from src.entity_factories import Death_Scroll
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -30,21 +30,32 @@ max_monsters_by_floor = [
  ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35), (entity_factories.confusion_scroll, 5)],
-    2: [(entity_factories.confusion_scroll, 10)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
-    6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
+    0: [(entity_factories.health_potion, 35),(entity_factories.confusion_scroll, 5),(Death_Scroll, 2)],
+    2: [(entity_factories.confusion_scroll, 10),(Death_Scroll, 10)],
+    3: [(entity_factories.Death_Scroll, 25), (entity_factories.sword, 5)],
+    5: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [
+    0:[
         (entity_factories.orc, 80),
-        (entity_factories.rat, 100),
+        (entity_factories.archer, 100),
         (entity_factories.silly, 0)
     ],
-    2: [(entity_factories.troll, 15)],
-    4: [(entity_factories.troll, 30),(entity_factories.armored_rat, 50),(entity_factories.rat, 0)],
-    6: [(entity_factories.troll, 60)],
+    2:[(entity_factories.troll, 15), (entity_factories.soldier, 15)],
+    4:[
+        (entity_factories.troll, 20),
+        (entity_factories.armored_rat, 60),
+        (entity_factories.rat, 40),
+        (entity_factories.orc, 30)
+    ],
+    5:[(entity_factories.troll, 60),
+        (entity_factories.giant, 5),
+        (entity_factories.soldier, 30),
+        (entity_factories.rat, 0),
+        (entity_factories.orc, 0)
+    ],
+    7:[(entity_factories.giant, 10)]
 }
 
 
@@ -95,7 +106,7 @@ def place_entities(
     rng: np.random.Generator
 ) -> None:
     number_of_monsters = rng.integers(
-        0, get_max_value_for_floor(max_monsters_by_floor, floor_number),
+        1, get_max_value_for_floor(max_monsters_by_floor, floor_number),
         endpoint=True
     )
     number_of_items = rng.integers(
@@ -126,7 +137,7 @@ def populate_rooms(
         x, y = dungeon.exit_location
         entity_factories.upward_stairs.spawn(dungeon, x, y)
     else:
-        # this must be bob's lair, at the top of the tower
+        # this must be Bob's lair, at the top of the tower
         populate_lair(dungeon, rooms, rng)
     if dungeon.entry_location:
         x, y = dungeon.entry_location
@@ -144,7 +155,7 @@ def populate_lair(
     rooms: List[basemap.Room],
     rng: np.random.Generator
 ):
-    # Place the Amulet of Yendor in the room furthest from the stairs.
+    # Take Bob's savings in the room furthest from the stairs.
     # We know there are only three rooms in the lair, so the room which does
     # not have the stairs, and has only one connection, must be the one.
     for room in rooms:

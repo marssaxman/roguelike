@@ -78,7 +78,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            "bob's house of uncleanliness",
+            "Bob really fucking hates you",
             fg=color.menu_title,
             alignment=libtcodpy.CENTER,
         )

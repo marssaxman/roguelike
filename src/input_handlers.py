@@ -396,6 +396,9 @@ class InventoryActivateHandler(InventoryEventHandler):
         else:
             return None
 
+class InventoryHandler(InventoryEventHandler):
+    pass
+
 
 class InventoryDropHandler(InventoryEventHandler):
     """Handle dropping an inventory item."""
@@ -555,10 +558,10 @@ class MainGameEventHandler(EventHandler):
         elif key == tcod.event.KeySym.v:
             return HistoryViewer(self.engine)
 
-        elif key == tcod.event.KeySym.g:
+        elif key == tcod.event.KeySym.z:
             action = PickupAction(player)
 
-        elif key == tcod.event.KeySym.i:
+        elif key == tcod.event.KeySym.x:
             return InventoryActivateHandler(self.engine)
         elif key == tcod.event.KeySym.d:
             return InventoryDropHandler(self.engine)
@@ -570,10 +573,14 @@ class MainGameEventHandler(EventHandler):
             # yeah, we already use escape, but I keep trying to quit this way,
             # so we might as well support both
             raise SystemExit()
+        elif key == tcod.event.KeySym.e:
+            return InventoryHandler(self.engine)
 
         # No valid key was pressed
         return action
-
+    def ev_mousebuttondown(self, event):
+        return InventoryHandler(self.engine)
+        x, y = event.tile
 
 class GameOverEventHandler(EventHandler):
     def on_quit(self) -> None:

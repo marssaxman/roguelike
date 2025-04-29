@@ -1,4 +1,4 @@
-from components.ai import HostileEnemy, Passive, Epic_friend
+from components.ai import HostileEnemy, Passive, Epic_friend, HostileArcher
 from components import consumable, equippable, mechanism
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -6,7 +6,6 @@ from components.inventory import Inventory
 from components.level import Level
 from components.appearance import Static
 from entity import Actor, Item, Fixture
-import color
 import graphics
 
 
@@ -50,6 +49,26 @@ rat=Actor(
     level=Level(xp_given=10)
 )
 
+archer=Actor(
+    appearance=graphics.archer,
+    name="Archer",
+    ai_cls=HostileArcher,
+    fighter=Fighter(hp=3, base_defense=0, base_power=4), # This damage is ranged, also when people get close this enemy should run away
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=40)
+)
+
+wizard=Actor(
+    appearance=Static(char=ord("w"), color=(255, 0, 255)),
+    name="Wizard",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=6, base_defense=0, base_power=0), # The power doesn't matter, It's based on the spells she uses, which is based on the floor.
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=50)
+)
+
 silly=Actor(
     appearance=Static(char=ord("x"), color=(255, 0, 255)),
     name="Helper",
@@ -61,10 +80,32 @@ silly=Actor(
 )
 
 armored_rat=Actor(
-    appearance=Static(char=ord("A"), color=(255, 0, 255)),
+    appearance=graphics.armored_rat,
     name="Armored Rat",
     ai_cls=HostileEnemy,
     fighter=Fighter(hp=8, base_defense=1, base_power=4),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30)
+
+)
+
+soldier=Actor(
+    appearance=graphics.soldier,
+    name="Soldier",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=20, base_defense=1, base_power=6),
+    equipment=Equipment(),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30)
+
+)
+
+giant=Actor(
+    appearance=graphics.giant,
+    name="Giant",
+    ai_cls=HostileEnemy,
+    fighter=Fighter(hp=30, base_defense=0, base_power=8),
     equipment=Equipment(),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=30)
@@ -89,10 +130,10 @@ health_potion = Item(
     consumable=consumable.HealingConsumable(amount=4),
 )
 
-lightning_scroll = Item(
+Death_Scroll = Item(
     appearance=Static(char=graphics.SCROLL, color=(255, 255, 0)),
     name="Death Scroll",
-    consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5)
+    consumable=consumable.DeathDamageConsumable(damage=20, maximum_range=5)
 )
 
 dagger = Item(

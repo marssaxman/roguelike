@@ -124,11 +124,23 @@ player = _actor_appearance(_PLAYER)
 _RAT = _alloc_actor()
 rat = _actor_appearance(_RAT)
 
+_ARMORED_RAT = _alloc_actor()
+armored_rat = _actor_appearance(_ARMORED_RAT)
+
 _ORC = _alloc_actor()
 orc = _actor_appearance(_ORC)
 
+_SOLDIER =_alloc_actor()
+soldier =_actor_appearance(_SOLDIER)
+
 _TROLL = _alloc_actor()
 troll = _actor_appearance(_TROLL)
+
+_GIANT =_alloc_actor()
+giant =_actor_appearance(_GIANT)
+
+_ARCHER =_alloc_actor()
+archer =_actor_appearance(_ARCHER)
 
 
 # The rest of these are just codepoints.
@@ -277,16 +289,20 @@ def load_into(tileset):
         "assets/DawnLike/Characters/Player1.png", 8, 15, range(8*15)
     )
     _set_mirrored(tileset, _PLAYER[1], player1_tiles.get_tile(0))
+    _set_mirrored(tileset, _ARCHER[1], player1_tiles.get_tile(3 * 8 + 2))
+    _set_mirrored(tileset, _ARCHER[0], player0_tiles.get_tile(3 * 8 + 2))
 
 
     rodent0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent0.png", 8, 4, range(8*4)
     )
-    _set_mirrored(tileset, _RAT[0], rodent0_tiles.get_tile(9))
     rodent1_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Rodent1.png", 8, 4, range(8*4)
     )
+    _set_mirrored(tileset, _RAT[0], rodent0_tiles.get_tile(9))
     _set_mirrored(tileset, _RAT[1], rodent1_tiles.get_tile(9))
+    _set_mirrored(tileset, _ARMORED_RAT[0], rodent0_tiles.get_tile(11))
+    _set_mirrored(tileset, _ARMORED_RAT[1], rodent1_tiles.get_tile(11))
 
     humanoid0_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Characters/Humanoid0.png", 8, 27, range(8*17)
@@ -298,6 +314,10 @@ def load_into(tileset):
     _set_mirrored(tileset, _TROLL[1], humanoid1_tiles.get_tile(8))
     _set_mirrored(tileset, _ORC[0], humanoid0_tiles.get_tile(64))
     _set_mirrored(tileset, _ORC[1], humanoid1_tiles.get_tile(64))
+    _set_mirrored(tileset, _SOLDIER[0], humanoid0_tiles.get_tile(32))
+    _set_mirrored(tileset, _SOLDIER[1], humanoid1_tiles.get_tile(32))
+    _set_mirrored(tileset, _GIANT[0], humanoid1_tiles.get_tile(168))
+    _set_mirrored(tileset, _GIANT[1], humanoid1_tiles.get_tile(168))
 
     potion_tiles = tcod.tileset.load_tilesheet(
         "assets/DawnLike/Items/Potion.png", (128//16), (80//16), range(40)
@@ -318,7 +338,7 @@ def load_into(tileset):
     redjack = tcod.tileset.load_tilesheet(
         "assets/Redjack17.png", 16, 16, range(16*16)
     )
-    tileset.set_tile(corpse.char, redjack.get_tile((16*15)+13))
+    tileset.set_tile(corpse.char, redjack.get_tile(35))
     tileset.set_tile(stairs_up.char, redjack.get_tile((16*3)+12))
     tileset.set_tile(stairs_down.char, redjack.get_tile((16*3)+14))
 
