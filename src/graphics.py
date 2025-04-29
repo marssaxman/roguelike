@@ -139,6 +139,9 @@ troll = _actor_appearance(_TROLL)
 _GIANT =_alloc_actor()
 giant =_actor_appearance(_GIANT)
 
+_ARCHER =_alloc_actor()
+archer =_actor_appearance(_ARCHER)
+
 
 # The rest of these are just codepoints.
 corpse = appearance.Static(_alloc(), (191, 0, 0))
@@ -286,6 +289,8 @@ def load_into(tileset):
         "assets/DawnLike/Characters/Player1.png", 8, 15, range(8*15)
     )
     _set_mirrored(tileset, _PLAYER[1], player1_tiles.get_tile(0))
+    _set_mirrored(tileset, _ARCHER[1], player1_tiles.get_tile(3 * 8 + 2))
+    _set_mirrored(tileset, _ARCHER[0], player0_tiles.get_tile(3 * 8 + 2))
 
 
     rodent0_tiles = tcod.tileset.load_tilesheet(

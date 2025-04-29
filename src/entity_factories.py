@@ -50,7 +50,7 @@ rat=Actor(
 )
 
 archer=Actor(
-    appearance=Static(char=ord("a"), color=(255, 0, 255)),
+    appearance=graphics.archer,
     name="Archer",
     ai_cls=HostileArcher,
     fighter=Fighter(hp=3, base_defense=0, base_power=4), # This damage is ranged, also when people get close this enemy should run away
