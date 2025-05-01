@@ -156,6 +156,7 @@ class HostileArcher(BaseAI):
     def __init__(self, entity:Actor):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []
+        self.readybow = 1
 
     def perform(self) -> None:
         target = self.engine.player
@@ -166,9 +167,12 @@ class HostileArcher(BaseAI):
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
             if distance <= 1:
                 return MeleeAction(self.entity, dx, dy).perform()
-            elif distance <= 6 and distance > 2:
+            elif distance <= 6 and distance > 2 and self.readybow == 0:
                 return ShootBowAction(self.entity, dx, dy).perform()
-            self.path = self.get_path_to(target.x, target.y)
+            elif self.readybow == 1:
+                self.readybow -= 1
+            else:
+                self.path = self.get_path_to(target.x, target.y)
 
         if self.path:
             dest_x, dest_y = self.path.pop(0)
