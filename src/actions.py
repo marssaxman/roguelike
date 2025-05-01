@@ -188,10 +188,10 @@ class BumpAction(ActionWithDirection):
 
 class ShootBowAction(ActionWithDirection):
     def perform(self) -> None:
-        target=self.target_actor
-        damage=4
-        self.entity.appearance.move(self.dx, self.dy)
-        self.engine.message_log.add_message(
-            f"A lighting bolt strikes the {target.name} with a loud thunder, for {damage} damage!"
-        )
-        target.fighter.take_damage(damage)
+            target=self.target_actor
+            damage=4
+            self.entity.appearance.move(self.dx, self.dy)
+            self.engine.message_log.add_message(
+                f"A lighting bolt strikes the {target.name} with a loud thunder, for {damage} damage!"
+            )
+            target.fighter.take_damage(damage)
