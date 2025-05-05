@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional, Tuple, Any, TYPE_CHECKING
 from numpy.typing import NDArray
-
+import time
 import numpy as np  # type: ignore
 from tcod.console import Console
 
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 class GameMap:
     entry_location: Optional[Tuple[int, int]]
     exit_location: Optional[Tuple[int, int]]
+    last_animate_time: float
     def __init__(
         self,
         engine: Engine,
@@ -33,6 +34,7 @@ class GameMap:
         self.exit_location = (0, 0)
         self.entry_location = (0, 0)
         self.render_origin = (0, 0)
+        self.last_animate_time = time.time()
 
     @property
     def gamemap(self) -> GameMap:
@@ -196,11 +198,17 @@ class GameMap:
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
         )
+        # Has enough time elapsed to justify animating entities?
+        cur_animate_time = time.time()
+        do_animate_now = 0.25 <= (cur_animate_time - self.last_animate_time)
+        if do_animate_now:
+            self.last_animate_time = cur_animate_time
         for entity in entities_sorted_for_rendering:
             # Only render mobile entities which are currently visible; other
             # entities we'll draw if they have ever been explored.
             if self.visible[entity.x, entity.y]:
-                entity.appearance.animate()
+                if do_animate_now:
+                    entity.appearance.animate()
             elif entity.mobile:
                 continue
             elif not self.explored[entity.x, entity.y]:
