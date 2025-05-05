@@ -53,7 +53,7 @@ archer=Actor(
     appearance=graphics.archer,
     name="Archer",
     ai_cls=HostileArcher,
-    fighter=Fighter(hp=3, base_defense=0, base_power=4), # This damage is ranged, also when people get close this enemy should run away
+    fighter=Fighter(hp=3, base_defense=0, base_power=3), # This damage is ranged, also when people get close this enemy should run away
     equipment=Equipment(),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=40)

@@ -168,6 +168,7 @@ class HostileArcher(BaseAI):
             if distance <= 1:
                 return MeleeAction(self.entity, dx, dy).perform()
             elif distance <= 6 and distance > 2 and self.readybow == 0:
+                self.readybow += 1
                 return ShootBowAction(self.entity, dx, dy).perform()
             elif self.readybow == 1:
                 self.readybow -= 1
