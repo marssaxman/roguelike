@@ -363,6 +363,7 @@ class InventoryEventHandler(AskUserEventHandler):
         else:
             console.print(x + 1, y + 1, "(Empty)")
 
+
     def ev_keydown(self, event: tcod.event.KeyDown)  -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
@@ -396,8 +397,43 @@ class InventoryActivateHandler(InventoryEventHandler):
         else:
             return None
 
-class InventoryHandler(InventoryEventHandler):
-    pass
+class InventoryHandler(AskUserEventHandler):
+    def on_render(self, console: tcod.console.Console) -> None:
+        """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
+        Will move to a different position based on where the player is located, so the player can always see where
+        they are.
+        """
+        super().on_render(console)
+        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+        title = "inventory"
+        width = 23
+        height = number_of_items_in_inventory + 2
+        if height <= 3:
+            height = 3
+
+        if self.engine.player.x <= (console.width // 2):
+            x = console.width - width - 1
+        else:
+            x = 1
+        height = 20
+        y = console.height -height + 1
+        x = console.width -23
+        console.draw_frame(x = x, y = y, width=width, height=height, fg=(139, 128, 0))
+
+        if number_of_items_in_inventory > 0:
+            for i, item in enumerate(self.engine.player.inventory.items):
+                item_key = chr(ord("a") + i)
+                is_equipped = self.engine.player.equipment.item_is_equipped(item)
+
+                item_string = f"({item_key}) {item.name}"
+
+                if is_equipped:
+                    item_string = f"{item_string} (E)"
+
+                console.print(x + 1, y + i + 1, item_string)
+        else:
+            console.print(x + 1, y + 1, "(Empty)")
+        console.print(x + 1, y + height - 3, "Z to use, D to drop.", fg = (255, 255, 255))
 
 
 class InventoryDropHandler(InventoryEventHandler):

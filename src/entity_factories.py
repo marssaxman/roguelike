@@ -53,7 +53,7 @@ archer=Actor(
     appearance=graphics.archer,
     name="Archer",
     ai_cls=HostileArcher,
-    fighter=Fighter(hp=3, base_defense=0, base_power=4), # This damage is ranged, also when people get close this enemy should run away
+    fighter=Fighter(hp=3, base_defense=0, base_power=2), # This damage is ranged
     equipment=Equipment(),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=40)
@@ -63,7 +63,7 @@ wizard=Actor(
     appearance=Static(char=ord("w"), color=(255, 0, 255)),
     name="Wizard",
     ai_cls=HostileEnemy,
-    fighter=Fighter(hp=6, base_defense=0, base_power=0), # The power doesn't matter, It's based on the spells she uses, which is based on the floor.
+    fighter=Fighter(hp=6, base_defense=0, base_power=0), # The power doesn't matter, It's based on the spells she uses.
     equipment=Equipment(),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=50)
