@@ -401,6 +401,31 @@ class InventoryHandler(AskUserEventHandler):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.selection = 0
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+        number_of_items_in_inventory = len(self.engine.player.inventory.items)
+        key = event.sym
+        if key == tcod.event.KeySym.UP:
+            self.selection -= 1
+        elif key == tcod.event.KeySym.DOWN:
+            self.selection += 1
+        elif key == tcod.event.KeySym.a:
+            item = self.engine.player.inventory.items[self.selection]
+            if item.consumable:
+                return item.consumable.get_action(self.engine.player)
+            elif item.equippable:
+                return actions.EquipAction(self.engine.player, item)
+            else:
+                return None
+        elif key == tcod.event.KeySym.d:
+            item = self.engine.player.inventory.items[self.selection]
+            return actions.DropItem(self.engine.player, item)
+        else:
+            return super().ev_keydown(event)
+        if self.selection < 0:
+            self.selection = number_of_items_in_inventory - 1
+        if self.selection > number_of_items_in_inventory - 1:
+            self.selection = 0
+        return None
 
 
     def on_render(self, console: tcod.console.Console) -> None:
@@ -427,18 +452,20 @@ class InventoryHandler(AskUserEventHandler):
 
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
-                item_key = chr(ord("a") + i)
                 is_equipped = self.engine.player.equipment.item_is_equipped(item)
 
-                item_string = f"({item_key}) {item.name}"
+                item_string = f" {item.name}"
 
                 if is_equipped:
                     item_string = f"{item_string} (E)"
 
                 console.print(x + 1, y + i + 1, item_string)
+
+                if i == self.selection:
+                    console.hline(x + 1, y + i + 1, 1)
         else:
             console.print(x + 1, y + 1, "(Empty)")
-        console.print(x + 1, y + height - 3, "Z to use, D to drop.", fg = (255, 255, 255))
+        console.print(x + 1, y + height - 3, "A to use, D to drop.", fg = (255, 255, 255))
 
 
 class InventoryDropHandler(InventoryEventHandler):
