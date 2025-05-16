@@ -398,6 +398,11 @@ class InventoryActivateHandler(InventoryEventHandler):
             return None
 
 class InventoryHandler(AskUserEventHandler):
+    def __init__(self, engine: Engine):
+        super().__init__(engine)
+        self.selection = 0
+
+
     def on_render(self, console: tcod.console.Console) -> None:
         """Render an inventory menu, which displays the items in the inventory, and the letter to select them.
         Will move to a different position based on where the player is located, so the player can always see where
