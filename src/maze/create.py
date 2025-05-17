@@ -24,7 +24,6 @@ def _coarse_grid(
     After play-testing, Stella decided that skinny hallways are not fun;
     now we use factor 4 so the minimum room dimension is 3 (+1 wall row).
     """
-    print(f"_coarse_grid({shape}, {box_size}, {edge}")
     width, height = shape
     factor = 4
     scaled_box_size = np.uint(box_size + factor - 1)
