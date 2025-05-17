@@ -55,9 +55,9 @@ def main():
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 
     # create a terminal window to put the game interface in
-    with tcod.context.new_terminal(
-        screen_width,
-        screen_height,
+    with tcod.context.new(
+        columns = screen_width,
+        rows = screen_height,
         tileset = tileset,
         title = "Bob's insanity",
         vsync = True,
