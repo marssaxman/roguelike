@@ -16,17 +16,26 @@ def _coarse_grid(
     seed: np.int64,
     edge: float, # range 0..0.5, controls irregularity of grid
 ):
-    """Generate an offset grid using half the target resolution."""
-    width = shape[0]
-    height = shape[1]
+    """
+    Generate an offset grid using a fraction of the target resolution.
+    This allows us to set a floor on the minimum room dimension.
+    We originally meant to avoid creating rooms with width or height 1,
+    because they would be completely filled by wall tiles.
+    After play-testing, Stella decided that skinny hallways are not fun;
+    now we use factor 4 so the minimum room dimension is 3 (+1 wall row).
+    """
+    print(f"_coarse_grid({shape}, {box_size}, {edge}")
+    width, height = shape
+    factor = 4
+    scaled_box_size = np.uint(box_size + factor - 1)
     for left, top, right, bottom in offgrid.generate(
-        width=np.floor_divide(np.uint(width), 2, dtype=np.uint),
-        height=np.floor_divide(np.uint(height), 2, dtype=np.uint),
-        box_size=np.floor_divide(np.uint(box_size+1), 2, dtype=np.uint),
+        width=np.floor_divide(np.uint(width), factor, dtype=np.uint),
+        height=np.floor_divide(np.uint(height), factor, dtype=np.uint),
+        box_size=np.floor_divide(scaled_box_size, factor, dtype=np.uint),
         seed=seed,
         edge=np.double(edge),
     ):
-        yield left * 2, top * 2, right * 2, bottom * 2
+        yield left * factor, top * factor, right * factor, bottom * factor
 
 
 def _rasterize(rects, grid):
@@ -79,7 +88,7 @@ def level(
     width, height = shape
     assert width >= 8 and height >= 8
     # Generate offset grid rectangles which will cover the game area.
-    # We will use half the tile grid resolution, to ensure that every rect
+    # We will divide the tile grid resolution, to ensure that every rect
     # has enough open area to accommodate wall tiles along its edges.
     # We will also allocate a raster grid one unit larger than the desired
     # map grid, then render into the center of this array, leaving one space
